@@ -22,13 +22,13 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ./myapp  # Specify the output directory
+        run: dotnet publish -c Release  # Eliminé el -o
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ./myapp  # Reference the correct output path
+          path: .
 
   deploy:
     runs-on: windows-latest
@@ -58,4 +58,4 @@ jobs:
         with:
           app-name: 'aidmanagermobile'
           slot-name: 'Production'
-          package: ./myapp  # Ensure this points to the published output
+          package: .
