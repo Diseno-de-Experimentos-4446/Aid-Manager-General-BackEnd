@@ -9,7 +9,7 @@ public interface IUserCommandService
     Task<User?> Handle(CreateUserCommand command);
     Task<User> Handle(UpdateUserCommand command, string email);
     Task<bool> AuthenticateUser(ValidateUserCredentialsCommand command);
-    Task<bool> Handle(EditCompanyIdCommand command, string companyId);
+    Task<bool> Handle(EditCompanyIdCommand command, int companyId);
     Task<bool> Handle(KickUserByCompanyIdCommand command);
     Task<User?> Handle(UpdateUserCompanyNameCommand command);
 }
