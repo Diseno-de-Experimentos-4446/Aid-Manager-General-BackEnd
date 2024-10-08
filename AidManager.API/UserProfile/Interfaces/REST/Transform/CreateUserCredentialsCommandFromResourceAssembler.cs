@@ -8,6 +8,6 @@ public static class CreateUserCredentialsCommandFromResourceAssembler
 {
     public static ValidateUserCredentialsCommand ToCommandFromResource(UserCredentialsResource resource)
     {
-        return new ValidateUserCredentialsCommand(resource.Email, resource.Password);
+        return new ValidateUserCredentialsCommand(resource.Email, resource.Password, resource.CompanyRegisterCode);
     }
 }
