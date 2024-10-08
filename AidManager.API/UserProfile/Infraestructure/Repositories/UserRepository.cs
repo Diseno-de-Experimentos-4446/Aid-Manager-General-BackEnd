@@ -10,22 +10,9 @@ public class UserRepository(AppDBContext context) : BaseRepository<User>(context
 {
     public async Task<User?> FindUserByEmail(string email)
     {
-        using (var trans = Context.Database.BeginTransaction())
-        {
-            try
-            {
-                Console.WriteLine("Searching by email user in UserRepository");
-                var result = await Context.Set<User>().FirstOrDefaultAsync(x => x.Email == email);
-                await trans.CommitAsync();
-                return result;
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Error searching by email user in UserRepository");
-                await trans.RollbackAsync();
-                return null;
-            }
-        }
+        
+        return await Context.Set<User>().FirstOrDefaultAsync(x => x.Email == email);
+        
     }
 
     public async Task<User?> FindUserById(int id)
