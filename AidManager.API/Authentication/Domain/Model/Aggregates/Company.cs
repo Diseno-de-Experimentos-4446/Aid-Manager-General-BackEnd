@@ -5,28 +5,25 @@ namespace AidManager.API.Authentication.Domain.Model.Aggregates;
 public class Company
 {
     public int Id { get; private set; }
-     public string BrandName { get; private set; }
-     public string IdentificationCode { get; private set; }
+     public string CompanyName { get; private set; }
      public string Country { get; private set; }
-     public string Phone {get; private set; }
-     public int UserId { get; private set; }
+     public string Email {get; private set; }
+     public int ManagerId { get; private set; }
      
-     public Company(string brandName, string identificationCode, string country, string phone, int userId)
-     {
-         BrandName = brandName;
-         IdentificationCode = identificationCode;
-         Country = country;
-         Phone = phone;
-            UserId = userId;
-     }
+     public string TeamRegisterCode { get; private set; }
 
+     private Company() { }
      public Company(CreateCompanyCommand command)
      {
-        BrandName = command.BrandName;
-        IdentificationCode = command.IdentificationCode;
+        CompanyName = command.CompanyName;
         Country = command.Country;
-        Phone = command.Phone;
-        UserId = command.UserId;
-    }
-     
+        Email = command.Email;
+        ManagerId = command.UserId;
+        TeamRegisterCode = GenerateRegisterCode();
+     }
+
+     private string GenerateRegisterCode()
+     {
+         return Guid.NewGuid().ToString();
+     }
 }

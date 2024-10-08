@@ -12,20 +12,12 @@ namespace AidManager.API.Authentication.Interfaces;
 [Produces(MediaTypeNames.Application.Json)]
 public class CompanyController(ICompanyCommandService companyCommandService, ICompanyQueryService companyQueryService) : ControllerBase
 {
-    [HttpPost]
-    public async Task<IActionResult> CreateNewCompany([FromBody] CreateCompanyResource resource)
-    {
-        var command = CreateCompanyCommandFromResourceAssembler.ToCommandFromResource(resource);
-        var company = await companyCommandService.handle(command);
-        if (company == null) return Ok(new { status_code = 500, message = "Internal pointer" });
-        return Ok(new { status_code = 200, message = "Company created" });
-    }
     
-    [HttpGet("{UID}")]
-    public async Task<IActionResult> GetCompanyByUID(string UID)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetCompanyById(int id)
     {
-        var query = new GetCompanyByUIDQuery(UID);
-        var company = await companyQueryService.handle(query);
+        var query = new GetCompanyByUserIdQuery(id);
+        var company = await companyQueryService.Handle(query);
         if (company == null) return Ok(new { status_code = 404, message = "Company not found" });
         return Ok(new { status_code = 200, message = "Company found", company = CreateCompanyResourceFromEntityAssembler.ToResourceFromEntity(company) });
     }

@@ -5,5 +5,5 @@ namespace AidManager.API.Authentication.Domain.Services;
 
 public interface ICompanyQueryService
 {
-    Task<Company?> handle(GetCompanyByUIDQuery query);
+    Task<Company?> Handle(GetCompanyByUserIdQuery query);
 }

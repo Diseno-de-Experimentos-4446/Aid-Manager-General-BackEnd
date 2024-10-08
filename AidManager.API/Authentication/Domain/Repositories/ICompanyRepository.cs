@@ -6,5 +6,10 @@ namespace AidManager.API.Authentication.Domain.Repositories;
 public interface ICompanyRepository : IBaseRepository<Company>
 {
     Task<bool> CreateCompany(Company company);
-    Task<Company?> FindCompanyByUID(string UID);
+    Task<Company?> FindCompanyByUserId(int userId);
+    
+    Task<bool> ExistsByID(int id);
+    
+    Task<Company?> FindCompanyByRegisterCode(string registerCode);
+    
 }
