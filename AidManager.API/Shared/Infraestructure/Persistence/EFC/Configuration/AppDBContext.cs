@@ -32,14 +32,13 @@ public class AppDBContext : DbContext
         builder.Entity<Post>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<Post>().Property(p => p.CreatedAt).IsRequired();
         builder.Entity<Post>().Property(p => p.UserId).HasColumnName("user_id"); 
-        builder.Entity<Post>().HasOne(p => p.User).WithMany(u => u.Posts).HasForeignKey(p => p.UserId);
         
         // table for events
         builder.Entity<Event>().ToTable("Events");
         builder.Entity<Event>().HasKey(e => e.Id);
         builder.Entity<Event>().Property(e => e.Id).IsRequired().ValueGeneratedOnAdd();
         
-        builder.Entity<User>().ToTable("Users");
+        builder.Entity<User>().ToTable("Accounts");
         builder.Entity<User>().HasKey(u => u.Id);
         builder.Entity<User>().Property(u => u.Id).IsRequired().ValueGeneratedOnAdd();
         
@@ -64,11 +63,10 @@ public class AppDBContext : DbContext
         builder.Entity<Company>().ToTable("Companies");
         builder.Entity<Company>().HasKey(c => c.Id);
         builder.Entity<Company>().Property(c => c.Id).IsRequired().ValueGeneratedOnAdd();
-
-        builder.Entity<Message>().ToTable("Messages");
-        builder.Entity<Message>().HasKey(m => m.Id);
+        
         
         // iam context
+        builder.Entity<UserAuth>().ToTable("Users");
         builder.Entity<UserAuth>().HasKey(u => u.Id);
         builder.Entity<UserAuth>().Property(u => u.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<UserAuth>().Property(u => u.Username).IsRequired();
