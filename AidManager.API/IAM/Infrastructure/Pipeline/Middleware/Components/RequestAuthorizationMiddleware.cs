@@ -20,7 +20,9 @@ public class RequestAuthorizationMiddleware(RequestDelegate next)
             Console.WriteLine("Entering InvokeAsync");
             var path = context.Request.Path.Value;
             var allowAnonymous = path.Equals("/api/v1/authentication/sign-up", StringComparison.OrdinalIgnoreCase) ||
-                                 path.Equals("/api/v1/authentication/sign-in", StringComparison.OrdinalIgnoreCase);
+                                 path.Equals("/api/v1/authentication/sign-in", StringComparison.OrdinalIgnoreCase) ||
+                                 path.Equals("/api/v1/users/sign-up", StringComparison.OrdinalIgnoreCase);
+            
 
             Console.WriteLine($"Allow Anonymous is {allowAnonymous}");
             if (allowAnonymous)

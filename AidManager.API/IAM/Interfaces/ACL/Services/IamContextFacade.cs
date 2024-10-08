@@ -1,15 +1,26 @@
 ﻿using AidManager.API.IAM.Domain.Model.Commands;
 using AidManager.API.IAM.Domain.Model.Queries;
 using AidManager.API.IAM.Domain.Services;
+using AidManager.API.UserProfile.Domain.Model.Commands;
+using UpdateUserCommand = AidManager.API.IAM.Domain.Model.Commands.UpdateUserCommand;
 
 namespace AidManager.API.IAM.Interfaces.ACL.Services;
 
 public class IamContextFacade(IUserIAMCommandService userCommandService, IUserIAMQueryService userQueryService): IIamContextFacade
 {
-    public async Task<int> CreateUser(string username, string password)
+    public async Task<int> CreateUser(string username, string password, int role)
     {
-        var signUpCommand = new SignUpCommand(username, password);
+        var signUpCommand = new SignUpCommand(username, password,role );
         await userCommandService.Handle(signUpCommand);
+        var getUserByUsernameQuery = new GetUserIAMByUsernameQuery(username);
+        var result = await userQueryService.Handle(getUserByUsernameQuery);
+        return result?.Id ?? 0;
+    }
+    
+    public async Task<int> UpdateUserData(string username, string password, int role)
+    {
+        var updateUserCommand = new UpdateUserCommand(username, password, role);
+        await userCommandService.Handle(updateUserCommand);
         var getUserByUsernameQuery = new GetUserIAMByUsernameQuery(username);
         var result = await userQueryService.Handle(getUserByUsernameQuery);
         return result?.Id ?? 0;

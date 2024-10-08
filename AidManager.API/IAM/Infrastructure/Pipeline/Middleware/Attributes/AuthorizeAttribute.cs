@@ -13,7 +13,7 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
         var allowAnonymous = context.ActionDescriptor.EndpointMetadata.OfType<AllowAnonymousAttribute>().Any();
         if (allowAnonymous)
         {
-            Console.WriteLine("Skipping Authorization");
+            Console.WriteLine("All good");
             return;
         }
         // If user is logged in, this will be set

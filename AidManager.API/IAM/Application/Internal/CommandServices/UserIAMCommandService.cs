@@ -21,7 +21,7 @@ public class UserIAMCommandService(
             throw new Exception($"Username {command.Username} is already taken");
         
         var hashedPassword = hashingService.HashPassword(command.Password);
-        var user = new UserAuth(command.Username, hashedPassword);
+        var user = new UserAuth(command.Username, hashedPassword, command.UserRole);
         try
         {
             await userRepository.AddAsync(user);
@@ -30,6 +30,30 @@ public class UserIAMCommandService(
         catch (Exception e)
         {
             throw new Exception($"An error occurred while creating the user: {e.Message}");
+        }
+    }
+    
+    public async Task Handle(UpdateUserCommand command)
+    {
+        var user = await userRepository.FindByUsernameAsync(command.Username);
+        
+        if (user is null)
+            throw new Exception($"User with username {command.Username} does not exist");
+        
+        var hashedPassword = hashingService.HashPassword(command.Password);
+        user.UpdatePasswordHash(hashedPassword);
+        user.UpdateUsername(command.Username);
+        user.UpdateRole(command.UserRole);
+        
+        
+        try
+        {
+            await userRepository.Update(user);
+            await unitOfWork.CompleteAsync();
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"An error occurred while updating the user: {e.Message}");
         }
     }
     

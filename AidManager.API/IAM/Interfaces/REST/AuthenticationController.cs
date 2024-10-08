@@ -14,22 +14,6 @@ namespace AidManager.API.IAM.Interfaces.REST;
 
 public class AuthenticationController(IUserIAMCommandService userCommandService) : ControllerBase
 {
-    [HttpPost("sign-up")]
-    [AllowAnonymous]
-    public async Task<IActionResult> SignUp([FromBody] SignUpResource resource)
-    {
-        try
-        {
-            var signUpCommand = SignUpCommandFromResourceAssembler.ToCommandFromResource(resource);
-            await userCommandService.Handle(signUpCommand);
-            return Ok(new { message = "User created successfully" });
-        }
-        catch (Exception e)
-        {
-            return BadRequest("Error: " + e.Message);
-        }
-        
-    }
     
     [HttpPost("sign-in")]
     [AllowAnonymous]
