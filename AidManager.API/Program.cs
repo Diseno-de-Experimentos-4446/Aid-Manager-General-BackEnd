@@ -4,8 +4,11 @@ using AidManager.API.Authentication.Application.Internal.QueryServices;
 using AidManager.API.Authentication.Domain.Repositories;
 using AidManager.API.Authentication.Domain.Services;
 using AidManager.API.Authentication.Infrastructure.Persistence.EFC.Repositories;
+using AidManager.API.Authentication.Interfaces.ACL;
+using AidManager.API.Authentication.Interfaces.ACL.Services;
 using AidManager.API.Authentication.Interfaces.REST.Resources;
 using AidManager.API.Collaborate.Application.Internal.CommandServices;
+using AidManager.API.Collaborate.Application.Internal.OutboundServices.ACL;
 using AidManager.API.Collaborate.Application.Internal.QueryServices;
 using AidManager.API.Collaborate.Domain.Repositories;
 using AidManager.API.Collaborate.Domain.Services;
@@ -20,12 +23,15 @@ using AidManager.API.IAM.Infrastructure.Persistence.EFC.Repositories;
 using AidManager.API.IAM.Infrastructure.Pipeline.Middleware.Extensions;
 using AidManager.API.IAM.Infrastructure.Tokens.JWT.Configuration;
 using AidManager.API.IAM.Infrastructure.Tokens.JWT.Services;
+using AidManager.API.IAM.Interfaces.ACL;
+using AidManager.API.IAM.Interfaces.ACL.Services;
 using AidManager.API.ManageCosts.Application.Internal.CommandServices;
 using AidManager.API.ManageCosts.Application.Internal.QueryServices;
 using AidManager.API.ManageCosts.Domain.Repositories;
 using AidManager.API.ManageCosts.Domain.Services;
 using AidManager.API.ManageCosts.Infraestructure.Repositories;
 using AidManager.API.ManageTasks.Application.Internal.CommandServices;
+using AidManager.API.ManageTasks.Application.Internal.OutboundServices.ACL;
 using AidManager.API.ManageTasks.Application.Internal.QueryServices;
 using AidManager.API.ManageTasks.Domain.Repositories;
 using AidManager.API.ManageTasks.Domain.Services;
@@ -39,6 +45,9 @@ using AidManager.API.Shared.Domain.Repositories;
 using AidManager.API.Shared.Infraestructure.Interfaces.ASP.Configuration;
 using AidManager.API.Shared.Infraestructure.Persistence.EFC.Configuration;
 using AidManager.API.Shared.Infraestructure.Persistence.EFC.Repositories;
+using AidManager.API.UserManagement.UserProfile.Application.Internal.OutboundServices.ACL;
+using AidManager.API.UserProfile.Interfaces.ACL;
+using AidManager.API.UserProfile.Interfaces.ACL.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -138,11 +147,15 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<IPostCommandService, PostCommandService>();
 builder.Services.AddScoped<IPostQueryService, PostQueryService>();
+builder.Services.AddScoped<ExternalUserAccountService>(); // Register ExternalUserAccountService
 
 // event bounded context injection configuration
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IEventCommandService, EventCommandService>();
 builder.Services.AddScoped<IEventQueryService, EventQueryService>();
+builder.Services.AddScoped<IIamContextFacade, IamContextFacade>();
+builder.Services.AddScoped<IAuthenticationFacade, AuthenticationFacade>();
+builder.Services.AddScoped<ExternalUserAuthService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserCommandService, UserCommandService>();
@@ -156,6 +169,8 @@ builder.Services.AddScoped<IAnalyticsQueryService, AnalyticsQueryService>();
 builder.Services.AddScoped<ITaskRepository, TaskItemsRepository>();
 builder.Services.AddScoped<ITaskCommandService, TaskCommandService>();
 builder.Services.AddScoped<ITaskQueryService, TaskQueryService>();
+builder.Services.AddScoped<ExternalUserService>(); // Register ExternalUserService
+
 //
 builder.Services.AddScoped<IProjectCommandService, ProjectCommandService>();
 builder.Services.AddScoped<IProjectQueryService, ProjectQueryService>();
@@ -172,8 +187,6 @@ builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<ICompanyCommandService, CompanyCommandService>();
 builder.Services.AddScoped<ICompanyQueryService, CompanyQueryService>();
 
-builder.Services.AddScoped<IMessageCommandService, MessageCommandService>();
-builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
 builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("TokenSettings"));
 builder.Services.AddScoped<IUserIAMRepository, UserIAMRepository>();
@@ -181,6 +194,9 @@ builder.Services.AddScoped<IUserIAMCommandService, UserIAMCommandService>();
 builder.Services.AddScoped<IUserIAMQueryService, UserIAMQueryService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHashingService, HashingService>();
+builder.Services.AddScoped<IUserAccountFacade, UserAccountFacade>(); // Register IUserAccountFacade
+
+
 
 // Configure the HTTP request pipeline.
 var app = builder.Build();
@@ -207,8 +223,8 @@ app.UseCors(x => x
 
 // Add authorization middleware to pipeline
 app.UseRequestAuthorization();
+app.UseAuthorization();
 
 app.UseHttpsRedirection();
-app.UseAuthorization();
 app.MapControllers();
 app.Run();
