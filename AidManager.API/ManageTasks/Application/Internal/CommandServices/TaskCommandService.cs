@@ -1,4 +1,5 @@
-﻿using AidManager.API.ManageTasks.Domain.Model.Aggregates;
+﻿using AidManager.API.ManageTasks.Application.Internal.OutboundServices.ACL;
+using AidManager.API.ManageTasks.Domain.Model.Aggregates;
 using AidManager.API.ManageTasks.Domain.Model.Commands;
 using AidManager.API.ManageTasks.Domain.Repositories;
 using AidManager.API.ManageTasks.Domain.Services;
@@ -6,7 +7,7 @@ using AidManager.API.Shared.Domain.Repositories;
 
 namespace AidManager.API.ManageTasks.Application.Internal.CommandServices;
 
-public class TaskCommandService(ITaskRepository taskRepository, IUnitOfWork unitOfWork, IProjectRepository projectRepository) : ITaskCommandService
+public class TaskCommandService(ITaskRepository taskRepository, IUnitOfWork unitOfWork, IProjectRepository projectRepository, ExternalUserService externalUserService) : ITaskCommandService
 {
     public async Task<TaskItem> Handle(CreateTaskCommand command)
     {
@@ -18,7 +19,12 @@ public class TaskCommandService(ITaskRepository taskRepository, IUnitOfWork unit
             throw new Exception($"Project with id {command.ProjectId} does not exist.");
         }
         
-        var task = new TaskItem(command);
+        var username = await externalUserService.GetUserFullnameById(command.AssigneeId);
+        
+        
+        var task = new TaskItem(command, username);
+        
+        
         try
         {
             await taskRepository.AddAsync(task);
@@ -35,11 +41,11 @@ public class TaskCommandService(ITaskRepository taskRepository, IUnitOfWork unit
     
     public async Task<TaskItem> Handle(UpdateTaskCommand command)
     {
-
+        var username = await externalUserService.GetUserFullnameById(command.AssigneeId);
         var task = await taskRepository.FindByIdAsync(command.Id);
         Console.WriteLine("command service called");
         if (task is null) throw new Exception("Task not found");
-        task.UpdateTask(command);
+        task.UpdateTask(command, username);
         Console.WriteLine("task Aggregate updated");
         await taskRepository.Update(task);
         Console.WriteLine("task updated in repository");

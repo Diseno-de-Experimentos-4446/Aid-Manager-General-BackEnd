@@ -23,12 +23,19 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
     }
     
     [HttpGet("{companyId}")]
-    public async Task<IActionResult> GetAllProjects(string companyId)
+    public async Task<IActionResult> GetAllProjects(int companyId)
     {
         var projects = await projectQueryService.Handle(new GetAllProjectsQuery(companyId));
         var projectResources = projects.Select(ProjectResourceFromEntityAssembler.ToResourceFromEntity);
         return Ok(projectResources);
     }
     
+    [HttpGet("get/{projectId}")]
+    public async Task<IActionResult> GetProject(int projectId)
+    {
+        var project = await projectQueryService.Handle(new GetProjectByIdQuery(projectId));
+        var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project);
+        return Ok(projectResource);
+    }
     
 }

@@ -6,49 +6,27 @@ using AidManager.API.Shared.Infraestructure.Persistence.EFC.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace AidManager.API.ManageTasks.Infrastructure.Repositories;
-public class TaskItemsRepository : BaseRepository<TaskItem>, ITaskRepository
+public class TaskItemsRepository(AppDBContext context) : BaseRepository<TaskItem>(context), ITaskRepository
 {
-    public TaskItemsRepository(AppDBContext context) : base(context) {}
-    
-    public Task<TaskItem> CreateTaskItem(TaskItem entity)
+
+    public async Task<List<TaskItem?>> GetTasksByProjectId(int projectId)
     {
-        using (var transaction = Context.Database.BeginTransaction())
-        {
-            Console.WriteLine("Task:" + entity);
-            
-            try
-            {
-                Context.Set<TaskItem>().Add(entity);
-                Context.SaveChanges();
-                transaction.Commit();
-                Console.WriteLine("Task created successfully");
-                return Task.FromResult(entity);
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine("Error creating task" + ex.Message);
-                transaction.Rollback();
-            }
-            return Task.FromResult<TaskItem>(null);
-            
-        }
+        return await Context.Set<TaskItem>().Where(f => f.ProjectId == projectId).ToListAsync();
     }
     
-    public Task<List<TaskItem>> GetTasksByProjectId(int projectId)
+    public async Task<bool> ExistsTaskItemByProjectId(int projectId)
     {
-        return Context.Set<TaskItem>().Where(f => f.ProjectId == projectId).ToListAsync();
+        return await Context.Set<TaskItem>().AnyAsync(f => f.ProjectId == projectId);
     }
     
-    public Task<bool> ExistsTaskItemByProjectId(int projectId)
+    public async Task<TaskItem?> GetTaskById(int id)
     {
-        return Context.Set<TaskItem>().AnyAsync(f => f.ProjectId == projectId);
+        return await Context.Set<TaskItem>().FirstOrDefaultAsync(f => f.Id == id);
     }
     
-    
-    
-    public  Task<TaskItem?> GetAllTasksByProjectId(int id)
+    public async Task<TaskItem?> GetAllTasksByProjectId(int id)
     {
-        return  Context.Set<TaskItem>().FirstOrDefaultAsync(f => f.Id == id);
+        return await Context.Set<TaskItem>().FirstOrDefaultAsync(f => f.Id == id);
     }
     
     public async Task<IEnumerable<TaskItem>> GetAllTasks()

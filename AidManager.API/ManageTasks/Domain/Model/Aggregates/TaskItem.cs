@@ -2,7 +2,7 @@
 
 namespace AidManager.API.ManageTasks.Domain.Model.Aggregates;
 
-public class TaskItem
+public class TaskItem 
 {
     public int Id { get; private set; }
     
@@ -10,7 +10,7 @@ public class TaskItem
     
     public string Description { get; private set; }
     
-    public DateTime DueDate { get; private set; }
+    public DateOnly DueDate { get; private set; }
     
     public int ProjectId { get; private set; }
     
@@ -18,34 +18,41 @@ public class TaskItem
     
    public string Assignee {get; private set;}
    
+    public int AssigneeId {get; private set;}
+    
+    public DateOnly CreatedAt { get; private set; } = DateOnly.FromDateTime(DateTime.Now);
+   
     protected TaskItem()
     {
         this.Title = string.Empty;
         this.Description = string.Empty;
-        this.DueDate = DateTime.Now;
+        this.DueDate = DateOnly.MinValue;
         this.ProjectId = 0;
         this.State = "ToDo";
         this.Assignee = string.Empty;
+        this.AssigneeId = 0;
     }
 
-    public TaskItem(CreateTaskCommand command)
+    public TaskItem(CreateTaskCommand command, string assignee)
     {
         this.Title = command.Title;
         this.Description = command.Description;
-        this.DueDate = command.DueDate;
+        this.DueDate = DateOnly.Parse(command.DueDate);
         this.ProjectId = command.ProjectId;
         this.State = command.State;
-        this.Assignee = command.Assigned;
+        this.AssigneeId = command.AssigneeId;
+        this.Assignee = assignee;
 
     }
     
-    public void UpdateTask(UpdateTaskCommand command)
+    public void UpdateTask(UpdateTaskCommand command, string assignee)
     {
         this.Title = command.Title;
         this.Description = command.Description;
-        this.DueDate = command.DueDate;
+        this.DueDate = DateOnly.Parse(command.DueDate);
         this.State = command.State;
-        this.Assignee = command.Assigned;
+        this.Assignee = assignee;
+        this.AssigneeId = command.AssigneeId;
     }
     
     

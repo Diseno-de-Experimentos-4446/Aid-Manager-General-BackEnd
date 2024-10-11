@@ -7,4 +7,6 @@ namespace AidManager.API.ManageTasks.Domain.Services;
 public interface IProjectQueryService
 {
     Task<IEnumerable<Project>> Handle(GetAllProjectsQuery query);
+    
+    Task<Project> Handle(GetProjectByIdQuery query);
 }

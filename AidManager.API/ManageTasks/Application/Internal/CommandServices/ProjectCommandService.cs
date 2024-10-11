@@ -1,5 +1,7 @@
-﻿using AidManager.API.ManageTasks.Domain.Model.Aggregates;
+﻿using AidManager.API.Collaborate.Domain.Model.Commands;
+using AidManager.API.ManageTasks.Domain.Model.Aggregates;
 using AidManager.API.ManageTasks.Domain.Model.Commands;
+using AidManager.API.ManageTasks.Domain.Model.ValueObjects;
 using AidManager.API.ManageTasks.Domain.Repositories;
 using AidManager.API.ManageTasks.Domain.Services;
 using AidManager.API.Shared.Domain.Repositories;
@@ -30,6 +32,16 @@ public class ProjectCommandService(IProjectRepository projectRepository, IUnitOf
             Console.WriteLine(e);
             throw;
         }
+        
+    }
+
+    public async Task<List<ProjectImage?>> Handle(AddProjectImageCommand command)
+    {
+        var project = await projectRepository.GetProjectById(command.ProjectId);
+       
+        project.AddImage(command);
+        await projectRepository.Update(project);
+        return project.ImageUrl;
         
     }
 }

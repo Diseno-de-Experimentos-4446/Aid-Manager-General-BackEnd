@@ -6,23 +6,31 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AidManager.API.ManageTasks.Infrastructure.Repositories;
 
-public class ProjectsRepository : BaseRepository<Project>, IProjectRepository
+public class ProjectsRepository(AppDBContext context) : BaseRepository<Project>(context), IProjectRepository
 {
-    public ProjectsRepository(AppDBContext context) : base(context){}
     
-    public Task<bool> ExistsProject(int projectId)
+    public async Task<bool> ExistsProject(int projectId)
     {
-        return Context.Set<Project>().AnyAsync(f => f.Id == projectId);
+        return await Context.Set<Project>().AnyAsync(f => f.Id == projectId);
     }
     
-    public Task<bool> ExistsByName(string name)
+    public async Task<bool> ExistsByName(string name)
     {
-        return Context.Set<Project>().AnyAsync(f => f.Name == name);
+        return await Context.Set<Project>().AnyAsync(f => f.Name == name);
     }
-    
-    public Task<List<Project>> GetProjectsByCompanyId(string companyId)
+
+    public async Task<Project> GetProjectById(int projectId)
     {
-        return Context.Set<Project>().Where(f => f.CompanyId == companyId).ToListAsync();
+        return await Context.Set<Project>()
+            .Include(p => p.ImageUrl)
+            .FirstOrDefaultAsync(p=> p.Id == projectId);
+    }
+
+    public async Task<List<Project>> GetProjectsByCompanyId(int companyId)
+    {
+        return await Context.Set<Project>()
+            .Include(p => p.ImageUrl) // Ensure eager loading of ImageUrl
+            .Where(f => f.CompanyId == companyId).ToListAsync();
 
     }
     

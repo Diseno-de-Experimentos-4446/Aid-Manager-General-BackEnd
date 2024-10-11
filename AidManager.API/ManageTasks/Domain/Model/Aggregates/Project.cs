@@ -1,4 +1,6 @@
-﻿using AidManager.API.ManageTasks.Domain.Model.Commands;
+﻿using AidManager.API.Collaborate.Domain.Model.Commands;
+using AidManager.API.ManageTasks.Domain.Model.Commands;
+using AidManager.API.ManageTasks.Domain.Model.ValueObjects;
 
 namespace AidManager.API.ManageTasks.Domain.Model.Aggregates;
 
@@ -7,16 +9,38 @@ public class Project
     public int Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
+
+    public List<ProjectImage> ImageUrl { get; set; }
     
-    public string ImageUrl { get; set; }
+    public int CompanyId { get; set; }
     
-    public string CompanyId { get; set; }
-    public Project() { }
+    public DateOnly ProjectDate { get; set; }
+    
+    public TimeOnly ProjectTime { get; set; }
+    
+    public string ProjectLocation { get; set; }
+
+
+    public Project()
+    {
+        ImageUrl = new List<ProjectImage>(); // Initialize the list
+
+    }
     public Project(CreateProjectCommand command)
     {
         this.Name = command.Name;
         this.Description = command.Description;
-        this.ImageUrl = command.ImageUrl;
+        this.ImageUrl = command.ImageUrl?.ConvertAll(url => new ProjectImage { Url = url }) ?? new List<ProjectImage>();
         this.CompanyId = command.CompanyId;
+        this.ProjectDate = DateOnly.Parse(command.ProjectDate);
+        this.ProjectTime = TimeOnly.Parse(command.ProjectTime);
+        this.ProjectLocation = command.ProjectLocation;
     }
+    
+    public void AddImage(AddProjectImageCommand command)
+    {
+        var images = command.ImagesUrl?.ConvertAll(url => new ProjectImage { Url = url }) ?? [];
+        ImageUrl.AddRange(images);
+    }
+    
 }
