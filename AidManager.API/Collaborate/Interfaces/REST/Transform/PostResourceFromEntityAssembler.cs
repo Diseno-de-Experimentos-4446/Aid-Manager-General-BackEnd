@@ -9,17 +9,20 @@ public static class PostResourceFromEntityAssembler
 {
     public static PostResource ToResourceFromEntity(Post post)
     {
-        GetUserResource user = CreateGetUserResourceFromEntityAssembler.ToResourceFromEntity(post.User);
         
         return new PostResource(
             post.Id,
             post.Title,
             post.Subject,
             post.Description, 
-            post.CreatedAt,
-            post.Rating, 
             post.CompanyId,
-            user
+            post.UserId,
+            post.Username,
+            post.UserEmail,
+            post.UserImage,
+            post.Rating,
+            post.ImageUrl.Select(img => img.PostImageUrl).ToList(),
+            post.Comments
         );
     }
 }

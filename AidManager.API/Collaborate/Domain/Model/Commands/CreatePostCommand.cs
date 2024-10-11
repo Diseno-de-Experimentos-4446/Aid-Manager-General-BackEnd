@@ -1,10 +1,12 @@
-﻿namespace AidManager.API.Collaborate.Domain.Model.Commands;
+﻿using AidManager.API.Collaborate.Domain.Model.ValueObjects;
+
+namespace AidManager.API.Collaborate.Domain.Model.Commands;
 
 public record CreatePostCommand(
     string Title,
     string Subject,
     string Description,
-    int Rating,
-    string CompanyId,
-    int UserId
+    int CompanyId,
+    int UserId,
+    List<string> Images
 );

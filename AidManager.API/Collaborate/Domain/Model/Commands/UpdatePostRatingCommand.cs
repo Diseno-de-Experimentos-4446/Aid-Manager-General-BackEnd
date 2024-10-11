@@ -1,3 +1,3 @@
 namespace AidManager.API.Collaborate.Domain.Model.Commands;
 
-public record UpdatePostRatingCommand(int PostId, int Rating, int UserId);
+public record UpdatePostRatingCommand(int PostId);

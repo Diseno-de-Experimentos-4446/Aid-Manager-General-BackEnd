@@ -1,3 +1,3 @@
 ﻿namespace AidManager.API.Collaborate.Domain.Model.Queries;
 
-public record GetAllPostsQuery();
+public record GetCommentsByPostIdQuery(int PostId);

@@ -1,5 +1,7 @@
 ﻿using System.Net.Mime;
+using AidManager.API.Authentication.Interfaces.REST.Transform;
 using AidManager.API.Collaborate.Domain.Model.Commands;
+using AidManager.API.Collaborate.Domain.Model.Entities;
 using AidManager.API.Collaborate.Domain.Model.Queries;
 using AidManager.API.Collaborate.Domain.Services;
 using AidManager.API.Collaborate.Interfaces.REST.Resources;
@@ -41,33 +43,61 @@ public class PostsController(IPostCommandService postCommandService, IPostQueryS
         
     }
     
-    // obtain all posts
-    [HttpGet]
-    [SwaggerOperation (
-        Summary = "Get all posts",
-        Description = "Get all posts",
-        OperationId = "GetAllPosts"
-    )]
-    [SwaggerResponse(200, "The posts were found")]
-    public async Task<IActionResult> GetAllPosts()
-    {
-        try
+    
+    //CreateAPost
+     [HttpPost("{id}")]
+        [SwaggerOperation(
+            Summary = "Post comment",
+            Description = "Add a comment to a post",
+            OperationId = "PostComment"
+        )]
+        [SwaggerResponse(200, "New Comment Sent", typeof(CommentResource))]
+        public async Task<IActionResult> AddPostComment([FromRoute] int id, [FromBody] AddCommentResource resource)
         {
-            var query = new GetAllPostsQuery();
-            var posts = await postQueryService.Handle(query);
-
-            if (posts == null) return BadRequest();
-
-            var postResources = posts.Select(PostResourceFromEntityAssembler.ToResourceFromEntity);
-            return Ok(postResources);
-        }
-        catch (Exception e)
+            try
+            {
+                var command = CreateAddCommentCommandFromResourceAssembler.ToCommandFromResource(id, resource);
+                var comments = await postCommandService.Handle(command);
+    
+                if (comments == null) return NotFound();
+    
+                var c = CommentResourceFromEntityAssembler.ToResourceFromEntity(comments);
+                return Ok(c);
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Error: " + e.Message);
+            }
+            
+        }    
+        
+     // update rating field of post by id
+        [HttpPatch("{id}/rating")]
+        [SwaggerOperation(
+            Summary = "Update rating field of post by id",
+            Description = "Update rating field of post by id",
+            OperationId = "UpdatePostRating"
+        )]
+        [SwaggerResponse(200, "The post rating was updated: ", typeof(CreatePostResource))]
+        public async Task<IActionResult> UpdatePostRating([FromRoute] int id)
         {
-            return BadRequest("Error: " + e.Message);
+            try
+            {
+                var command = UpdatePostRatingCommandFromResourceAssembler.ToCommandFromResource(id);
+                var post = await postCommandService.Handle(command);
+    
+                if (post == null) return NotFound();
+    
+                var postResource = PostResourceFromEntityAssembler.ToResourceFromEntity(post);
+                return Ok(postResource);
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Error: " + e.Message);
+            }
+            
         }
         
-    }
-    
     // obtain post by id
     [HttpGet("{id}")]
     [SwaggerOperation(
@@ -75,7 +105,7 @@ public class PostsController(IPostCommandService postCommandService, IPostQueryS
         Description = "Get post by id",
         OperationId = "GetPostById"
     )]
-    [SwaggerResponse(200, "The post was found", typeof(CreatePostResource))]
+    [SwaggerResponse(200, "The post was found", typeof(PostResource))]
     public async Task<IActionResult> GetPostById([FromRoute] int id)
     {
         try
@@ -130,7 +160,7 @@ public class PostsController(IPostCommandService postCommandService, IPostQueryS
         OperationId = "GetAllPostsByCompanyId"
     )]
     [SwaggerResponse(200, "The posts by company id were found", typeof(CreatePostResource))]
-    public async Task<IActionResult> GetAllPostsByCompanyId([FromRoute] string companyId)
+    public async Task<IActionResult> GetAllPostsByCompanyId([FromRoute] int companyId)
     {
         try
         {
@@ -149,32 +179,37 @@ public class PostsController(IPostCommandService postCommandService, IPostQueryS
         
     }
     
-    // update rating field of post by id
-    [HttpPatch("{id}/rating")]
+   
+   
+    
+    [HttpGet("{id}/comments")]
     [SwaggerOperation(
-        Summary = "Update rating field of post by id",
-        Description = "Update rating field of post by id",
-        OperationId = "UpdatePostRating"
+        Summary = "Get comments",
+        Description = "Get comments from a post",
+        OperationId = "GetComments"
     )]
-    [SwaggerResponse(200, "The post rating was updated", typeof(CreatePostResource))]
-    public async Task<IActionResult> UpdatePostRating([FromRoute] int id, [FromBody] UpdatePostRatingResource resource)
+    public async Task<IActionResult> GetComments([FromRoute] int id)
     {
-        try
-        {
-            var command = UpdatePostRatingCommandFromResourceAssembler.ToCommandFromResource(id, resource);
-            var post = await postCommandService.Handle(command);
-
-            if (post == null) return NotFound();
-
-            var postResource = PostResourceFromEntityAssembler.ToResourceFromEntity(post);
-            return Ok(postResource);
-        }
-        catch (Exception e)
-        {
-            return BadRequest("Error: " + e.Message);
-        }
-        
+        var query = new GetCommentsByPostIdQuery(id);
+        var comments = await postQueryService.Handle(query);
+        if(comments == null) return BadRequest();
+        var commentResources = comments.Select(CommentResourceFromEntityAssembler.ToResourceFromEntity);
+        return Ok(commentResources);
+    }    
+    
+    [HttpDelete("{id}/comments/{commentId}")]
+    [SwaggerOperation(
+        Summary = "Delete comment",
+        Description = "Delete a comment from a post",
+        OperationId = "DeleteComment"
+    )]
+    public async Task<IActionResult> DeleteComment([FromRoute] int id, [FromRoute] int commentId)
+    {
+        var command = new DeleteCommentCommand(id, commentId);
+        var deleted = await postCommandService.Handle(command);
+        if (deleted == null)
+            return Ok(new { status_code = 404, message = "Comment not found"});
+        var c = CommentResourceFromEntityAssembler.ToResourceFromEntity(deleted);
+        return Ok(new {status_code=202, message = "Comment deleted", data = c});
     }
-    
-    
 }

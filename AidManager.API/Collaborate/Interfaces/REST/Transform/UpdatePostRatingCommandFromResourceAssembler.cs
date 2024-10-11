@@ -5,12 +5,10 @@ namespace AidManager.API.Collaborate.Interfaces.REST.Transform;
 
 public static class UpdatePostRatingCommandFromResourceAssembler
 {
-    public static UpdatePostRatingCommand ToCommandFromResource(int postId, UpdatePostRatingResource resource)
+    public static UpdatePostRatingCommand ToCommandFromResource(int postId)
     {
         return new UpdatePostRatingCommand(
-            postId,
-            resource.Rating,
-            resource.UserId
+            postId
         );
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.Tracing;
-using AidManager.API.Collaborate.Domain.Model.Aggregates;
 using AidManager.API.Collaborate.Domain.Model.Commands;
 using AidManager.API.Collaborate.Domain.Model.Entities;
 using AidManager.API.Collaborate.Domain.Repositories;
@@ -11,6 +10,8 @@ namespace AidManager.API.Collaborate.Application.Internal.CommandServices;
 
 public class EventCommandService(IEventRepository eventRepository) : IEventCommandService
 {
+    
+    
     public async Task<Boolean> handle(CreateEventCommand command)
     {
         try

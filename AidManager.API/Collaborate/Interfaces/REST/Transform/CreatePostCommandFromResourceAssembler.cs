@@ -11,9 +11,9 @@ public static class CreatePostCommandFromResourceAssembler
             resource.Title, 
             resource.Subject,
             resource.Description, 
-            resource.Rating, 
             resource.CompanyId,
-            resource.UserId
+            resource.UserId,
+            resource.Images
         );
     }    
 }

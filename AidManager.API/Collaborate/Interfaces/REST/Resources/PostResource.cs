@@ -1,5 +1,16 @@
 using AidManager.API.Authentication.Interfaces.REST.Resources;
+using AidManager.API.Collaborate.Domain.Model.ValueObjects;
 
 namespace AidManager.API.Collaborate.Interfaces.REST.Resources;
 
-public record PostResource(int Id, String Title, String Subject, String Description, DateTime CreatedAt, int Rating, string CompanyId, GetUserResource User);
+public record PostResource(int Id, string Title,
+    string Subject,
+    string Description,
+    int CompanyId,
+    int UserId,
+    string UserName,
+    string Email,
+    string UserImage,
+    int Rating,
+    List<string> Images,
+    List<Comments> CommentsList);
