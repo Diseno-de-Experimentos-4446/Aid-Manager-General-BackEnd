@@ -13,6 +13,11 @@ public class UserQueryService(IUserRepository userRepository) : IUserQueryServic
         return await userRepository.ListAsync();
     }
 
+    public async Task<User?> FindUserById(GetUserByIdQuery query)
+    {
+        return await userRepository.FindUserById(query.Id);
+    }
+
     public async Task<User?> FindUserByEmail(GetUserByEmailQuery query)
     {
         Console.WriteLine("searching by email user");
