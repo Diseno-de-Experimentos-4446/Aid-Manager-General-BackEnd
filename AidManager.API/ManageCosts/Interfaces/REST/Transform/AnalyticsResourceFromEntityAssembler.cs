@@ -5,16 +5,16 @@ namespace AidManager.API.ManageCosts.Interfaces.REST.Transform;
 
 public class AnalyticsResourceFromEntityAssembler
 {
-    public static AnalyticsResource ToResourceFromEntity(Analytics analytic)
+    public static AnalyticsResource ToResourceFromEntity(Analytics entity)
     {
         return new AnalyticsResource(
-            analytic.Id,
-            analytic.ProjectId,
-            analytic.Lines,
-            analytic.Payments,
-            analytic.Progressbar,
-            analytic.Status,
-            analytic.Tasks 
+            entity.Id,
+            entity.ProjectId,
+            entity.LinesChartBarData,
+            entity.BarData,
+            entity.Progressbar,
+            entity.Status,
+            entity.Tasks
         );
     }
 }

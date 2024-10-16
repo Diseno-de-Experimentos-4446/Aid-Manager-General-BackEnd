@@ -3,11 +3,11 @@ using AidManager.API.ManageCosts.Interfaces.REST.Resources;
 
 namespace AidManager.API.ManageCosts.Interfaces.REST.Transform;
 
-public class UpdateAnalyticLinesCommandFromResourceAssembler
+public class UpdateLinesChartBarCommandFromResourceAssembler
 {
-    public static UpdateAnalyticLinesCommand ToCommandFromResource(int id, UpdateAnalyticLinesResource resource)
+    public static UpdateLinesChartBarCommand ToCommandFromResource(int id, UpdateLinesChartBarResource resource)
     {
-        return new UpdateAnalyticLinesCommand(
+        return new UpdateLinesChartBarCommand(
             id,
             resource.Lines
         );

@@ -30,7 +30,7 @@ public class AnalyticsCommandService(
         }
     }
     
-    public async Task<Analytics?> Handle(UpdateAnalyticPaymentsCommand command)
+    public async Task<Analytics?> Handle(UpdateBarDataPaymentsCommand command)
     {
         try
         {
@@ -42,7 +42,7 @@ public class AnalyticsCommandService(
                 return null;
             }
             
-            analytic.Payments = command.Payments;
+            analytic.BarData = command.BarData;
             
             await unitOfWork.CompleteAsync();
             
@@ -105,7 +105,7 @@ public class AnalyticsCommandService(
         }
     }
     
-    public async Task<Analytics?> Handle(UpdateAnalyticLinesCommand command)
+    public async Task<Analytics?> Handle(UpdateLinesChartBarCommand command)
     {
         try
         {
@@ -117,7 +117,7 @@ public class AnalyticsCommandService(
                 return null;
             }
             
-            analytic.Lines = command.Lines;
+            analytic.LinesChartBarData = command.Lines;
             
             await unitOfWork.CompleteAsync();
             

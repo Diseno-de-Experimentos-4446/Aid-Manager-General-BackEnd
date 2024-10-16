@@ -50,10 +50,10 @@ public class AnalyticsController(
     }
     
     [HttpPatch("payments")]
-    [SwaggerResponse(200, "Analytics updated", typeof(UpdateAnalyticPaymentsResource))]
-    public async Task<IActionResult> UpdateAnalyticPayments([FromBody] UpdateAnalyticPaymentsResource resource)
+    [SwaggerResponse(200, "Analytics updated", typeof(UpdateLinesChartBarResource))]
+    public async Task<IActionResult> UpdateAnalyticPayments([FromBody] UpdateLinesChartBarResource resource)
     {
-        var command = UpdateAnalyticPaymentCommandFromResourceAssembler.ToCommandFromResource(resource.Id, resource);
+        var command = UpdateLinesChartBarCommandFromResourceAssembler.ToCommandFromResource(resource.Id, resource);
         var analytic = await analyticsCommandService.Handle(command);
         
         if (analytic == null)
@@ -66,10 +66,10 @@ public class AnalyticsController(
     }
     
     [HttpPatch("lines")]
-    [SwaggerResponse(200, "Analytics updated", typeof(UpdateAnalyticLinesResource))]
-    public async Task<IActionResult> UpdateAnalyticLines([FromBody] UpdateAnalyticLinesResource resource)
+    [SwaggerResponse(200, "Analytics updated", typeof(UpdateBarDataResource))]
+    public async Task<IActionResult> UpdateAnalyticLines([FromBody] UpdateBarDataResource resource)
     {
-        var command = UpdateAnalyticLinesCommandFromResourceAssembler.ToCommandFromResource(resource.Id, resource);
+        var command = UpdateBarDataCommandFromResourceAssembler.ToCommandFromResource(resource.Id, resource);
         var analytic = await analyticsCommandService.Handle(command);
         
         if (analytic == null)

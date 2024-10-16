@@ -7,13 +7,13 @@ public interface IAnalyticsCommandService
 {
     Task<Analytics?> Handle(CreateAnalyticsCommand command);
     
-    Task<Analytics?> Handle(UpdateAnalyticPaymentsCommand command);
+    Task<Analytics?> Handle(UpdateBarDataPaymentsCommand command);
     
     Task<Analytics?> Handle(UpdateAnalyticProgressbarCommand command);
     
     Task<Analytics?> Handle(UpdateAnalyticStatusCommand command);
     
-    Task<Analytics?> Handle(UpdateAnalyticLinesCommand command);
+    Task<Analytics?> Handle(UpdateLinesChartBarCommand command);
     
     Task<Analytics?> Handle(UpdateAnalyticTasksCommand command);
 }

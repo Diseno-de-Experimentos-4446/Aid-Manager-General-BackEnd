@@ -9,11 +9,11 @@ public class CreateAnalyticsCommandFromResourceAssembler
     {
         return new CreateAnalyticsCommand(
             resource.ProjectId,
-            resource.Tasks, // Aquí se cambió 'resource.Lines' por 'resource.Tasks'
-            resource.Payments,
+            resource.LinesChartBarData,
+            resource.BarData,
             resource.Progressbar,
             resource.Status,
-            resource.Lines // Aquí se cambió 'resource.Tasks' por 'resource.Lines'
+            resource.Tasks
         );
     }
 }

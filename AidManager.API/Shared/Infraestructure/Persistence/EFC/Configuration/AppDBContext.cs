@@ -4,6 +4,7 @@ using AidManager.API.Collaborate.Domain.Model.Entities;
 using AidManager.API.Collaborate.Domain.Model.ValueObjects;
 using AidManager.API.IAM.Domain.Model.Aggregates;
 using AidManager.API.ManageCosts.Domain.Model.Aggregates;
+using AidManager.API.ManageCosts.Domain.Model.Entities;
 using AidManager.API.ManageTasks.Domain.Model.Aggregates;
 using AidManager.API.ManageTasks.Domain.Model.ValueObjects;
 using AidManager.API.Payment.Domain.Model.Aggregates;
@@ -52,6 +53,20 @@ public class AppDBContext : DbContext
         builder.Entity<Analytics>().ToTable("Analytics");
         builder.Entity<Analytics>().HasKey(a => a.Id);
         builder.Entity<Analytics>().Property(a => a.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<Analytics>().OwnsMany(a => a.BarData, b =>
+        {
+            b.WithOwner().HasForeignKey("AnalyticsId");
+            b.Property<int>("Id");
+            b.HasKey("Id");
+        });
+        builder.Entity<Analytics>().OwnsMany(a => a.LinesChartBarData, b =>
+        {
+            b.WithOwner().HasForeignKey("AnalyticsId");
+            b.Property<int>("Id");
+            b.HasKey("Id");
+        });
+
+
         
         builder.Entity<TaskItem>().ToTable("Tasks");
         builder.Entity<TaskItem>().HasKey(t => t.Id);
