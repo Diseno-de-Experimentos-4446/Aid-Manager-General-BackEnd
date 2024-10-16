@@ -57,14 +57,14 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
         }
     }
     
-    [HttpGet]
+    [HttpGet("{companyId}")]
     [SwaggerOperation(
         Summary = "Obtains all users",
         Description = "Obtains all users",
         OperationId = "GetAllUsers"
     )]
     [SwaggerResponse(200, "The users were obtained")]
-    public async Task<IActionResult> GetAllUsers([FromQuery] int companyId)
+    public async Task<IActionResult> GetAllUsers(int companyId)
     {
         var query = new GetAllUsersByCompanyIdQuery(companyId);
         var users = await userQueryService.Handle(query);
@@ -73,7 +73,7 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
         return Ok(usersResources);
     }
     
-    [HttpGet("{id}")]
+    [HttpGet("user/{id}")]
     [SwaggerOperation(
         Summary = "Obtains a user by id",
         Description = "Obtains a user by id",
@@ -97,8 +97,13 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
         return Ok(userResource);
     }
 
-    [HttpPut]
-    public async Task<IActionResult> UpdateUser([FromQuery] int userId, [FromBody] UpdateUserResource resource)
+    [HttpPut("{userId}")]
+    [SwaggerOperation(
+        Summary = "Update a User",
+        Description = "Update User Profile",
+        OperationId = "UpdateUser"
+    )]
+    public async Task<IActionResult> UpdateUser(int userId, [FromBody] UpdateUserResource resource)
     {
         var command = UpdateUserCommandFromResourceAssembler.ToCommandFromResource(resource);
         var updatedUser = await userCommandService.Handle(command, userId);
@@ -110,6 +115,11 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
     
     
     [HttpDelete("kick-member/{userId}")]
+    [SwaggerOperation(
+        Summary = "Kick User",
+        Description = "Delete User",
+        OperationId = "DeleteUser"
+    )]
     public async Task<IActionResult> KickUserByCompanyId(int userId)
     {
         if (!await userCommandService.Handle(new KickUserByCompanyIdCommand(userId)))

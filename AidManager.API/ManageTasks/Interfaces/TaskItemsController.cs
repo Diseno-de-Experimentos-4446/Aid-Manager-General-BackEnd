@@ -6,6 +6,7 @@ using AidManager.API.ManageTasks.Domain.Services;
 using AidManager.API.ManageTasks.Interfaces.REST.Resources;
 using AidManager.API.ManageTasks.Interfaces.REST.Transform;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace AidManager.API.ManageTasks.Interfaces;
 
@@ -15,6 +16,11 @@ namespace AidManager.API.ManageTasks.Interfaces;
 public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQueryService taskQueryService) : ControllerBase
 {
     [HttpPost]
+    [SwaggerOperation(
+        Summary = "Creates a Task",
+        Description = "Create a Project Task",
+        OperationId = "CreateTaskItem"
+    )]
     public async Task<ActionResult> CreateTaskItem(int projectId, [FromBody] CreateTaskItemResource resource)
     {
         var createTaskItemCommand = CreateTaskItemCommandFromResourceAssembler.ToCommandFromResource(resource, projectId); 
@@ -29,6 +35,11 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
     }
     
     [HttpGet("{id}")]
+    [SwaggerOperation(
+        Summary = "Get a Task by Id",
+        Description = "Get Task Item by using its ID",
+        OperationId = "GetTask"
+    )]
     public async Task<ActionResult<TaskItemResource>> GetTaskItemById(int id)
     {
         var taskItem = await taskQueryService.Handle(new GetTaskByIdQuery(id));
@@ -36,7 +47,12 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
         return Ok(resource);
     }
     
-    [HttpPut]
+    [HttpPut("{id}")]
+    [SwaggerOperation(
+        Summary = "Update a Task",
+        Description = "Update a Project Task",
+        OperationId = "UpdateTaskItem"
+    )]
     public async Task<ActionResult> UpdateTaskItem( int id ,int projectId,[FromBody] UpdateTaskItemResource resource)
     {
         var updateTaskCommand = UpdateTaskItemCommandFromResourceAssembler.ToCommandFromResource(resource, id, projectId);
@@ -44,6 +60,11 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
         return Ok(TaskItemResourceFromEntityAssembler.ToResourceFromEntity(result));
     }
     [HttpDelete("{id}")]
+    [SwaggerOperation(
+        Summary = "Deletes a Task",
+        Description = "Delete a ProjectTask",
+        OperationId = "DeleteTaskItem"
+    )]
     public async Task<ActionResult> DeleteTaskItem(int id, int projectId)
     {
         var deleteTaskItemCommand = new DeleteTaskCommand(id, projectId);
@@ -52,6 +73,11 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
     }
     
     [HttpGet]
+    [SwaggerOperation(
+        Summary = "Get All Tasks",
+        Description = "Get all tasks from a project",
+        OperationId = "GetAllTasks"
+    )]
     public async Task<ActionResult<IEnumerable<TaskItemResource>>> GetAllTaskItems(int projectId)
     {
         var getAllTasksQueryByProjectId = new GetTasksByProjectIdQuery(projectId);

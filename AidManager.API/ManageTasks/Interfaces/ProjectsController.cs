@@ -4,6 +4,7 @@ using AidManager.API.ManageTasks.Domain.Services;
 using AidManager.API.ManageTasks.Interfaces.REST.Resources;
 using AidManager.API.ManageTasks.Interfaces.REST.Transform;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace AidManager.API.ManageTasks.Interfaces.REST;
 
@@ -14,6 +15,11 @@ namespace AidManager.API.ManageTasks.Interfaces.REST;
 public class ProjectsController (IProjectCommandService projectCommandService, IProjectQueryService projectQueryService) : ControllerBase
 {
     [HttpPost]
+    [SwaggerOperation(
+        Summary = "Creates a Project",
+        Description = "Create a new Project",
+        OperationId = "CreateProject"
+    )]
     public async Task<IActionResult> CreateProject(CreateProjectResource resource)
     {
         var createProjectCommand = CreateProjectCommandFromResourceAssembler.ToCommandFromResource(resource);
@@ -23,6 +29,11 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
     }
     
     [HttpGet("{companyId}")]
+    [SwaggerOperation(
+        Summary = "Get All Projects",
+        Description = "Get all projects by company id",
+        OperationId = "GetAllProjects"
+    )]
     public async Task<IActionResult> GetAllProjects(int companyId)
     {
         var projects = await projectQueryService.Handle(new GetAllProjectsQuery(companyId));
@@ -31,6 +42,11 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
     }
     
     [HttpGet("get/{projectId}")]
+    [SwaggerOperation(
+        Summary = "Get Project",
+        Description = "Get project by Id",
+        OperationId = "GetProject"
+    )]
     public async Task<IActionResult> GetProject(int projectId)
     {
         var project = await projectQueryService.Handle(new GetProjectByIdQuery(projectId));
@@ -40,6 +56,11 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
     
     
     [HttpGet("team/{projectId}")]
+    [SwaggerOperation(
+        Summary = "Get all project Team Members",
+        Description = "Get all team members of a project",
+        OperationId = "GetTeamMembers"
+    )]
     public async Task<IActionResult> GetTeamMembers(int projectId)
     {
         var users = await projectQueryService.Handle(new GetAllTeamMembers(projectId));

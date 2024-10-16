@@ -4,6 +4,7 @@ using AidManager.API.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 using AidManager.API.IAM.Interfaces.REST.Resources;
 using AidManager.API.IAM.Interfaces.REST.Transform;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace AidManager.API.IAM.Interfaces.REST;
 
@@ -17,6 +18,11 @@ public class AuthenticationController(IUserIAMCommandService userCommandService)
     
     [HttpPost("sign-in")]
     [AllowAnonymous]
+    [SwaggerOperation(
+        Summary = "SignIn",
+        Description = "Signs in the user and returns the token by validating the Email and Password.",
+        OperationId = "SignIn"
+    )]
     public async Task<IActionResult> SignIn([FromBody] SignInResource resource)
     {
         var signInCommand = SignInCommandFromResourceAssembler.ToCommandFromResource(resource);

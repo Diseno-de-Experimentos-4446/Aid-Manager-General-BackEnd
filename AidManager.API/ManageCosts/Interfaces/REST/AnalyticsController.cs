@@ -18,6 +18,11 @@ public class AnalyticsController(
 {
     
     [HttpPost]
+    [SwaggerOperation(
+        Summary = "Create Analytics Data",
+        Description = "Add new Data to the Analytics",
+        OperationId = "CreateData"
+    )]
     [SwaggerResponse(201, "Analytics created", typeof(CreateAnalyticsResource))]
     public async Task<IActionResult> CreateNewAnalytics([FromBody] CreateAnalyticsResource resource)
     {
@@ -34,6 +39,11 @@ public class AnalyticsController(
     }
     
     [HttpGet("{projectId}")]
+    [SwaggerOperation(
+        Summary = "Get Analytics by Project Id",
+        Description = "gets Analytics by Project Id",
+        OperationId = "GetAnalytics"
+    )]
     [SwaggerResponse(200, "Analytics found", typeof(AnalyticsResource))]
     public async Task<IActionResult> GetAnalyticsByProjectId([FromRoute] int projectId)
     {
@@ -49,7 +59,12 @@ public class AnalyticsController(
         return Ok(analyticResource);
     }
     
-    [HttpPatch("payments")]
+    [HttpPatch("BarData")]
+    [SwaggerOperation(
+        Summary = "Update BarData",
+        Description = "Update the BarData list",
+        OperationId = "UpdateBarData"
+    )]
     [SwaggerResponse(200, "Analytics updated", typeof(UpdateLinesChartBarResource))]
     public async Task<IActionResult> UpdateAnalyticPayments([FromBody] UpdateLinesChartBarResource resource)
     {
@@ -66,6 +81,11 @@ public class AnalyticsController(
     }
     
     [HttpPatch("lines")]
+    [SwaggerOperation(
+        Summary = "Update LineBarData",
+        Description = "Update the LineBarData list",
+        OperationId = "UpdateLineBarData"
+    )]
     [SwaggerResponse(200, "Analytics updated", typeof(UpdateBarDataResource))]
     public async Task<IActionResult> UpdateAnalyticLines([FromBody] UpdateBarDataResource resource)
     {
