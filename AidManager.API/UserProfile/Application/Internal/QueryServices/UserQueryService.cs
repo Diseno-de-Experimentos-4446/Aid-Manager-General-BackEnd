@@ -7,10 +7,9 @@ namespace AidManager.API.Authentication.Application.Internal.QueryServices;
 
 public class UserQueryService(IUserRepository userRepository) : IUserQueryService
 {
-    public async Task<IEnumerable<User>?> Handle(GetAllUsersQuery query)
+    public async Task<IEnumerable<User>?> Handle(GetAllUsersByCompanyIdQuery query)
     {
-        Console.WriteLine("obtaining all users");
-        return await userRepository.ListAsync();
+        return await userRepository.FindUsersByCompanyId(query.CompanyId);
     }
 
     public async Task<User?> FindUserById(GetUserByIdQuery query)

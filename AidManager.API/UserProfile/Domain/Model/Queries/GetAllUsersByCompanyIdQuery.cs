@@ -1,3 +1,3 @@
 ﻿namespace AidManager.API.Authentication.Domain.Model.Queries;
 
-public record GetAllUsersQuery;
+public record GetAllUsersByCompanyIdQuery(int CompanyId);

@@ -5,7 +5,7 @@ namespace AidManager.API.Authentication.Domain.Services;
 
 public interface IUserQueryService
 {
-    Task<IEnumerable<User>?> Handle(GetAllUsersQuery query);
+    Task<IEnumerable<User>?> Handle(GetAllUsersByCompanyIdQuery byCompanyIdQuery);
     
     Task<User?> FindUserById(GetUserByIdQuery id);
     Task<User?> FindUserByEmail(GetUserByEmailQuery email);

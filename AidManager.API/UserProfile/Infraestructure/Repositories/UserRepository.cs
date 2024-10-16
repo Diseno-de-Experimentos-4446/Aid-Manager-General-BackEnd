@@ -8,6 +8,12 @@ namespace AidManager.API.Authentication.Infrastructure.Persistence.EFC.Repositor
 
 public class UserRepository(AppDBContext context) : BaseRepository<User>(context), IUserRepository
 {
+    public async Task<List<User>> FindUsersByCompanyId(int companyId)
+    {
+        return await Context.Set<User>().Where(p => p.CompanyId == companyId).ToListAsync();
+
+    }
+
     public async Task<User?> FindUserByEmail(string email)
     {
         

@@ -23,19 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Authentication\Domain\Model\ValueObjects\" />
-      <Folder Include="UserProfile\Application\Internal\CommandServices\" />
-      <Folder Include="UserProfile\Application\Internal\QueryServices\" />
-      <Folder Include="UserProfile\Domain\Model\Aggregates\" />
-      <Folder Include="UserProfile\Domain\Model\Entities\" />
-      <Folder Include="UserProfile\Domain\Model\Queries\" />
-      <Folder Include="UserProfile\Domain\Model\ValueObjects\" />
-      <Folder Include="UserProfile\Domain\Repositories\" />
-      <Folder Include="UserProfile\Domain\Services\" />
-      <Folder Include="UserProfile\Infraestructure\Persistence\EFC\Repositories\" />
-    </ItemGroup>
-
-    <ItemGroup>
+      <Folder Include="Collaborate\Domain\Model\Entities\" />
     </ItemGroup>
 
 </Project>

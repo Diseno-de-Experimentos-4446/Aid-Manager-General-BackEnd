@@ -41,6 +41,8 @@ public class User
         this.Age = command.Age;
         this.Phone = command.Phone;
         this.ProfileImg = command.ProfileImg;
+        this.Email = command.Email;
+        this.Password = command.Password;
     }
 
 }

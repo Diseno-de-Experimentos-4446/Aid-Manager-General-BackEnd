@@ -8,7 +8,15 @@ public class ExternalUserAuthService(IIamContextFacade iamContextFacade, IAuthen
 {
     public async Task CreateUsername(string username, string password, int role)
     {
-        await iamContextFacade.CreateUser(username, password, role);
+        try
+        {
+            await iamContextFacade.CreateUser(username, password, role);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
     
     public async Task UpdateUser(string username, string password, int role)
@@ -50,7 +58,15 @@ public class ExternalUserAuthService(IIamContextFacade iamContextFacade, IAuthen
     
     public async Task<bool> CreateCompany(string companyName, string country, string email, int userId)
     {
-        return await authenticationFacade.CreateCompany(companyName, country, email, userId);
+        try
+        {
+            return await authenticationFacade.CreateCompany(companyName, country, email, userId);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
     
     

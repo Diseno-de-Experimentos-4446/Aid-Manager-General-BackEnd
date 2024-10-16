@@ -13,6 +13,9 @@ public class UserCommandService(IUserRepository userRepository, IUnitOfWork unit
 {
     public async Task<User?> Handle(CreateUserCommand command)
     {
+        {
+            
+        }
         try
         {
             var validate = await userRepository.FindUserByEmail(command.Email);
@@ -22,11 +25,9 @@ public class UserCommandService(IUserRepository userRepository, IUnitOfWork unit
                 Console.WriteLine("EMAIL ALREADY USED"); 
                 throw new Exception("Error: User EMAIL already exists");
             }
-
-            var user = new User(command);
             
+            var user = new User(command);
             await externalUserAuthService.CreateUsername(user.Email, user.Password, user.Role);
-
             var userid = await externalUserAuthService.FetchUserIdByUsername(user.Email);
            
             
@@ -65,9 +66,9 @@ public class UserCommandService(IUserRepository userRepository, IUnitOfWork unit
         
     }
     
-    public async Task<User> Handle(UpdateUserCommand command, string email)
+    public async Task<User> Handle(UpdateUserCommand command, int id)
     {
-        var user = await userRepository.FindUserByEmail(email);
+        var user = await userRepository.FindUserById(id);
         if (user != null)
         {
             user.updateProfile(command);
@@ -76,35 +77,7 @@ public class UserCommandService(IUserRepository userRepository, IUnitOfWork unit
                     await unitOfWork.CompleteAsync();
                     return user;
         }
-        throw new Exception("User not found");
-    }
-
-    public async Task<bool> AuthenticateUser(ValidateUserCredentialsCommand command)
-    {
-        var user = await userRepository.FindUserByEmail(command.Email);
-        if (user == null)
-        {
-            return false;
-        }
-        
-        Console.WriteLine("User found in UserRepository");
-        Console.WriteLine(user.Password + " == " + command.Password);
-        return user.Password == command.Password;
-    }
-    
-    public async Task<bool> Handle(EditCompanyIdCommand command, int companyId)
-    {
-        var user = await userRepository.FindByIdAsync(command.UserId);
-        if (user != null)
-        {
-            user.CompanyId = companyId;
-            await userRepository.Update(user);
-            await unitOfWork.CompleteAsync();
-            return true;
-        }
-
-        return false;
-        
+        throw new Exception("Could not update: User not found");
     }
     
     public async Task<bool> Handle(KickUserByCompanyIdCommand command)
@@ -120,17 +93,4 @@ public class UserCommandService(IUserRepository userRepository, IUnitOfWork unit
         return false;
     }
     
-    public async Task<User?> Handle(UpdateUserCompanyNameCommand command)
-    {
-        var user = await userRepository.FindByIdAsync(command.UserId);
-        if (user != null)
-        {
-            user.CompanyName = command.CompanyName;
-            await userRepository.Update(user);
-            await unitOfWork.CompleteAsync();
-            return user;
-        }
-
-        return null;
-    }
 }

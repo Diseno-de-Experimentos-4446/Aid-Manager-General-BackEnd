@@ -7,6 +7,6 @@ public static class UpdateUserCommandFromResourceAssembler
 {
     public static UpdateUserCommand ToCommandFromResource(UpdateUserResource resource)
     {
-       return new UpdateUserCommand(resource.FirstName, resource.LastName, resource.Age, resource.Phone, resource.ProfileImg);
+       return new UpdateUserCommand(resource.FirstName, resource.LastName, resource.Age, resource.Phone, resource.ProfileImg, resource.Email, resource.Password);
     }
 }
