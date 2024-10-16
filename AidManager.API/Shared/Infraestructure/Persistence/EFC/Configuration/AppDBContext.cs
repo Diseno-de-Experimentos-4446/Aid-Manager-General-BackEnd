@@ -60,12 +60,17 @@ public class AppDBContext : DbContext
             v => v.ToDateTime(TimeOnly.MinValue),
             v => DateOnly.FromDateTime(v)
         ); // Ensure correct mapping
+        builder.Entity<TaskItem>().Property(p => p.CreatedAt).IsRequired().HasConversion(
+            v => v.ToDateTime(TimeOnly.MinValue),
+            v => DateOnly.FromDateTime(v)
+            );
         
         
         builder.Entity<Project>().ToTable("Projects");
         builder.Entity<Project>().HasKey(p => p.Id);
         builder.Entity<Project>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<Project>().HasMany(p => p.ImageUrl).WithOne().OnDelete(DeleteBehavior.Cascade);
+        builder.Entity<Project>().HasMany(p => p.TeamMembers).WithOne().OnDelete(DeleteBehavior.Cascade);
         builder.Entity<Project>().Property(p => p.ProjectDate).IsRequired().HasConversion(
             v => v.ToDateTime(TimeOnly.MinValue),
             v => DateOnly.FromDateTime(v)
