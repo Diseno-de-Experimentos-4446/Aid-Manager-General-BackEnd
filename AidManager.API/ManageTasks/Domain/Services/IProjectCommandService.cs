@@ -11,5 +11,6 @@ public interface IProjectCommandService
     
     Task<List<ProjectImage?>> Handle(AddProjectImageCommand command);
 
+    Task<Project> Handle(AddTeamMemberCommand command);
 
 }

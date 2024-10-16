@@ -6,6 +6,6 @@ namespace AidManager.API.ManageTasks.Interfaces.REST.Transform;
 public static class TaskItemResourceFromEntityAssembler
 {
     public static TaskItemResource ToResourceFromEntity(TaskItem entity) =>
-        new TaskItemResource(entity.Id, entity.Title, entity.Description, entity.DueDate.ToString(), entity.ProjectId, entity.State,
-            entity.Assignee);
+        new TaskItemResource(entity.Id, entity.Title, entity.Description, entity.CreatedAt, entity.DueDate,
+            entity.State, entity.AssigneeId, entity.Assignee, entity.ProjectId);
 }

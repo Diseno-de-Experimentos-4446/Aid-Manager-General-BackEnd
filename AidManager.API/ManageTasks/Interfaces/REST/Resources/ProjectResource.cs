@@ -1,3 +1,5 @@
-﻿namespace AidManager.API.ManageTasks.Interfaces.REST.Resources;
+﻿using AidManager.API.Authentication.Domain.Model.Entities;
 
-public record ProjectResource(int Id, string Name, string Description, List<string> ImageUrl, int CompanyId);
+namespace AidManager.API.ManageTasks.Interfaces.REST.Resources;
+
+public record ProjectResource(int Id, string Name, string Description,DateOnly ProjectDate, TimeOnly ProjectTime, string ProjectLocation , int CompanyId, List<User> UserList , List<string> ImageUrl);

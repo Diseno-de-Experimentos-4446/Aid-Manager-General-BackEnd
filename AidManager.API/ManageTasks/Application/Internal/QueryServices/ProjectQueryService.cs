@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using AidManager.API.Authentication.Domain.Model.Entities;
 using AidManager.API.ManageTasks.Domain.Model.Aggregates;
 using AidManager.API.ManageTasks.Domain.Model.Queries;
 using AidManager.API.ManageTasks.Domain.Repositories;
@@ -18,5 +19,9 @@ public class ProjectQueryService(IProjectRepository projectRepository) :IProject
         return await projectRepository.GetProjectById(query.id);
     }
 
+    public async Task<IEnumerable<User>> Handle(GetAllTeamMembers query)
+    {
+        return await projectRepository.GetTeamMembers(query.ProjectId);
+    }
   
 }

@@ -38,4 +38,16 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
         return Ok(projectResource);
     }
     
+    
+    [HttpGet("team/{projectId}")]
+    public async Task<IActionResult> GetTeamMembers(int projectId)
+    {
+        var users = await projectQueryService.Handle(new GetAllTeamMembers(projectId));
+        var projectResource = users.Select(TeamMemberResourceFromEntityAssembler.ToResourceFromEntity);
+        return Ok(projectResource);
+    }
+    
+    
+    
+    
 }

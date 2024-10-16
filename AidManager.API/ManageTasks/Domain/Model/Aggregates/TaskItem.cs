@@ -20,7 +20,7 @@ public class TaskItem
    
     public int AssigneeId {get; private set;}
     
-    public DateOnly CreatedAt { get; private set; } = DateOnly.FromDateTime(DateTime.Now);
+    public DateOnly CreatedAt { get; private set; } = DateOnly.MinValue;
    
     protected TaskItem()
     {
@@ -37,7 +37,7 @@ public class TaskItem
     {
         this.Title = command.Title;
         this.Description = command.Description;
-        this.DueDate = DateOnly.Parse(command.DueDate);
+        this.DueDate = command.DueDate;
         this.ProjectId = command.ProjectId;
         this.State = command.State;
         this.AssigneeId = command.AssigneeId;
@@ -49,7 +49,7 @@ public class TaskItem
     {
         this.Title = command.Title;
         this.Description = command.Description;
-        this.DueDate = DateOnly.Parse(command.DueDate);
+        this.DueDate = command.DueDate;
         this.State = command.State;
         this.Assignee = assignee;
         this.AssigneeId = command.AssigneeId;

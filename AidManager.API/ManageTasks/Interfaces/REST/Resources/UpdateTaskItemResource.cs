@@ -1,3 +1,3 @@
 ﻿namespace AidManager.API.ManageTasks.Interfaces.REST.Resources;
 
-public record UpdateTaskItemResource(int Id, string Title, string Description, string DueDate, string State, int UserId);
+public record UpdateTaskItemResource(string Title, string Description, DateOnly DueDate, string State, int UserId);

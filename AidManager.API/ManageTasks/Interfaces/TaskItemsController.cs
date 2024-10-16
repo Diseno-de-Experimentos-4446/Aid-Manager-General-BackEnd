@@ -1,4 +1,5 @@
 ﻿using System.Net.Mime;
+using AidManager.API.ManageTasks.Domain.Model.Aggregates;
 using AidManager.API.ManageTasks.Domain.Model.Commands;
 using AidManager.API.ManageTasks.Domain.Model.Queries;
 using AidManager.API.ManageTasks.Domain.Services;
@@ -36,16 +37,16 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
     }
     
     [HttpPut]
-    public async Task<ActionResult> UpdateTaskItem([FromBody] UpdateTaskItemResource resource)
+    public async Task<ActionResult> UpdateTaskItem( int id ,int projectId,[FromBody] UpdateTaskItemResource resource)
     {
-        var updateTaskCommand = UpdateTaskItemCommandFromResourceAssembler.ToCommandFromResource(resource);
+        var updateTaskCommand = UpdateTaskItemCommandFromResourceAssembler.ToCommandFromResource(resource, id, projectId);
         var result = await taskCommandService.Handle(updateTaskCommand);
         return Ok(TaskItemResourceFromEntityAssembler.ToResourceFromEntity(result));
     }
     [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteTaskItem(int id)
+    public async Task<ActionResult> DeleteTaskItem(int id, int projectId)
     {
-        var deleteTaskItemCommand = new DeleteTaskCommand(id);
+        var deleteTaskItemCommand = new DeleteTaskCommand(id, projectId);
         var result = await taskCommandService.Handle(deleteTaskItemCommand);
         return Ok(TaskItemResourceFromEntityAssembler.ToResourceFromEntity(result));
     }

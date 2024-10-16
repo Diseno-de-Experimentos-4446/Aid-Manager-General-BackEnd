@@ -1,3 +1,5 @@
-﻿namespace AidManager.API.ManageTasks.Domain.Model.Commands;
+﻿using AidManager.API.ManageTasks.Domain.Model.Aggregates;
 
-public record DeleteTaskCommand(int Id);
+namespace AidManager.API.ManageTasks.Domain.Model.Commands;
+
+public record DeleteTaskCommand(int Id, int ProjectId);

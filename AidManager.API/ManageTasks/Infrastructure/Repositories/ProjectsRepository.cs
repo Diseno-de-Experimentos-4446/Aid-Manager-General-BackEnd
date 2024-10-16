@@ -1,4 +1,5 @@
-﻿using AidManager.API.ManageTasks.Domain.Model.Aggregates;
+﻿using AidManager.API.Authentication.Domain.Model.Entities;
+using AidManager.API.ManageTasks.Domain.Model.Aggregates;
 using AidManager.API.ManageTasks.Domain.Repositories;
 using AidManager.API.Shared.Infraestructure.Persistence.EFC.Configuration;
 using AidManager.API.Shared.Infraestructure.Persistence.EFC.Repositories;
@@ -22,17 +23,26 @@ public class ProjectsRepository(AppDBContext context) : BaseRepository<Project>(
     public async Task<Project> GetProjectById(int projectId)
     {
         return await Context.Set<Project>()
+            .Include(p => p.TeamMembers)
             .Include(p => p.ImageUrl)
             .FirstOrDefaultAsync(p=> p.Id == projectId);
+    }
+
+    public async Task<List<User>> GetTeamMembers(int projectId)
+    {
+        return await Context.Set<Project>().FirstOrDefaultAsync(p => p.Id == projectId)
+            .ContinueWith(t => t.Result.TeamMembers.ToList());
     }
 
     public async Task<List<Project>> GetProjectsByCompanyId(int companyId)
     {
         return await Context.Set<Project>()
             .Include(p => p.ImageUrl) // Ensure eager loading of ImageUrl
+            .Include(p => p.TeamMembers)
             .Where(f => f.CompanyId == companyId).ToListAsync();
 
     }
+    
     
     
 }

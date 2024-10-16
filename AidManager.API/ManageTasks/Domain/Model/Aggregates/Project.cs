@@ -1,4 +1,5 @@
-﻿using AidManager.API.Collaborate.Domain.Model.Commands;
+﻿using AidManager.API.Authentication.Domain.Model.Entities;
+using AidManager.API.Collaborate.Domain.Model.Commands;
 using AidManager.API.ManageTasks.Domain.Model.Commands;
 using AidManager.API.ManageTasks.Domain.Model.ValueObjects;
 
@@ -12,6 +13,8 @@ public class Project
 
     public List<ProjectImage> ImageUrl { get; set; }
     
+    public List<User> TeamMembers { get; set; }
+    
     public int CompanyId { get; set; }
     
     public DateOnly ProjectDate { get; set; }
@@ -24,6 +27,7 @@ public class Project
     public Project()
     {
         ImageUrl = new List<ProjectImage>(); // Initialize the list
+        TeamMembers = new List<User>(); // Initialize the list
 
     }
     public Project(CreateProjectCommand command)
@@ -41,6 +45,11 @@ public class Project
     {
         var images = command.ImagesUrl?.ConvertAll(url => new ProjectImage { Url = url }) ?? [];
         ImageUrl.AddRange(images);
+    }
+    
+    public void AddTeamMember(User user)
+    {
+        TeamMembers.Add(user);
     }
     
 }

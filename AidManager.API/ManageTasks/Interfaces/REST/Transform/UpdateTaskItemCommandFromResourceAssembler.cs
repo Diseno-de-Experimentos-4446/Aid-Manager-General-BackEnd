@@ -5,7 +5,7 @@ namespace AidManager.API.ManageTasks.Interfaces.REST.Transform;
 
 public static class UpdateTaskItemCommandFromResourceAssembler
 {
-    public static UpdateTaskCommand ToCommandFromResource(UpdateTaskItemResource resource) =>
-        new UpdateTaskCommand(resource.Id , resource.Title, resource.Description, resource.DueDate, resource.State, resource.UserId);
+    public static UpdateTaskCommand ToCommandFromResource(UpdateTaskItemResource resource, int taskId ,int projectId) =>
+        new UpdateTaskCommand(taskId,resource.Title, resource.Description, resource.DueDate, resource.State, resource.UserId, projectId);
 
 }

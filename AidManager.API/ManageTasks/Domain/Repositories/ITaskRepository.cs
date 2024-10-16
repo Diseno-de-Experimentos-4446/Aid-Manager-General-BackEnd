@@ -6,9 +6,6 @@ namespace AidManager.API.ManageTasks.Domain.Repositories;
 
 public interface ITaskRepository : IBaseRepository<TaskItem>
 {
-    Task<List<TaskItem?>> GetTasksByProjectId(int projectId);
-    
-    Task<bool> ExistsTaskItemByProjectId(int projectId);
-    
+    Task<List<TaskItem>> GetTasksByProjectId(int projectId);
     Task<TaskItem?> GetTaskById(int id);
 }

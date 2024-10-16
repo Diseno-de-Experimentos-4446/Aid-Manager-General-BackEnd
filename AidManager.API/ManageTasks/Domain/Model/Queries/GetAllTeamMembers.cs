@@ -1,3 +1,3 @@
 ﻿namespace AidManager.API.ManageTasks.Domain.Model.Queries;
 
-public record GetAllTasksQuery(int CompanyId);
+public record GetAllTeamMembers(int ProjectId);
