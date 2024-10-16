@@ -6,6 +6,7 @@ namespace AidManager.API.Collaborate.Interfaces.REST.Resources;
 public record PostResource(int Id, string Title,
     string Subject,
     string Description,
+    DateTime PostTime,
     int CompanyId,
     int UserId,
     string UserName,

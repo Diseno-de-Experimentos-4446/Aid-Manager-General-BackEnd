@@ -15,6 +15,7 @@ public static class PostResourceFromEntityAssembler
             post.Title,
             post.Subject,
             post.Description, 
+            post.CreatedAt,
             post.CompanyId,
             post.UserId,
             post.Username,
