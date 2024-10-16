@@ -73,14 +73,14 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
         return Ok(usersResources);
     }
     
-    [HttpGet("user")]
+    [HttpGet("{id}")]
     [SwaggerOperation(
         Summary = "Obtains a user by id",
         Description = "Obtains a user by id",
         OperationId = "GetUserById"
     )]
     [SwaggerResponse(200, "The user was obtained")]
-    public async Task<IActionResult> GetUserById([FromQuery] int id)
+    public async Task<IActionResult> GetUserById(int id)
     {
         var query = new GetUserByIdQuery(id);
         var user = await userQueryService.FindUserById(query);
