@@ -8,6 +8,12 @@ namespace AidManager.API.IAM.Interfaces.ACL.Services;
 
 public class IamContextFacade(IUserIAMCommandService userCommandService, IUserIAMQueryService userQueryService): IIamContextFacade
 {
+    public async Task DeleteUser(string username)
+    {
+        var deleteUserCommand = new DeleteUserCommand(username);
+        await userCommandService.Handle(deleteUserCommand);
+    }
+
     public async Task<int> CreateUser(string username, string password, int role)
     {
         var signUpCommand = new SignUpCommand(username, password,role );

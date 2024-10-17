@@ -32,7 +32,21 @@ public class UserIAMCommandService(
             throw new Exception($"An error occurred while creating the user: {e.Message}");
         }
     }
-    
+
+    public async Task Handle(DeleteUserCommand command)
+    {
+        try
+        {
+            var user = await userRepository.FindByUsernameAsync(command.Username);
+            await userRepository.Remove(user);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
     public async Task Handle(UpdateUserCommand command)
     {
         var user = await userRepository.FindByUsernameAsync(command.Username);

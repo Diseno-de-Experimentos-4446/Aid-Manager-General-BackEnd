@@ -29,6 +29,11 @@ public class ExternalUserAuthService(IIamContextFacade iamContextFacade, IAuthen
         }
     }
     
+    public async Task DeleteUser (string username)
+    {
+        await iamContextFacade.DeleteUser(username);
+    }
+    
     public async Task UpdateUser(string username, string password, int role)
     {
         await iamContextFacade.UpdateUserData(username, password, role);
