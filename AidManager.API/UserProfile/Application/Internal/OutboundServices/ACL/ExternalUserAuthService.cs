@@ -84,6 +84,20 @@ public class ExternalUserAuthService(IIamContextFacade iamContextFacade, IAuthen
         }
     }
     
+    public async Task<bool> DeleteCompany(int userId)
+    {
+        try
+        {
+            return await authenticationFacade.DeleteCompany(userId);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+    
+    
     
     
 }

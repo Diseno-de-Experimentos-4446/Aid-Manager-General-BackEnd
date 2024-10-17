@@ -83,11 +83,14 @@ public class UserCommandService(IUserRepository userRepository, IUnitOfWork unit
         throw new Exception("Could not update: User not found");
     }
     
+    
+        
     public async Task<bool> Handle(KickUserByCompanyIdCommand command)
     {
         var user = await userRepository.FindByIdAsync(command.UserId);
         if (user != null)
         {
+            await externalUserAuthService.DeleteCompany(user.CompanyId);
             await externalUserAuthService.DeleteUser(user.Email);
             await userRepository.Remove(user);
             await unitOfWork.CompleteAsync();
@@ -96,5 +99,8 @@ public class UserCommandService(IUserRepository userRepository, IUnitOfWork unit
 
         return false;
     }
+    
+    
+    
     
 }

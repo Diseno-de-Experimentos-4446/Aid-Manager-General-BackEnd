@@ -5,6 +5,8 @@ namespace AidManager.API.Authentication.Domain.Services;
 
 public interface ICompanyCommandService
 {
+    Task<bool> Handle(EditCompanyIdCommand command);
+    Task<bool> Handle(DeleteCompanyCommand command);
     Task<bool> Handle(CreateCompanyCommand command);
     
     Task<Company?> Handle(ValidateRegisterCode command);

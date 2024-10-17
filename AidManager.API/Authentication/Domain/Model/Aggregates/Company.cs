@@ -21,6 +21,14 @@ public class Company
         ManagerId = command.UserId;
         TeamRegisterCode = GenerateRegisterCode();
      }
+     
+        public void Update(EditCompanyIdCommand command)
+        {
+            CompanyName = command.BrandName;
+            Country = command.Country;
+            Email = command.Email;
+            TeamRegisterCode = GenerateRegisterCode();
+        }
 
      private string GenerateRegisterCode()
      {

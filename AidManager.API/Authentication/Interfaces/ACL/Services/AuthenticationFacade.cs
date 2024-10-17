@@ -31,4 +31,12 @@ public class AuthenticationFacade(ICompanyCommandService commandService, ICompan
         return await queryService.Handle(existsCompanyByEmailQuery);
     }
     
+  
+    
+    public async Task<bool> DeleteCompany(int userId)
+    {
+        var deleteCompanyCommand = new DeleteCompanyCommand(userId);
+        return await commandService.Handle(deleteCompanyCommand);
+    }
+    
 }

@@ -1,3 +1,3 @@
 ﻿namespace AidManager.API.Authentication.Domain.Model.Commands;
 
-public record EditCompanyIdCommand(string BrandName, string IdentificationCode, string Country, string Email, int UserId);
+public record EditCompanyIdCommand(string BrandName, string Country, string Email, int UserId);

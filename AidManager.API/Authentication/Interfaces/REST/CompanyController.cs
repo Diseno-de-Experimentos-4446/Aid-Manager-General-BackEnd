@@ -21,4 +21,14 @@ public class CompanyController(ICompanyCommandService companyCommandService, ICo
         if (company == null) return Ok(new { status_code = 404, message = "Company not found" });
         return Ok(new { status_code = 200, message = "Company found", company = CreateCompanyResourceFromEntityAssembler.ToResourceFromEntity(company) });
     }
+    
+    [HttpPut]
+    public async Task<IActionResult> UpdateCompany([FromBody] UpdateCompanyResource resource)
+    {
+        var command = UpdateCompanyCommandFromResourceAssembler.ToCommandFromResource(resource);
+        var result = await companyCommandService.Handle(command);
+        if (!result) return Ok(new { status_code = 404, message = "Company not found" });
+        return Ok(new { status_code = 200, message = "Company updated" });
+    }
+    
 }
