@@ -6,6 +6,16 @@ namespace AidManager.API.UserManagement.UserProfile.Application.Internal.Outboun
 
 public class ExternalUserAuthService(IIamContextFacade iamContextFacade, IAuthenticationFacade authenticationFacade)
 {
+    
+    public async Task<Company?> GetCompanyByEmail(string email)
+    {
+        var companyFound = await authenticationFacade.ExistsCompanyByEmail(email);
+        if (companyFound != null)
+        {
+            return companyFound;
+        }
+        return null;
+    }
     public async Task CreateUsername(string username, string password, int role)
     {
         try

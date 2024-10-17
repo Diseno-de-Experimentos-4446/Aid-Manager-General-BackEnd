@@ -8,6 +8,7 @@ public interface ICompanyRepository : IBaseRepository<Company>
     Task<bool> CreateCompany(Company company);
     Task<Company?> FindCompanyByUserId(int userId);
     
+    Task<Company?> GetCompanyByEmail(string email);
     Task<bool> ExistsByID(int id);
     
     Task<Company?> FindCompanyByRegisterCode(string registerCode);

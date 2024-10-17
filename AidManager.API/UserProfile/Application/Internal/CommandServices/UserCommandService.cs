@@ -13,22 +13,22 @@ public class UserCommandService(IUserRepository userRepository, IUnitOfWork unit
 {
     public async Task<User?> Handle(CreateUserCommand command)
     {
-        {
-            
-        }
         try
         {
             var validate = await userRepository.FindUserByEmail(command.Email);
-                //se valida q no esta el email en la base de datos.
-            if ( validate != null) //si se encuentra error
+            var companyByEmail = await externalUserAuthService.GetCompanyByEmail(command.CompanyEmail);
+            if (companyByEmail != null)
+            {
+                Console.WriteLine("Company EMAIL ALREADY USED"); 
+                throw new Exception("Error: Company EMAIL already exist");
+            } 
+            if ( validate != null) 
             {
                 Console.WriteLine("EMAIL ALREADY USED"); 
                 throw new Exception("Error: User EMAIL already exists");
             }
             
             var user = new User(command);
-            await externalUserAuthService.CreateUsername(user.Email, user.Password, user.Role);
-            var userid = await externalUserAuthService.FetchUserIdByUsername(user.Email);
            
             
             
@@ -38,6 +38,8 @@ public class UserCommandService(IUserRepository userRepository, IUnitOfWork unit
             {
                 //Manager
                 case 0:
+                    await externalUserAuthService.CreateUsername(user.Email, user.Password, user.Role);
+                    var userid = await externalUserAuthService.FetchUserIdByUsername(user.Email);
                     //externalCompanyAuthService.CreateCompany
                     await externalUserAuthService.CreateCompany(command.CompanyName, command.CompanyCountry, command.CompanyEmail, userid);
                     var company = await externalUserAuthService.FetchCompanyByUserId(userid);
@@ -46,7 +48,8 @@ public class UserCommandService(IUserRepository userRepository, IUnitOfWork unit
                 //TeamMember
                 case 1:
                     //externalCompanyAuthService.GetCompanyInfoByCompanyRegisterCode
-                    var companyData = await externalUserAuthService.AuthenticateCode(command.TeamRegisterCode);
+                    var companyData = await externalUserAuthService.AuthenticateCode(command.TeamRegisterCode); 
+                    await externalUserAuthService.CreateUsername(user.Email, user.Password, user.Role);
                     user.CompanyId = companyData.Id;
                     user.CompanyName = companyData.CompanyName;
                     break;

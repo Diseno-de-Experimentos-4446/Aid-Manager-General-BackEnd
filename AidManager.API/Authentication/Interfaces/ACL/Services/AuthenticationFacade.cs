@@ -24,4 +24,11 @@ public class AuthenticationFacade(ICompanyCommandService commandService, ICompan
         var getCompanyByUserId = new GetCompanyByUserIdQuery(userId);
         return await queryService.Handle(getCompanyByUserId);
     }
+    
+    public async Task<Company?> ExistsCompanyByEmail(string email)
+    {
+        var existsCompanyByEmailQuery = new GetCompanyByEmail(email);
+        return await queryService.Handle(existsCompanyByEmailQuery);
+    }
+    
 }

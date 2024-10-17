@@ -24,6 +24,9 @@ public class Company
 
      private string GenerateRegisterCode()
      {
-         return Guid.NewGuid().ToString();
+         Guid guid = Guid.NewGuid();
+         string base64Guid = Convert.ToBase64String(guid.ToByteArray());
+         string shortGuid = base64Guid.Replace("/", "_").Replace("+", "-").Substring(0, 15);
+         return shortGuid;
      }
 }

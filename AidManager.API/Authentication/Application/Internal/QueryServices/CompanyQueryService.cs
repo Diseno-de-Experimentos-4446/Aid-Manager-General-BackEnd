@@ -2,6 +2,7 @@
 using AidManager.API.Authentication.Domain.Model.Queries;
 using AidManager.API.Authentication.Domain.Repositories;
 using AidManager.API.Authentication.Domain.Services;
+using AidManager.API.Authentication.Infrastructure.Persistence.EFC.Repositories;
 using AidManager.API.Shared.Domain.Repositories;
 
 namespace AidManager.API.Authentication.Application.Internal.QueryServices;
@@ -12,8 +13,9 @@ public class CompanyQueryService(ICompanyRepository companyRepository, IUnitOfWo
     {
         return await companyRepository.FindCompanyByUserId(query.Id);
     }
-    
-    
-    
-    
+
+    public async Task<Company?> Handle(GetCompanyByEmail query)
+    {
+        return await companyRepository.GetCompanyByEmail(query.Email);
+    }
 }

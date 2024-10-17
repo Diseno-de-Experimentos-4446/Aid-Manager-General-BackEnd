@@ -18,7 +18,12 @@ public class CompanyRepository(AppDBContext context) : BaseRepository<Company>(c
     {
         return await Context.Set<Company>().Where(c => c.ManagerId == userid).FirstOrDefaultAsync();
     }
-    
+
+    public async Task<Company?> GetCompanyByEmail(string email)
+    {
+        return await Context.Set<Company>().Where(c => c.Email == email).FirstOrDefaultAsync();
+    }
+
     public async Task<Company?> FindCompanyByRegisterCode(string registercode)
     {
         return await Context.Set<Company>().Where(c => c.TeamRegisterCode == registercode).FirstOrDefaultAsync();
