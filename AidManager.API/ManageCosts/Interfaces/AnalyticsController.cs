@@ -59,7 +59,7 @@ public class AnalyticsController(
         return Ok(analyticResource);
     }
     
-    [HttpPatch("BarData")]
+    [HttpPatch("lines")]
     [SwaggerOperation(
         Summary = "Update BarData",
         Description = "Update the BarData list",
@@ -80,7 +80,7 @@ public class AnalyticsController(
         return Ok(analyticResource);
     }
     
-    [HttpPatch("lines")]
+    [HttpPatch("bardata")]
     [SwaggerOperation(
         Summary = "Update LineBarData",
         Description = "Update the LineBarData list",
