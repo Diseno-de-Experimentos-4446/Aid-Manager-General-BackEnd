@@ -38,13 +38,13 @@ public class ProjectCommandService(IProjectRepository projectRepository, IUnitOf
         
     }
 
-    public async Task<List<ProjectImage?>> Handle(AddProjectImageCommand command)
+    public async Task<Project> Handle(AddProjectImageCommand command)
     {
         var project = await projectRepository.GetProjectById(command.ProjectId);
        
         project.AddImage(command);
         await projectRepository.Update(project);
-        return project.ImageUrl;
+        return project;
         
     }
 
@@ -66,5 +66,22 @@ public class ProjectCommandService(IProjectRepository projectRepository, IUnitOf
             Console.WriteLine(e);
             throw;
         }
+    }
+
+    public async Task<Project> Handle(DeleteProjectCommand command)
+    {
+        var project = await projectRepository.GetProjectById(command.ProjectId);
+        await projectRepository.Remove(project);
+        await unitOfWork.CompleteAsync();
+        return project;
+    }
+
+    public async Task<Project> Handle(UpdateProjectCommand command)
+    {
+        var project = await projectRepository.GetProjectById(command.ProjectId);
+        project.UpdateProject(command);
+        await projectRepository.Update(project);
+        await unitOfWork.CompleteAsync();
+        return project;
     }
 }

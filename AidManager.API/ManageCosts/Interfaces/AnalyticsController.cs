@@ -16,28 +16,6 @@ public class AnalyticsController(
     IAnalyticsQueryService analyticsQueryService
     ) : ControllerBase
 {
-    
-    [HttpPost]
-    [SwaggerOperation(
-        Summary = "Create Analytics Data",
-        Description = "Add new Data to the Analytics",
-        OperationId = "CreateData"
-    )]
-    [SwaggerResponse(201, "Analytics created", typeof(CreateAnalyticsResource))]
-    public async Task<IActionResult> CreateNewAnalytics(int projectId, [FromBody] CreateAnalyticsResource resource)
-    {
-        var command = CreateAnalyticsCommandFromResourceAssembler.ToCommandFromResource(projectId,resource);
-        var analytic = await analyticsCommandService.Handle(command);
-        
-        if (analytic == null)
-        {
-            return NotFound();
-        }
-        
-        var analyticResource = AnalyticsResourceFromEntityAssembler.ToResourceFromEntity(analytic);
-        return Ok(analyticResource);
-    }
-    
     [HttpGet]
     [SwaggerOperation(
         Summary = "Get Analytics by Project Id",

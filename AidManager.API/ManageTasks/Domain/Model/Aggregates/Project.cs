@@ -47,6 +47,17 @@ public class Project
         ImageUrl.AddRange(images);
     }
     
+    public void UpdateProject(UpdateProjectCommand command)
+    {
+        this.Name = command.Name;
+        this.Description = command.Description;
+        this.ImageUrl = command.ImageUrl?.ConvertAll(url => new ProjectImage { Url = url }) ?? new List<ProjectImage>();
+        this.CompanyId = command.CompanyId;
+        this.ProjectDate = DateOnly.Parse(command.ProjectDate);
+        this.ProjectTime = TimeOnly.Parse(command.ProjectTime);
+        this.ProjectLocation = command.ProjectLocation;
+    }
+    
     public void AddTeamMember(User user)
     {
         TeamMembers.Add(user);

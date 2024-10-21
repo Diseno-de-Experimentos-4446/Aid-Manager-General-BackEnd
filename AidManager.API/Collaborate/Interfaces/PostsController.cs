@@ -43,34 +43,6 @@ public class PostsController(IPostCommandService postCommandService, IPostQueryS
         
     }
     
-    
-    //CreateAPost
-     [HttpPost("{id}")]
-        [SwaggerOperation(
-            Summary = "Post comment",
-            Description = "Add a comment to a post",
-            OperationId = "PostComment"
-        )]
-        [SwaggerResponse(200, "New Comment Sent", typeof(CommentResource))]
-        public async Task<IActionResult> AddPostComment([FromRoute] int id, [FromBody] AddCommentResource resource)
-        {
-            try
-            {
-                var command = CreateAddCommentCommandFromResourceAssembler.ToCommandFromResource(id, resource);
-                var comments = await postCommandService.Handle(command);
-    
-                if (comments == null) return NotFound();
-    
-                var c = CommentResourceFromEntityAssembler.ToResourceFromEntity(comments);
-                return Ok(c);
-            }
-            catch (Exception e)
-            {
-                return BadRequest("Error: " + e.Message);
-            }
-            
-        }    
-        
      // update rating field of post by id
         [HttpPatch("{id}/rating")]
         [SwaggerOperation(
@@ -177,39 +149,5 @@ public class PostsController(IPostCommandService postCommandService, IPostQueryS
             return BadRequest("Error: " + e.Message);
         }
         
-    }
-    
-   
-   
-    
-    [HttpGet("{id}/comments")]
-    [SwaggerOperation(
-        Summary = "Get comments",
-        Description = "Get comments from a post",
-        OperationId = "GetComments"
-    )]
-    public async Task<IActionResult> GetComments([FromRoute] int id)
-    {
-        var query = new GetCommentsByPostIdQuery(id);
-        var comments = await postQueryService.Handle(query);
-        if(comments == null) return BadRequest();
-        var commentResources = comments.Select(CommentResourceFromEntityAssembler.ToResourceFromEntity);
-        return Ok(commentResources);
-    }    
-    
-    [HttpDelete("{id}/comments/{commentId}")]
-    [SwaggerOperation(
-        Summary = "Delete comment",
-        Description = "Delete a comment from a post",
-        OperationId = "DeleteComment"
-    )]
-    public async Task<IActionResult> DeleteComment([FromRoute] int id, [FromRoute] int commentId)
-    {
-        var command = new DeleteCommentCommand(id, commentId);
-        var deleted = await postCommandService.Handle(command);
-        if (deleted == null)
-            return Ok(new { status_code = 404, message = "Comment not found"});
-        var c = CommentResourceFromEntityAssembler.ToResourceFromEntity(deleted);
-        return Ok(new {status_code=202, message = "Comment deleted", data = c});
     }
 }

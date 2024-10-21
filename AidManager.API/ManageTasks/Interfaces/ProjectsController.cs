@@ -36,6 +36,20 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
         }
         
     }
+
+    [HttpPut("{projectId}")]
+    [SwaggerOperation(
+        Summary = "Update project",
+        Description = "Update a project",
+        OperationId = "UpdateProject"
+    )]
+    public async Task<IActionResult> UpdateProject(int projectId,UpdateProjectResource resource)
+    {
+        var project = await projectCommandService.Handle(UpdateProjectCommandFromResourceAssembler.ToCommandFromResource(projectId, resource));
+        var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project);
+        return Ok(projectResource);
+    }
+
     
     [HttpGet("{companyId}")]
     [SwaggerOperation(
@@ -63,6 +77,19 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
         return Ok(projectResource);
     }
     
+    [HttpPatch("{projectId}/images")]
+    [SwaggerOperation(
+        Summary = "Update a project Images",
+        Description = "Update project images",
+        OperationId = "UpdateProjectImages"
+    )]
+    public async Task<IActionResult> UpdateProject(AddImageResource resource)
+    {
+        var project = await projectCommandService.Handle(AddImageResourceFromResourceAssembler.ToCommandFromResource(resource));
+        
+        var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project);
+        return Ok(projectResource);
+    }
     
     [HttpGet("team/{projectId}")]
     [SwaggerOperation(
@@ -77,6 +104,18 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
         return Ok(projectResource);
     }
     
+    [HttpDelete("{projectId}")]
+    [SwaggerOperation(
+        Summary = "Delete project",
+        Description = "Delete a project",
+        OperationId = "DeleteProject"
+    )]
+    public async Task<IActionResult> DeleteProject(int projectId)
+    {
+        var project = await projectCommandService.Handle(DeleteProjectCommandFromResourceAssembler.ToCommandFromResource(projectId));
+        var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project);
+        return Ok(projectResource);
+    }
     
     
     

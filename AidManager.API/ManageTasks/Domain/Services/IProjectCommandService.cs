@@ -9,8 +9,12 @@ public interface IProjectCommandService
 {
     Task<Project> Handle(CreateProjectCommand command);
     
-    Task<List<ProjectImage?>> Handle(AddProjectImageCommand command);
+    Task<Project> Handle(AddProjectImageCommand command);
 
     Task<Project> Handle(AddTeamMemberCommand command);
+    
+    Task<Project> Handle(DeleteProjectCommand command);
+    
+    Task<Project> Handle(UpdateProjectCommand command);
 
 }
