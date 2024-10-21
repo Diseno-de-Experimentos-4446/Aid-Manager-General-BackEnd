@@ -13,20 +13,22 @@ public class ProjectCommandService(IProjectRepository projectRepository, IUnitOf
 {
     public async Task<Project> Handle(CreateProjectCommand command)
     {
-        bool existsByName = await projectRepository.ExistsByName(command.Name);
-        
-        if (existsByName)
-        {
-            throw new Exception($"Project with name {command.Name} already exists.");
-        }
-        
-        var project = new Project(command);
-        
-        try
-        {
-            await projectRepository.AddAsync(project);
-            await unitOfWork.CompleteAsync();
-            return project;
+        try {
+            
+            var existsByName = await projectRepository.ExistsByName(command.Name);
+            
+            if (existsByName)
+            {
+                throw new Exception($"Project with name {command.Name} already exists.");
+            }
+            
+            var project = new Project(command);
+            
+                await projectRepository.AddAsync(project);
+                Console.WriteLine("Project added: " + project.Id);
+                await externalUserService.CreateAnalytics(project.Id);
+                await unitOfWork.CompleteAsync();
+                return project;
         }
         catch (Exception e)
         {

@@ -30,6 +30,8 @@ using AidManager.API.ManageCosts.Application.Internal.QueryServices;
 using AidManager.API.ManageCosts.Domain.Repositories;
 using AidManager.API.ManageCosts.Domain.Services;
 using AidManager.API.ManageCosts.Infraestructure.Repositories;
+using AidManager.API.ManageCosts.Interfaces.ACL;
+using AidManager.API.ManageCosts.Interfaces.ACL.Services;
 using AidManager.API.ManageTasks.Application.Internal.CommandServices;
 using AidManager.API.ManageTasks.Application.Internal.OutboundServices.ACL;
 using AidManager.API.ManageTasks.Application.Internal.QueryServices;
@@ -165,6 +167,7 @@ builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 builder.Services.AddScoped<IAnalyticsRepository, AnalyticsRepository>();
 builder.Services.AddScoped<IAnalyticsCommandService, AnalyticsCommandService>();
 builder.Services.AddScoped<IAnalyticsQueryService, AnalyticsQueryService>();
+builder.Services.AddScoped<IManageCostsFacade, ManageCostsFacade>();
 
 builder.Services.AddScoped<ITaskRepository, TaskItemsRepository>();
 builder.Services.AddScoped<ITaskCommandService, TaskCommandService>();

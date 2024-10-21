@@ -56,13 +56,13 @@ public class AppDBContext : DbContext
         builder.Entity<Analytics>().OwnsMany(a => a.BarData, b =>
         {
             b.WithOwner().HasForeignKey("AnalyticsId");
-            b.Property<int>("Id");
+            b.Property<int>("Id").ValueGeneratedOnAdd().HasAnnotation("SqlServer:Identity", "1, 1");
             b.HasKey("Id");
         });
         builder.Entity<Analytics>().OwnsMany(a => a.LinesChartBarData, b =>
         {
             b.WithOwner().HasForeignKey("AnalyticsId");
-            b.Property<int>("Id");
+            b.Property<int>("Id").ValueGeneratedOnAdd().HasAnnotation("SqlServer:Identity", "1, 1");
             b.HasKey("Id");
         });
 
