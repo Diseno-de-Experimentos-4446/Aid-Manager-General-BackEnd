@@ -20,9 +20,15 @@ public class TaskCommandService(ITaskRepository taskRepository, IUnitOfWork unit
         }
         
         var user = await externalUserService.GetUserById(command.AssigneeId);
+
+        if (user.Role == 0)
+        {
+            throw new Exception($"Cant assign task to a manager user.");
+        }
+        
         var fullname = user.FirstName + " " + user.LastName;
         
-        var task = new TaskItem(command, fullname);
+        var task = new TaskItem(command, fullname, user.ProfileImg);
         
         await projectCommandService.Handle(new AddTeamMemberCommand(command.AssigneeId, command.ProjectId));
         
@@ -57,7 +63,7 @@ public class TaskCommandService(ITaskRepository taskRepository, IUnitOfWork unit
 
         if (task is null) throw new Exception("Task not found");
         
-        task.UpdateTask(command, fullname);
+        task.UpdateTask(command, fullname, username.ProfileImg);
         await taskRepository.Update(task);
         await unitOfWork.CompleteAsync();
         return task;

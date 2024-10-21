@@ -14,6 +14,12 @@ public class CompanyQueryService(ICompanyRepository companyRepository, IUnitOfWo
         return await companyRepository.FindCompanyByUserId(query.Id);
     }
 
+    public async Task<Company?> Handle(GetCompanyById query)
+    {
+        return await companyRepository.GetCompanyById(query.CompanyId);
+    }
+    
+
     public async Task<Company?> Handle(GetCompanyByEmail query)
     {
         return await companyRepository.GetCompanyByEmail(query.Email);

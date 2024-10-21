@@ -66,11 +66,20 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
     [SwaggerResponse(200, "The users were obtained")]
     public async Task<IActionResult> GetAllUsers(int companyId)
     {
-        var query = new GetAllUsersByCompanyIdQuery(companyId);
-        var users = await userQueryService.Handle(query);
-        if(users == null) return BadRequest();
-        var usersResources = users.Select(UserResourceFromEntityAssembler.ToResourceFromEntity);
-        return Ok(usersResources);
+        try
+        {
+            var query = new GetAllUsersByCompanyIdQuery(companyId);
+            var users = await userQueryService.Handle(query); 
+            if(users == null) return BadRequest();
+            var usersResources = users.Select(UserResourceFromEntityAssembler.ToResourceFromEntity);
+            return Ok(usersResources);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        
     }
     
     [HttpGet("user/{id}")]
@@ -82,19 +91,28 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
     [SwaggerResponse(200, "The user was obtained")]
     public async Task<IActionResult> GetUserById(int id)
     {
-        var query = new GetUserByIdQuery(id);
-        var user = await userQueryService.FindUserById(query);
-        if(user == null) return BadRequest();
-
-        if (user.Role == 0)
+        try
         {
-            var company = await externalUserAuthService.FetchCompanyByUserId(user.Id);
-            var managerResource = UserResourceFromEntityAssembler.ToManagerResourceFromEntity(user, company);
-            return Ok(managerResource);
+            var query = new GetUserByIdQuery(id);
+            var user = await userQueryService.FindUserById(query);
+            if(user == null) return BadRequest();
+
+            if (user.Role == 0)
+            {
+                var company = await externalUserAuthService.FetchCompanyByUserId(user.Id);
+                var managerResource = UserResourceFromEntityAssembler.ToManagerResourceFromEntity(user, company);
+                return Ok(managerResource);
+            }
+            
+            var userResource = UserResourceFromEntityAssembler.ToResourceFromEntity(user);
+            return Ok(userResource);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
         }
         
-        var userResource = UserResourceFromEntityAssembler.ToResourceFromEntity(user);
-        return Ok(userResource);
     }
 
     [HttpPut("{userId}")]
@@ -105,12 +123,21 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
     )]
     public async Task<IActionResult> UpdateUser(int userId, [FromBody] UpdateUserResource resource)
     {
-        var command = UpdateUserCommandFromResourceAssembler.ToCommandFromResource(resource);
-        var updatedUser = await userCommandService.Handle(command, userId);
-        if(updatedUser == null) return BadRequest();
+        try
+        {
+            var command = UpdateUserCommandFromResourceAssembler.ToCommandFromResource(resource);
+            var updatedUser = await userCommandService.Handle(command, userId);
+            if(updatedUser == null) return BadRequest();
         
-        var userResource = UserResourceFromEntityAssembler.ToResourceFromEntity(updatedUser);
-        return Ok(userResource);
+            var userResource = UserResourceFromEntityAssembler.ToResourceFromEntity(updatedUser);
+            return Ok(userResource);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        
     }
     
     
@@ -122,9 +149,18 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
     )]
     public async Task<IActionResult> KickUserByCompanyId(int userId)
     {
-        if (!await userCommandService.Handle(new KickUserByCompanyIdCommand(userId)))
-            return Ok(new { status_code = 404, message = "User not found"});
-        return Ok(new {status_code=202, message = "User kicked"});
+        try
+        {
+            if (!await userCommandService.Handle(new KickUserByCompanyIdCommand(userId)))
+                return Ok(new { status_code = 404, message = "User not found"});
+            return Ok(new {status_code=202, message = "User kicked"});
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        
     }
 
 

@@ -5,13 +5,13 @@ namespace AidManager.API.Authentication.Interfaces.REST.Transform;
 
 public class UpdateCompanyCommandFromResourceAssembler
 {
-    public static EditCompanyIdCommand ToCommandFromResource(UpdateCompanyResource resource)
+    public static EditCompanyIdCommand ToCommandFromResource(UpdateCompanyResource resource, int companyId)
     {
         return new EditCompanyIdCommand(
             resource.CompanyName,
             resource.Country,
             resource.Email,
-            resource.UserId
+            companyId
         );
     }
 }

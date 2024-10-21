@@ -19,6 +19,6 @@ public static class UserResourceFromEntityAssembler
         var role = "Manager";
         
 
-        return new ManagerUserResource(user.Id, user.FirstName + " " + user.LastName, user.Age, user.Email, user.Phone, user.Password, user.ProfileImg, role, user.CompanyName, company.Email, company.Country, company.TeamRegisterCode);
+        return new ManagerUserResource(user.Id, user.FirstName + " " + user.LastName, user.Age, user.Email, user.Phone, user.Password, user.ProfileImg, role,user.CompanyId, user.CompanyName, company.Email, company.Country, company.TeamRegisterCode);
     }
 }

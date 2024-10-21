@@ -22,10 +22,19 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
     )]
     public async Task<IActionResult> CreateProject(CreateProjectResource resource)
     {
-        var createProjectCommand = CreateProjectCommandFromResourceAssembler.ToCommandFromResource(resource);
-        var project = await projectCommandService.Handle(createProjectCommand);
-        var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project);
-        return Ok(projectResource);
+        try
+        {
+            var createProjectCommand = CreateProjectCommandFromResourceAssembler.ToCommandFromResource(resource);
+            var project = await projectCommandService.Handle(createProjectCommand);
+            var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project);
+            return Ok(projectResource);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        
     }
     
     [HttpGet("{companyId}")]

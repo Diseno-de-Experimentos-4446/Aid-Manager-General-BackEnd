@@ -29,6 +29,11 @@ public class CompanyRepository(AppDBContext context) : BaseRepository<Company>(c
         return await Context.Set<Company>().Where(c => c.TeamRegisterCode == registercode).FirstOrDefaultAsync();
     }
     
+    public async Task<Company?> GetCompanyById(int id)
+    {
+        return await Context.Set<Company>().Where(c => c.Id == id).FirstOrDefaultAsync();
+    }
+    
     public async Task<bool> ExistsByID(int id)
     {
         return await Context.Set<Company>().AnyAsync(c => c.Id == id);
