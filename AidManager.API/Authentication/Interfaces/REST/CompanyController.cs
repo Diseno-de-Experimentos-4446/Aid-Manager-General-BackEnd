@@ -21,7 +21,7 @@ public class CompanyController(ICompanyCommandService companyCommandService, ICo
         Description = "Get the company by Id",
         OperationId = "GetCompanyID"
     )]
-    [SwaggerResponse(201, "Analytics created", typeof(CreateAnalyticsResource))]
+    [SwaggerResponse(201, "Company Found", typeof(GetCompanyResource))]
     public async Task<IActionResult> GetCompanyById(int companyId)
     {
         var query = new GetCompanyByUserIdQuery(companyId);
@@ -36,7 +36,7 @@ public class CompanyController(ICompanyCommandService companyCommandService, ICo
         Description = "Update certain things for the company by Id",
         OperationId = "UpdateCompany"
     )]
-    [SwaggerResponse(201, "Analytics created", typeof(CreateAnalyticsResource))]
+    [SwaggerResponse(201, "Company Updated", typeof(GetCompanyResource))]
     public async Task<IActionResult> UpdateCompany(int companyId,[FromBody] UpdateCompanyResource resource)
     {
         var command = UpdateCompanyCommandFromResourceAssembler.ToCommandFromResource(resource, companyId);

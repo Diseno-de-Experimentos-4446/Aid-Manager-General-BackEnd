@@ -5,10 +5,10 @@ namespace AidManager.API.ManageCosts.Interfaces.REST.Transform;
 
 public class UpdateBarDataCommandFromResourceAssembler
 {
-    public static UpdateBarDataPaymentsCommand ToCommandFromResource(int id, UpdateBarDataResource resource)
+    public static UpdateBarDataPaymentsCommand ToCommandFromResource(int projectId, UpdateBarDataResource resource)
     {
         return new UpdateBarDataPaymentsCommand(
-            id,
+            projectId,
             resource.BarData
         );
     }

@@ -5,10 +5,10 @@ namespace AidManager.API.ManageCosts.Interfaces.REST.Transform;
 
 public class UpdateAnalyticTasksCommandFromResourceAssembler
 {
-    public static UpdateAnalyticTasksCommand ToCommandFromResource(int id, UpdateAnalyticTasksResource resource)
+    public static UpdateAnalyticTasksCommand ToCommandFromResource(int projectId, UpdateAnalyticTasksResource resource)
     {
         return new UpdateAnalyticTasksCommand(
-            id,
+            projectId,
             resource.Tasks
         );
     }

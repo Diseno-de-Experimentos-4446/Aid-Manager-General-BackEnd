@@ -35,7 +35,7 @@ public class AnalyticsCommandService(
         try
         {
             
-            var analytic = await analyticsRepository.GetAnalyticsById(command.Id);
+            var analytic = await analyticsRepository.GetAnalyticsByProjectId(command.Id);
             
             if (analytic == null)
             {
@@ -60,7 +60,7 @@ public class AnalyticsCommandService(
         try
         {
             
-            var analytic = await analyticsRepository.GetAnalyticsById(command.Id);
+            var analytic = await analyticsRepository.GetAnalyticsByProjectId(command.Id);
             
             if (analytic == null)
             {
@@ -85,7 +85,7 @@ public class AnalyticsCommandService(
         try
         {
 
-            var analytic = await analyticsRepository.GetAnalyticsById(command.Id);
+            var analytic = await analyticsRepository.GetAnalyticsByProjectId(command.Id);
             
             if (analytic == null)
             {
@@ -110,7 +110,7 @@ public class AnalyticsCommandService(
         try
         {
 
-            var analytic = await analyticsRepository.GetAnalyticsById(command.Id);
+            var analytic = await analyticsRepository.GetAnalyticsByProjectId(command.Id);
             
             if (analytic == null)
             {
@@ -135,7 +135,7 @@ public class AnalyticsCommandService(
         try
         {
 
-            var analytic = await analyticsRepository.GetAnalyticsById(command.Id);
+            var analytic = await analyticsRepository.GetAnalyticsByProjectId(command.Id);
             
             if (analytic == null)
             {

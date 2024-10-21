@@ -5,10 +5,10 @@ namespace AidManager.API.ManageCosts.Interfaces.REST.Transform;
 
 public class CreateAnalyticsCommandFromResourceAssembler
 {
-    public static CreateAnalyticsCommand ToCommandFromResource(CreateAnalyticsResource resource)
+    public static CreateAnalyticsCommand ToCommandFromResource(int projectId,CreateAnalyticsResource resource)
     {
         return new CreateAnalyticsCommand(
-            resource.ProjectId,
+            projectId,
             resource.LinesChartBarData,
             resource.BarData,
             resource.Progressbar,

@@ -5,10 +5,10 @@ namespace AidManager.API.ManageCosts.Interfaces.REST.Transform;
 
 public class UpdateAnalyticProgressbarCommandFromResourceAssembler
 {
-    public static UpdateAnalyticProgressbarCommand ToCommandFromResource(int id, UpdateAnalyticProgressbarResource resource)
+    public static UpdateAnalyticProgressbarCommand ToCommandFromResource(int projectId, UpdateAnalyticProgressbarResource resource)
     {
         return new UpdateAnalyticProgressbarCommand(
-            id,
+            projectId,
             resource.Progressbar
         );
     }

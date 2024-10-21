@@ -5,10 +5,10 @@ namespace AidManager.API.ManageCosts.Interfaces.REST.Transform;
 
 public class UpdateLinesChartBarCommandFromResourceAssembler
 {
-    public static UpdateLinesChartBarCommand ToCommandFromResource(int id, UpdateLinesChartBarResource resource)
+    public static UpdateLinesChartBarCommand ToCommandFromResource(int projectId, UpdateLinesChartBarResource resource)
     {
         return new UpdateLinesChartBarCommand(
-            id,
+            projectId,
             resource.Lines
         );
     }

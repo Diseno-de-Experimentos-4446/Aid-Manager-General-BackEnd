@@ -9,7 +9,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace AidManager.API.ManageCosts.Interfaces.REST;
 
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/v1/Projects/{projectId}/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 public class AnalyticsController(
     IAnalyticsCommandService analyticsCommandService,
@@ -24,9 +24,9 @@ public class AnalyticsController(
         OperationId = "CreateData"
     )]
     [SwaggerResponse(201, "Analytics created", typeof(CreateAnalyticsResource))]
-    public async Task<IActionResult> CreateNewAnalytics([FromBody] CreateAnalyticsResource resource)
+    public async Task<IActionResult> CreateNewAnalytics(int projectId, [FromBody] CreateAnalyticsResource resource)
     {
-        var command = CreateAnalyticsCommandFromResourceAssembler.ToCommandFromResource(resource);
+        var command = CreateAnalyticsCommandFromResourceAssembler.ToCommandFromResource(projectId,resource);
         var analytic = await analyticsCommandService.Handle(command);
         
         if (analytic == null)
@@ -38,7 +38,7 @@ public class AnalyticsController(
         return Ok(analyticResource);
     }
     
-    [HttpGet("{projectId}")]
+    [HttpGet]
     [SwaggerOperation(
         Summary = "Get Analytics by Project Id",
         Description = "gets Analytics by Project Id",
@@ -66,9 +66,9 @@ public class AnalyticsController(
         OperationId = "UpdateBarData"
     )]
     [SwaggerResponse(200, "Analytics updated", typeof(UpdateLinesChartBarResource))]
-    public async Task<IActionResult> UpdateAnalyticPayments([FromBody] UpdateLinesChartBarResource resource)
+    public async Task<IActionResult> UpdateAnalyticPayments([FromRoute] int projectId, [FromBody] UpdateLinesChartBarResource resource)
     {
-        var command = UpdateLinesChartBarCommandFromResourceAssembler.ToCommandFromResource(resource.Id, resource);
+        var command = UpdateLinesChartBarCommandFromResourceAssembler.ToCommandFromResource(projectId, resource);
         var analytic = await analyticsCommandService.Handle(command);
         
         if (analytic == null)
@@ -87,9 +87,9 @@ public class AnalyticsController(
         OperationId = "UpdateLineBarData"
     )]
     [SwaggerResponse(200, "Analytics updated", typeof(UpdateBarDataResource))]
-    public async Task<IActionResult> UpdateAnalyticLines([FromBody] UpdateBarDataResource resource)
+    public async Task<IActionResult> UpdateAnalyticLines([FromRoute] int projectId, [FromBody] UpdateBarDataResource resource)
     {
-        var command = UpdateBarDataCommandFromResourceAssembler.ToCommandFromResource(resource.Id, resource);
+        var command = UpdateBarDataCommandFromResourceAssembler.ToCommandFromResource(projectId, resource);
         var analytic = await analyticsCommandService.Handle(command);
         
         if (analytic == null)
@@ -103,9 +103,9 @@ public class AnalyticsController(
     
     [HttpPatch("tasks")]
     [SwaggerResponse(200, "Analytics updated", typeof(UpdateAnalyticTasksResource))]
-    public async Task<IActionResult> UpdateAnalyticTasks([FromBody] UpdateAnalyticTasksResource resource)
+    public async Task<IActionResult> UpdateAnalyticTasks([FromRoute] int projectId,[FromBody] UpdateAnalyticTasksResource resource)
     {
-        var command = UpdateAnalyticTasksCommandFromResourceAssembler.ToCommandFromResource(resource.Id, resource);
+        var command = UpdateAnalyticTasksCommandFromResourceAssembler.ToCommandFromResource(projectId, resource);
         var analytic = await analyticsCommandService.Handle(command);
         
         if (analytic == null)
@@ -119,9 +119,9 @@ public class AnalyticsController(
     
     [HttpPatch("progressbar")]
     [SwaggerResponse(200, "Analytics updated", typeof(UpdateAnalyticProgressbarResource))]
-    public async Task<IActionResult> UpdateAnalyticProgressbar([FromBody] UpdateAnalyticProgressbarResource resource)
+    public async Task<IActionResult> UpdateAnalyticProgressbar([FromRoute] int projectId,[FromBody] UpdateAnalyticProgressbarResource resource)
     {
-        var command = UpdateAnalyticProgressbarCommandFromResourceAssembler.ToCommandFromResource(resource.Id, resource);
+        var command = UpdateAnalyticProgressbarCommandFromResourceAssembler.ToCommandFromResource(projectId, resource);
         var analytic = await analyticsCommandService.Handle(command);
         
         if (analytic == null)
@@ -135,9 +135,9 @@ public class AnalyticsController(
     
     [HttpPatch("status")]
     [SwaggerResponse(200, "Analytics updated", typeof(UpdateAnalyticStatusResource))]
-    public async Task<IActionResult> UpdateAnalyticStatus([FromBody] UpdateAnalyticStatusResource resource)
+    public async Task<IActionResult> UpdateAnalyticStatus([FromRoute] int projectId,[FromBody] UpdateAnalyticStatusResource resource)
     {
-        var command = UpdateAnalyticStatusCommandFromResourceAssembler.ToCommandFromResource(resource.Id, resource);
+        var command = UpdateAnalyticStatusCommandFromResourceAssembler.ToCommandFromResource(projectId, resource);
         var analytic = await analyticsCommandService.Handle(command);
         
         if (analytic == null)
