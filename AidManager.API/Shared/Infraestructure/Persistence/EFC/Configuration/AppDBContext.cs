@@ -89,8 +89,13 @@ public class AppDBContext : DbContext
         builder.Entity<Project>().Property(p => p.ProjectDate).IsRequired().HasConversion(
             v => v.ToDateTime(TimeOnly.MinValue),
             v => DateOnly.FromDateTime(v)
-        ); // Ensure correct mapping
-
+        );
+        
+        builder.Entity<Project>().Property(p => p.AuditDate).IsRequired().HasConversion(
+            v => v.ToDateTime(TimeOnly.MinValue),
+            v => DateOnly.FromDateTime(v)
+        );
+        
         builder.Entity<Project>().Property(p => p.ProjectTime).IsRequired().HasConversion(
             v => v.ToTimeSpan(),
             v => TimeOnly.FromTimeSpan(v)
