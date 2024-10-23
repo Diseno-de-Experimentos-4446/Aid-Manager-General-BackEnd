@@ -21,7 +21,7 @@ public class TaskItem
     public int AssigneeId {get; private set;}
     
     public string profileImg {get; private set;}
-    public DateOnly CreatedAt { get; private set; } = DateOnly.MinValue;
+    public DateOnly CreatedAt { get; private set; }
    
     protected TaskItem()
     {
@@ -32,6 +32,7 @@ public class TaskItem
         this.State = "ToDo";
         this.Assignee = string.Empty;
         this.AssigneeId = 0;
+        this.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
     }
 
     public TaskItem(CreateTaskCommand command, string assignee, string assigneeImage)
@@ -44,6 +45,7 @@ public class TaskItem
         this.AssigneeId = command.AssigneeId;
         this.Assignee = assignee;
         this.profileImg = assigneeImage;
+        this.CreatedAt= DateOnly.FromDateTime(DateTime.Now);
 
     }
     

@@ -17,7 +17,7 @@ public class UserCommandService(IUserRepository userRepository, IUnitOfWork unit
         {
             var validate = await userRepository.FindUserByEmail(command.Email);
             var companyByEmail = await externalUserAuthService.GetCompanyByEmail(command.CompanyEmail);
-            if (companyByEmail != null)
+            if (companyByEmail != null && command.Role == 0)
             {
                 Console.WriteLine("Company EMAIL ALREADY USED"); 
                 throw new Exception("Error: Company EMAIL already exist");

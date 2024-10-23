@@ -25,11 +25,19 @@ public class AuthenticationController(IUserIAMCommandService userCommandService)
     )]
     public async Task<IActionResult> SignIn([FromBody] SignInResource resource)
     {
-        var signInCommand = SignInCommandFromResourceAssembler.ToCommandFromResource(resource);
-        var authenticatedUser = await userCommandService.Handle(signInCommand);
-        var authenticatedUserResource =
-            AuthenticatedUserResourceFromEntityAssembler.ToResourceFromEntity(authenticatedUser.user,
-                authenticatedUser.token);
-        return Ok(authenticatedUserResource);
+        try
+        {
+            var signInCommand = SignInCommandFromResourceAssembler.ToCommandFromResource(resource);
+            var authenticatedUser = await userCommandService.Handle(signInCommand);
+            var authenticatedUserResource =
+                AuthenticatedUserResourceFromEntityAssembler.ToResourceFromEntity(authenticatedUser.user,
+                    authenticatedUser.token);
+            return Ok(authenticatedUserResource);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Error: " + e.Message);
+        }
+        
     }
 }

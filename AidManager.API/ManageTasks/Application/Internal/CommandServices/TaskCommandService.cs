@@ -11,32 +11,32 @@ public class TaskCommandService(ITaskRepository taskRepository, IUnitOfWork unit
 {
     public async Task<TaskItem> Handle(CreateTaskCommand command)
     {
-        
-        bool exists = await projectRepository.ExistsProject(command.ProjectId);
-
-        if (!exists)
-        {
-            throw new Exception($"Project with id {command.ProjectId} does not exist.");
-        }
-        
-        var user = await externalUserService.GetUserById(command.AssigneeId);
-
-        if (user.Role == 0)
-        {
-            throw new Exception($"Cant assign task to a manager user.");
-        }
-        
-        var fullname = user.FirstName + " " + user.LastName;
-        
-        var task = new TaskItem(command, fullname, user.ProfileImg);
-        
-        await projectCommandService.Handle(new AddTeamMemberCommand(command.AssigneeId, command.ProjectId));
-        
         try
         {
-            await taskRepository.AddAsync(task);
-            await unitOfWork.CompleteAsync();
-            return task;
+            bool exists = await projectRepository.ExistsProject(command.ProjectId);
+
+            if (!exists)
+            {
+                throw new Exception($"Project with id {command.ProjectId} does not exist.");
+            }
+            
+            var user = await externalUserService.GetUserById(command.AssigneeId);
+
+            if (user.Role == 0)
+            {
+                throw new Exception($"Cant assign task to a manager user.");
+            }
+            
+            var fullname = user.FirstName + " " + user.LastName;
+            
+            var task = new TaskItem(command, fullname, user.ProfileImg);
+            
+            await projectCommandService.Handle(new AddTeamMemberCommand(command.AssigneeId, command.ProjectId));
+            
+            
+                await taskRepository.AddAsync(task);
+                await unitOfWork.CompleteAsync();
+                return task;
         }
         catch (Exception e)
         {

@@ -31,8 +31,8 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest("Error: " + e.Message);
+
         }
         
     }
@@ -85,10 +85,18 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
     )]
     public async Task<IActionResult> UpdateProject(AddImageResource resource)
     {
-        var project = await projectCommandService.Handle(AddImageResourceFromResourceAssembler.ToCommandFromResource(resource));
+        try
+        {
+            var project = await projectCommandService.Handle(AddImageResourceFromResourceAssembler.ToCommandFromResource(resource));
+            var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project);
+            return Ok(projectResource);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Error: " + e.Message);
+
+        }
         
-        var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project);
-        return Ok(projectResource);
     }
     
     [HttpGet("team/{projectId}")]
@@ -112,9 +120,18 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
     )]
     public async Task<IActionResult> DeleteProject(int projectId)
     {
-        var project = await projectCommandService.Handle(DeleteProjectCommandFromResourceAssembler.ToCommandFromResource(projectId));
-        var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project);
-        return Ok(projectResource);
+        try
+        {
+            var project = await projectCommandService.Handle(DeleteProjectCommandFromResourceAssembler.ToCommandFromResource(projectId));
+            var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project);
+            return Ok(projectResource);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Error: " + e.Message);
+
+        }
+        
     }
     
     

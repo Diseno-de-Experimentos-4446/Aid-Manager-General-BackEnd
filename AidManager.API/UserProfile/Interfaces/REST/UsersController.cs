@@ -76,8 +76,7 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest("Error: " + e.Message);
         }
         
     }
@@ -109,8 +108,8 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest("Error: " + e.Message);
+
         }
         
     }
@@ -134,8 +133,8 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest("Error: " + e.Message);
+
         }
         
     }
@@ -157,8 +156,8 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest("Error: " + e.Message);
+
         }
         
     }

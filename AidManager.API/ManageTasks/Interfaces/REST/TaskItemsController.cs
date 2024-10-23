@@ -24,14 +24,22 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
     [SwaggerResponse(201, "Task Created", typeof(CreateTaskItemResource))]
     public async Task<ActionResult> CreateTaskItem(int projectId, [FromBody] CreateTaskItemResource resource)
     {
-        var createTaskItemCommand = CreateTaskItemCommandFromResourceAssembler.ToCommandFromResource(resource, projectId); 
-        Console.WriteLine("The TaskItemController is called. and the Task Item is assembled." + createTaskItemCommand);
-        var result = await taskCommandService.Handle(createTaskItemCommand);
-        Console.WriteLine("The Create Item Command is handled in the taskCommandService.");
-        var taskItemById = GetTaskItemById(result.Id);
-        Console.WriteLine("Task by id called" + taskItemById.Result);
-        return CreatedAtAction(nameof(GetTaskItemById), new {projectId = projectId, id = result.Id }, 
+        try
+        {
+            var createTaskItemCommand = CreateTaskItemCommandFromResourceAssembler.ToCommandFromResource(resource, projectId); 
+            Console.WriteLine("The TaskItemController is called. and the Task Item is assembled." + createTaskItemCommand);
+            var result = await taskCommandService.Handle(createTaskItemCommand);
+            Console.WriteLine("The Create Item Command is handled in the taskCommandService.");
+            var taskItemById = GetTaskItemById(result.Id);
+            Console.WriteLine("Task by id called" + taskItemById.Result);
+            return CreatedAtAction(nameof(GetTaskItemById), new {projectId = projectId, id = result.Id }, 
             TaskItemResourceFromEntityAssembler.ToResourceFromEntity(result));
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Error: " + e.Message);
+        }
+        
         
     }
     
@@ -51,13 +59,41 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest("Error: " + e.Message);
         }
         
     }
     
-    [HttpPut("{id}")]
+    
+    [HttpPatch("{id}")]
+    [SwaggerOperation(
+        Summary = "Change Status",
+        Description = "Update a Status Project Task",
+        OperationId = "UpdateStatusTaskItem"
+    )]
+    [SwaggerResponse(201, "Task Updated", typeof(UpdateTaskItemResource))]
+
+    public async Task<ActionResult> ChangeStatusTaskItem( int id ,int projectId,[FromBody] string State)
+    {
+        try
+        { 
+            var getTaskByIdQuery = new GetTaskByIdQuery(id);
+            var taskItem = await taskQueryService.Handle(getTaskByIdQuery);
+            var resource = new UpdateTaskItemResource(taskItem.Title, taskItem.Description, taskItem.DueDate, State, taskItem.AssigneeId);
+            
+            var updateTaskCommand = UpdateTaskItemCommandFromResourceAssembler.ToCommandFromResource(resource, id, projectId);
+            var result = await taskCommandService.Handle(updateTaskCommand);
+            return Ok(TaskItemResourceFromEntityAssembler.ToResourceFromEntity(result));
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Error: " + e.Message);
+
+        }
+       
+    }
+    
+    [HttpPatch("edit/{id}")]
     [SwaggerOperation(
         Summary = "Update a Task",
         Description = "Update a Project Task",
@@ -75,8 +111,8 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest("Error: " + e.Message);
+
         }
        
     }
@@ -96,8 +132,8 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest("Error: " + e.Message);
+
         }
        
     }
@@ -119,8 +155,8 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest("Error: " + e.Message);
+
         }
         
     }

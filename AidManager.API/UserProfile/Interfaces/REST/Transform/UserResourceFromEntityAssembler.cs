@@ -10,6 +10,11 @@ public static class UserResourceFromEntityAssembler
     public static GetUserResource ToResourceFromEntity(User user)
     {
         var role = "TeamMember";
+
+        if (user.Role == 0)
+        {
+            role = "Manager";
+        }
         
         return new GetUserResource(user.Id, user.FirstName + " " + user.LastName, user.Age, user.Email, user.Phone, user.Password, user.ProfileImg ,role, user.CompanyId ,user.CompanyName);
     }
@@ -21,4 +26,5 @@ public static class UserResourceFromEntityAssembler
 
         return new ManagerUserResource(user.Id, user.FirstName + " " + user.LastName, user.Age, user.Email, user.Phone, user.Password, user.ProfileImg, role,user.CompanyId, user.CompanyName, company.Email, company.Country, company.TeamRegisterCode);
     }
+    
 }

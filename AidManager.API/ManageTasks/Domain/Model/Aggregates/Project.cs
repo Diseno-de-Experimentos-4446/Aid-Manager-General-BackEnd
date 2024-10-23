@@ -22,13 +22,15 @@ public class Project
     public TimeOnly ProjectTime { get; set; }
     
     public string ProjectLocation { get; set; }
+    
+    public DateOnly AuditDate { get; set; }
 
 
     public Project()
     {
         ImageUrl = new List<ProjectImage>(); // Initialize the list
         TeamMembers = new List<User>(); // Initialize the list
-
+        AuditDate = DateOnly.FromDateTime(DateTime.Now);
     }
     public Project(CreateProjectCommand command)
     {
@@ -39,6 +41,7 @@ public class Project
         this.ProjectDate = DateOnly.Parse(command.ProjectDate);
         this.ProjectTime = TimeOnly.Parse(command.ProjectTime);
         this.ProjectLocation = command.ProjectLocation;
+        this.AuditDate = DateOnly.FromDateTime(DateTime.Now);
     }
     
     public void AddImage(AddProjectImageCommand command)
