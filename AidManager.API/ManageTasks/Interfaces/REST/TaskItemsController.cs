@@ -72,15 +72,14 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
         OperationId = "UpdateStatusTaskItem"
     )]
     [SwaggerResponse(201, "Task Updated", typeof(UpdateTaskItemResource))]
-
-    public async Task<ActionResult> ChangeStatusTaskItem( int id ,int projectId,[FromBody] string State)
+    public async Task<ActionResult> ChangeStatusTaskItem(int id, int projectId, [FromBody] UpdateProjectStatusResource request)
     {
         try
-        { 
+        {
             var getTaskByIdQuery = new GetTaskByIdQuery(id);
             var taskItem = await taskQueryService.Handle(getTaskByIdQuery);
-            var resource = new UpdateTaskItemResource(taskItem.Title, taskItem.Description, taskItem.DueDate, State, taskItem.AssigneeId);
-            
+            var resource = new UpdateTaskItemResource(taskItem.Title, taskItem.Description, taskItem.DueDate, request.status, taskItem.AssigneeId);
+
             var updateTaskCommand = UpdateTaskItemCommandFromResourceAssembler.ToCommandFromResource(resource, id, projectId);
             var result = await taskCommandService.Handle(updateTaskCommand);
             return Ok(TaskItemResourceFromEntityAssembler.ToResourceFromEntity(result));
@@ -88,9 +87,7 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
         catch (Exception e)
         {
             return BadRequest("Error: " + e.Message);
-
         }
-       
     }
     
     [HttpPatch("edit/{id}")]
