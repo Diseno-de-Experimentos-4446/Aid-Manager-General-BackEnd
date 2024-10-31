@@ -50,14 +50,19 @@ public class ProjectCommandService(IProjectRepository projectRepository, IUnitOf
 
     public async Task<Project> Handle(AddTeamMemberCommand command)
     {
-        var project = await projectRepository.GetProjectById(command.ProjectId);
-        var user = await externalUserService.GetUserById(command.UserId);
-        
-        project.AddTeamMember(user);
-        
         try
         {
+            var project = await projectRepository.GetProjectById(command.ProjectId); 
+            var user = await externalUserService.GetUserById(command.UserId);
+
+            if (project.TeamMembers.All(tm => tm.Id != user.Id))
+        { 
+            project.AddTeamMember(user);
             await projectRepository.Update(project);
+            await unitOfWork.CompleteAsync();
+        }
+            
+            
             await unitOfWork.CompleteAsync();
             return project;
         }

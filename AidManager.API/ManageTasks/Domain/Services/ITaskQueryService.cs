@@ -8,4 +8,6 @@ public interface ITaskQueryService
     Task<TaskItem> Handle(GetTaskByIdQuery query); 
     Task<List<TaskItem>> Handle(GetTasksByProjectIdQuery query);
     
+    Task<List<List<TaskItem>>> Handle(GetTasksByCompanyId query);
+    
 }

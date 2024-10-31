@@ -85,7 +85,14 @@ public class AppDBContext : DbContext
         builder.Entity<Project>().HasKey(p => p.Id);
         builder.Entity<Project>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<Project>().HasMany(p => p.ImageUrl).WithOne().OnDelete(DeleteBehavior.Cascade);
-        builder.Entity<Project>().HasMany(p => p.TeamMembers).WithOne().OnDelete(DeleteBehavior.Cascade);
+        builder.Entity<Project>().HasMany(p => p.TeamMembers)
+            .WithMany()
+            .UsingEntity<Dictionary<string, object>>("ProjectUser",
+                j => j.HasOne<User>().WithMany().HasForeignKey("UserId"),
+            j => j.HasOne<Project>().WithMany().HasForeignKey("ProjectId")
+        );
+        
+        
         builder.Entity<Project>().Property(p => p.ProjectDate).IsRequired().HasConversion(
             v => v.ToDateTime(TimeOnly.MinValue),
             v => DateOnly.FromDateTime(v)

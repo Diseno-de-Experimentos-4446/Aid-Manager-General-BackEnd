@@ -26,6 +26,7 @@ using AidManager.API.IAM.Infrastructure.Tokens.JWT.Services;
 using AidManager.API.IAM.Interfaces.ACL;
 using AidManager.API.IAM.Interfaces.ACL.Services;
 using AidManager.API.ManageCosts.Application.Internal.CommandServices;
+using AidManager.API.ManageCosts.Application.Internal.OutboundServices.ACL;
 using AidManager.API.ManageCosts.Application.Internal.QueryServices;
 using AidManager.API.ManageCosts.Domain.Repositories;
 using AidManager.API.ManageCosts.Domain.Services;
@@ -38,6 +39,8 @@ using AidManager.API.ManageTasks.Application.Internal.QueryServices;
 using AidManager.API.ManageTasks.Domain.Repositories;
 using AidManager.API.ManageTasks.Domain.Services;
 using AidManager.API.ManageTasks.Infrastructure.Repositories;
+using AidManager.API.ManageTasks.Interfaces.ACL;
+using AidManager.API.ManageTasks.Interfaces.ACL.Services;
 using AidManager.API.Payment.Application.Internal.CommandServices;
 using AidManager.API.Payment.Application.Internal.QueryServices;
 using AidManager.API.Payment.Domain.Repositories;
@@ -168,6 +171,8 @@ builder.Services.AddScoped<IAnalyticsRepository, AnalyticsRepository>();
 builder.Services.AddScoped<IAnalyticsCommandService, AnalyticsCommandService>();
 builder.Services.AddScoped<IAnalyticsQueryService, AnalyticsQueryService>();
 builder.Services.AddScoped<IManageCostsFacade, ManageCostsFacade>();
+builder.Services.AddScoped<ExternalProjectsService>();
+
 
 builder.Services.AddScoped<ITaskRepository, TaskItemsRepository>();
 builder.Services.AddScoped<ITaskCommandService, TaskCommandService>();
@@ -178,6 +183,7 @@ builder.Services.AddScoped<ExternalUserService>(); // Register ExternalUserServi
 builder.Services.AddScoped<IProjectCommandService, ProjectCommandService>();
 builder.Services.AddScoped<IProjectQueryService, ProjectQueryService>();
 builder.Services.AddScoped<IProjectRepository, ProjectsRepository>();
+builder.Services.AddScoped<IManageTasksFacade, ManageTasksFacade>();
 
 builder.Services.AddControllers();
 

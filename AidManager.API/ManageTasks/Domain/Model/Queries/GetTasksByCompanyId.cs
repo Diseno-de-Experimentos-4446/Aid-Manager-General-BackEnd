@@ -1,3 +1,3 @@
 ﻿namespace AidManager.API.ManageTasks.Domain.Model.Queries;
 
-public record GetAllProjectsByCompanyIdQuery(string CompanyId);
+public record GetTasksByCompanyId(int CompanyId);

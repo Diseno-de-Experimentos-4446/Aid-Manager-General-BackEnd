@@ -11,7 +11,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace AidManager.API.ManageTasks.Interfaces;
 
 [ApiController]
-[Route("api/v1/Projects/{projectId}/[controller]")]
+[Route("api/v1/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQueryService taskQueryService) : ControllerBase
 {
@@ -43,7 +43,7 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
         
     }
     
-    [HttpGet("{id}")]
+    [HttpGet("{id}/Projects/{projectId}")]
     [SwaggerOperation(
         Summary = "Get a Task by Id",
         Description = "Get Task Item by using its ID",
@@ -65,7 +65,7 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
     }
     
     
-    [HttpPatch("{id}")]
+    [HttpPatch("{id}/Projects/{projectId}")]
     [SwaggerOperation(
         Summary = "Change Status",
         Description = "Update a Status Project Task",
@@ -90,7 +90,7 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
         }
     }
     
-    [HttpPatch("edit/{id}")]
+    [HttpPatch("edit/{id}/Projects/{projectId}")]
     [SwaggerOperation(
         Summary = "Update a Task",
         Description = "Update a Project Task",
@@ -113,7 +113,7 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
         }
        
     }
-    [HttpDelete("{id}")]
+    [HttpDelete("{id}/Projects/{projectId}")]
     [SwaggerOperation(
         Summary = "Deletes a Task",
         Description = "Delete a ProjectTask",
@@ -135,9 +135,9 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
        
     }
     
-    [HttpGet]
+    [HttpGet("/Projects/{projectId}")]
     [SwaggerOperation(
-        Summary = "Get All Tasks",
+        Summary = "Get All Tasks from a project",
         Description = "Get all tasks from a project",
         OperationId = "GetAllTasks"
     )]
@@ -148,6 +148,29 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
             var getAllTasksQueryByProjectId = new GetTasksByProjectIdQuery(projectId); 
             var result = await taskQueryService.Handle(getAllTasksQueryByProjectId);
             var resources = result.Select(TaskItemResourceFromEntityAssembler.ToResourceFromEntity);
+            return Ok(resources);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Error: " + e.Message);
+
+        }
+        
+    }
+    
+    [HttpGet("/Company/{companyId}")]
+    [SwaggerOperation(
+        Summary = "Get All Tasks from a Company",
+        Description = "Get all tasks from a company",
+        OperationId = "GetAllTasksByCompany"
+    )]
+    public async Task<ActionResult<IEnumerable<IEnumerable<TaskItemResource>>>> GetAllTaskItemsByCompany(int companyId)
+    {
+        try
+        {
+            var getAllTasksQueryByCompanyId = new GetTasksByCompanyId(companyId);
+            var result = await taskQueryService.Handle(getAllTasksQueryByCompanyId);
+            var resources = result.Select(tasks => tasks.Select(TaskItemResourceFromEntityAssembler.ToResourceFromEntity));
             return Ok(resources);
         }
         catch (Exception e)

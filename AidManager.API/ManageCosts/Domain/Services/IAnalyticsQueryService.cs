@@ -8,4 +8,7 @@ public interface IAnalyticsQueryService
     Task<Analytics?> Handle(GetAnalyticsByProjectId query);
     
     Task<Analytics?> Handle(GetAnalyticsById query);
+    
+    Task<List<Analytics?>> Handle(GetAnalyticsByCompanyId query);
+    
 }

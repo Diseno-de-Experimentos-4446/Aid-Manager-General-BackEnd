@@ -63,7 +63,10 @@ public class Project
     
     public void AddTeamMember(User user)
     {
-        TeamMembers.Add(user);
+        if (TeamMembers.All(tm => tm.Id != user.Id))
+        {
+            TeamMembers.Add(user);
+        }
     }
     
 }
