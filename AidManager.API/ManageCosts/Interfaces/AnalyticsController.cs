@@ -9,14 +9,14 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace AidManager.API.ManageCosts.Interfaces.REST;
 
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/v1/Projects/{projectId}/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 public class AnalyticsController(
     IAnalyticsCommandService analyticsCommandService,
     IAnalyticsQueryService analyticsQueryService
     ) : ControllerBase
 {
-    [HttpGet("/{projectId}")]
+    [HttpGet]
     [SwaggerOperation(
         Summary = "Get Analytics by Project Id",
         Description = "gets Analytics by Project Id",
@@ -37,7 +37,7 @@ public class AnalyticsController(
         return Ok(analyticResource);
     }
     
-    [HttpPatch("lines/{projectId}")]
+    [HttpPatch("lines")]
     [SwaggerOperation(
         Summary = "Update BarData",
         Description = "Update the BarData list",
@@ -58,7 +58,7 @@ public class AnalyticsController(
         return Ok(analyticResource);
     }
     
-    [HttpPatch("bardata/{projectId}")]
+    [HttpPatch("bardata")]
     [SwaggerOperation(
         Summary = "Update LineBarData",
         Description = "Update the LineBarData list",
@@ -79,7 +79,7 @@ public class AnalyticsController(
         return Ok(analyticResource);
     }
     
-    [HttpPatch("tasks/{projectId}")]
+    [HttpPatch("tasks")]
     [SwaggerResponse(200, "Analytics updated", typeof(UpdateAnalyticTasksResource))]
     public async Task<IActionResult> UpdateAnalyticTasks([FromRoute] int projectId,[FromBody] UpdateAnalyticTasksResource resource)
     {
@@ -95,7 +95,7 @@ public class AnalyticsController(
         return Ok(analyticResource);
     }
     
-    [HttpPatch("progressbar/{projectId}")]
+    [HttpPatch("progressbar")]
     [SwaggerResponse(200, "Analytics updated", typeof(UpdateAnalyticProgressbarResource))]
     public async Task<IActionResult> UpdateAnalyticProgressbar([FromRoute] int projectId,[FromBody] UpdateAnalyticProgressbarResource resource)
     {
@@ -111,7 +111,7 @@ public class AnalyticsController(
         return Ok(analyticResource);
     }
     
-    [HttpPatch("status/{projectId}")]
+    [HttpPatch("status")]
     [SwaggerResponse(200, "Analytics updated", typeof(UpdateAnalyticStatusResource))]
     public async Task<IActionResult> UpdateAnalyticStatus([FromRoute] int projectId,[FromBody] UpdateAnalyticStatusResource resource)
     {
@@ -128,7 +128,7 @@ public class AnalyticsController(
     }
     
     
-    [HttpGet("company/{companyId}")]
+    [HttpGet("/api/v1/Analytics-by-Company/{companyId}")]
     [SwaggerOperation(
         Summary = "Get Analytics by Company Id",
         Description = "gets Analytics by Company Id",

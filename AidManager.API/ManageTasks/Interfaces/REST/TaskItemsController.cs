@@ -11,7 +11,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace AidManager.API.ManageTasks.Interfaces;
 
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/v1/Projects/{projectId}/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQueryService taskQueryService) : ControllerBase
 {
@@ -43,7 +43,7 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
         
     }
     
-    [HttpGet("{id}/Projects/{projectId}")]
+    [HttpGet("{id}")]
     [SwaggerOperation(
         Summary = "Get a Task by Id",
         Description = "Get Task Item by using its ID",
@@ -65,7 +65,7 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
     }
     
     
-    [HttpPatch("{id}/Projects/{projectId}")]
+    [HttpPatch("{id}")]
     [SwaggerOperation(
         Summary = "Change Status",
         Description = "Update a Status Project Task",
@@ -90,7 +90,7 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
         }
     }
     
-    [HttpPatch("edit/{id}/Projects/{projectId}")]
+    [HttpPatch("edit/{id}")]
     [SwaggerOperation(
         Summary = "Update a Task",
         Description = "Update a Project Task",
@@ -113,7 +113,7 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
         }
        
     }
-    [HttpDelete("{id}/Projects/{projectId}")]
+    [HttpDelete("{id}")]
     [SwaggerOperation(
         Summary = "Deletes a Task",
         Description = "Delete a ProjectTask",
@@ -135,7 +135,7 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
        
     }
     
-    [HttpGet("/Projects/{projectId}")]
+    [HttpGet("all")]
     [SwaggerOperation(
         Summary = "Get All Tasks from a project",
         Description = "Get all tasks from a project",
@@ -158,7 +158,7 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
         
     }
     
-    [HttpGet("/Company/{companyId}")]
+    [HttpGet("/api/v1/Company-Tasks/{companyId}")]
     [SwaggerOperation(
         Summary = "Get All Tasks from a Company",
         Description = "Get all tasks from a company",
