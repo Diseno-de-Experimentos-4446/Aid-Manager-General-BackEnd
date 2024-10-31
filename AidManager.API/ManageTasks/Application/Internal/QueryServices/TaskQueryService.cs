@@ -19,18 +19,18 @@ public class TaskQueryService(ITaskRepository taskRepository, ExternalUserServic
         return await taskRepository.GetTasksByProjectId(query.ProjectId);
     }
 
-    public async Task<List<List<TaskItem>>> Handle(GetTasksByCompanyId query)
+    public async Task<List<TaskItem>> Handle(GetTasksByCompanyId query)
     {
         try
         {
             var projects = await external.GetProjectsByCompany(query.CompanyId);
 
-            var tasksList = new List<List<TaskItem>>();
+            var tasksList = new List<TaskItem>();
                 
             foreach (var project in projects)
             {
                 var tasks = await taskRepository.GetTasksByProjectId(project.Id);
-                tasksList.Add(tasks);
+                tasksList.AddRange(tasks);
             }
 
             return tasksList;

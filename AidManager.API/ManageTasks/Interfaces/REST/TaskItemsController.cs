@@ -164,14 +164,14 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
         Description = "Get all tasks from a company",
         OperationId = "GetAllTasksByCompany"
     )]
-    public async Task<ActionResult<IEnumerable<IEnumerable<TaskItemResource>>>> GetAllTaskItemsByCompany(int companyId)
+    public async Task<ActionResult<IEnumerable<TaskItemResource>>> GetAllTaskItemsByCompany(int companyId)
     {
         try
         {
             var getAllTasksQueryByCompanyId = new GetTasksByCompanyId(companyId);
             var result = await taskQueryService.Handle(getAllTasksQueryByCompanyId);
-            var resources = result.Select(tasks => tasks.Select(TaskItemResourceFromEntityAssembler.ToResourceFromEntity));
-            return Ok(resources);
+            var resource = result.Select(TaskItemResourceFromEntityAssembler.ToResourceFromEntity);
+            return Ok(resource);
         }
         catch (Exception e)
         {
