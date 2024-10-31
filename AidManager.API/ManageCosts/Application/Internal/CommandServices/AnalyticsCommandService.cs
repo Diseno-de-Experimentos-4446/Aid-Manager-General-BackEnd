@@ -1,5 +1,6 @@
 using AidManager.API.ManageCosts.Domain.Model.Aggregates;
 using AidManager.API.ManageCosts.Domain.Model.Commands;
+using AidManager.API.ManageCosts.Domain.Model.Entities;
 using AidManager.API.ManageCosts.Domain.Repositories;
 using AidManager.API.ManageCosts.Domain.Services;
 using AidManager.API.Shared.Domain.Repositories;
@@ -43,7 +44,7 @@ public class AnalyticsCommandService(
             }
             
             analytic.BarData = command.BarData;
-            
+            await analyticsRepository.Update(analytic);
             await unitOfWork.CompleteAsync();
             
             return analytic;
@@ -67,10 +68,9 @@ public class AnalyticsCommandService(
                 return null;
             }
             
-            analytic.Progressbar = command.Progressbar;
-            
+            analytic.Progressbar = command.Progressbar; 
+            await analyticsRepository.Update(analytic);
             await unitOfWork.CompleteAsync();
-            
             return analytic;
         }
         catch (Exception e)
@@ -93,7 +93,8 @@ public class AnalyticsCommandService(
             }
             
             analytic.Status = command.Status;
-            
+            await analyticsRepository.Update(analytic);
+
             await unitOfWork.CompleteAsync();
             
             return analytic;
@@ -116,9 +117,12 @@ public class AnalyticsCommandService(
             {
                 return null;
             }
-            
-            analytic.LinesChartBarData = command.Lines;
-            
+
+            var linesChartBarData = new List<LineChartData>();
+            linesChartBarData.AddRange(command.Lines);
+            analytic.LinesChartBarData = linesChartBarData;
+            await analyticsRepository.Update(analytic);
+
             await unitOfWork.CompleteAsync();
             
             return analytic;
@@ -143,7 +147,8 @@ public class AnalyticsCommandService(
             }
             
             analytic.Tasks = command.Tasks;
-            
+            await analyticsRepository.Update(analytic);
+
             await unitOfWork.CompleteAsync();
             
             return analytic;
