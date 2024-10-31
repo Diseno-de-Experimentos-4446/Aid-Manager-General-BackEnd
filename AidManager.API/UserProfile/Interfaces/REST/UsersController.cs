@@ -143,7 +143,7 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
     [HttpDelete("kick-member/{userId}")]
     [SwaggerOperation(
         Summary = "Kick User",
-        Description = "Delete User",
+        Description = "Delete User, if you delete the MANAGER user the whole company will be deleted",
         OperationId = "DeleteUser"
     )]
     public async Task<IActionResult> KickUserByCompanyId(int userId)
