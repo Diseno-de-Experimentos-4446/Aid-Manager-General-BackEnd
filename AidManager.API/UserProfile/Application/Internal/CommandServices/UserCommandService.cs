@@ -90,7 +90,10 @@ public class UserCommandService(IUserRepository userRepository, IUnitOfWork unit
         var user = await userRepository.FindByIdAsync(command.UserId);
         if (user != null)
         {
-            await externalUserAuthService.DeleteCompany(user.CompanyId);
+            if (user.Role == 0)
+            {
+                await externalUserAuthService.DeleteCompany(user.CompanyId);
+            }
             await externalUserAuthService.DeleteUser(user.Email);
             await userRepository.Remove(user);
             await unitOfWork.CompleteAsync();
