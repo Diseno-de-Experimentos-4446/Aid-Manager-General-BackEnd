@@ -2,9 +2,6 @@
 
 public class BarData
 {
-    public int Id { get; set; } 
-    
-    public int AnalyticsId { get; set; } 
     public double SunAmount { get; set; }
     public double MonAmount { get; set; }
     public double TueAmount { get; set; }
