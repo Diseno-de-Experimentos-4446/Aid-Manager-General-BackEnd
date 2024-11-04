@@ -41,7 +41,8 @@ public class UserCommandService(IUserRepository userRepository, IUnitOfWork unit
                     await externalUserAuthService.CreateUsername(user.Email, user.Password, user.Role);
                     var userid = await externalUserAuthService.FetchUserIdByUsername(user.Email);
                     //externalCompanyAuthService.CreateCompany
-                    var company = await externalUserAuthService.CreateCompany(command.CompanyName, command.CompanyCountry, command.CompanyEmail, userid);
+                    await externalUserAuthService.CreateCompany(command.CompanyName, command.CompanyCountry, command.CompanyEmail, userid);
+                    var company = await externalUserAuthService.FetchCompanyByCompanyId(user.CompanyId);
                     user.CompanyId = company.Id;
                     break;
                 //TeamMember

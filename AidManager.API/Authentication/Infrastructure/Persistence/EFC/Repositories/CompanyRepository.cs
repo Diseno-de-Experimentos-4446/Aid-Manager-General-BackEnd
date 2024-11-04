@@ -9,15 +9,14 @@ namespace AidManager.API.Authentication.Infrastructure.Persistence.EFC.Repositor
 
 public class CompanyRepository(AppDBContext context) : BaseRepository<Company>(context), ICompanyRepository
 {
-    public async Task<Company> CreateCompany(Company company)
+    public async Task<bool> CreateCompany(Company company)
     {
-            await AddAsync(company);
-            return company;
+        return await AddAsync(company);
     }
     
-    public async Task<Company?> FindCompanyByCompanyId(int companyId)
+    public async Task<Company?> FindCompanyByUserId(int userid)
     {
-        return await Context.Set<Company>().Where(c => c.Id == companyId).FirstOrDefaultAsync();
+        return await Context.Set<Company>().Where(c => c.ManagerId == userid).FirstOrDefaultAsync();
     }
 
     public async Task<Company?> GetCompanyByEmail(string email)

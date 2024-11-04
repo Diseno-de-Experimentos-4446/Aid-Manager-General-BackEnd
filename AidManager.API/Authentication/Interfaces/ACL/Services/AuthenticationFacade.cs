@@ -7,11 +7,10 @@ namespace AidManager.API.Authentication.Interfaces.ACL.Services;
 
 public class AuthenticationFacade(ICompanyCommandService commandService, ICompanyQueryService queryService) : IAuthenticationFacade
 {
-    public async Task<Company?> CreateCompany(string companyName, string country, string email, int userId)
+    public async Task<bool> CreateCompany(string companyName, string country, string email, int userId)
     {
         var createCompanyCommand = new CreateCompanyCommand(companyName, country, email, userId);
-        var company = await commandService.Handle(createCompanyCommand);
-        return company;
+        return await commandService.Handle(createCompanyCommand);
     }
 
     public async Task<Company?> ValidateRegisterCode(string TeamRegisterCode)
@@ -20,9 +19,9 @@ public class AuthenticationFacade(ICompanyCommandService commandService, ICompan
         return await commandService.Handle(validateRegisterCodeCommand);
     }
 
-    public async Task<Company?> GetCompanyByCompanyId(int companyId)
+    public async Task<Company?> GetCompanyByCompanyId(int userId)
     {
-        var getCompanyByUserId = new GetCompanyByIdQuery(companyId);
+        var getCompanyByUserId = new GetCompanyByUserIdQuery(userId);
         return await queryService.Handle(getCompanyByUserId);
     }
     

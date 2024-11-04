@@ -9,9 +9,9 @@ namespace AidManager.API.Authentication.Application.Internal.QueryServices;
 
 public class CompanyQueryService(ICompanyRepository companyRepository, IUnitOfWork unitOfWork) : ICompanyQueryService
 {
-    public async Task<Company?> Handle(GetCompanyByIdQuery query)
+    public async Task<Company?> Handle(GetCompanyByUserIdQuery query)
     {
-        return await companyRepository.FindCompanyByCompanyId(query.Id);
+        return await companyRepository.FindCompanyByUserId(query.Id);
     }
 
     public async Task<Company?> Handle(GetCompanyById query)

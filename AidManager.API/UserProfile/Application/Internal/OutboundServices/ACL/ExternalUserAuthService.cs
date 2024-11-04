@@ -65,19 +65,17 @@ public class ExternalUserAuthService(IIamContextFacade iamContextFacade, IAuthen
         var company = await authenticationFacade.GetCompanyByCompanyId(comapnyId);
         if (company == null)
         {
-            Console.WriteLine(comapnyId);
-            throw new Exception("ERROR: Company not by Company ID" );
+            throw new Exception("ERROR Company not found by Manager ID");
         }
 
         return company;
     }
     
-    public async Task<Company?> CreateCompany(string companyName, string country, string email, int userId)
+    public async Task<bool> CreateCompany(string companyName, string country, string email, int userId)
     {
         try
         {
-            var company = await authenticationFacade.CreateCompany(companyName, country, email, userId);
-            return company;
+            return await authenticationFacade.CreateCompany(companyName, country, email, userId);
         }
         catch (Exception e)
         {
