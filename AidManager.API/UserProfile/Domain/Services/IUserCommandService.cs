@@ -11,4 +11,6 @@ public interface IUserCommandService
     
     Task<bool> Handle(KickUserByCompanyIdCommand command);
     
+    Task<User?> Handle(PatchImageCommand command, int userId);
+    
 }

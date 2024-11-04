@@ -44,5 +44,10 @@ public class User
         this.Email = command.Email;
         this.Password = command.Password;
     }
+    
+    public void updateImage(PatchImageCommand command)
+    {
+        this.ProfileImg = command.Image;
+    }
 
 }

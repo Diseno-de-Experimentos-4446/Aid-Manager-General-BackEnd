@@ -139,6 +139,31 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
         
     }
     
+    [HttpPatch("update-image/{userId}")]
+    [SwaggerOperation(
+        Summary = "Update User Image",
+        Description = "Update User Image",
+        OperationId = "UpdateUserImage"
+    )] 
+    [SwaggerResponse(200, "The Image was updated")]
+
+    public async Task<IActionResult> UpdateUserImage(int userId, [FromBody] UpdateUserImageResource resource)
+    {
+        try
+        {
+            var command = UpdateImageCommandFromResourceAssembler.ToCommandFromResource(resource, userId);
+            var updatedUser = await userCommandService.Handle(command, userId);
+            if(updatedUser == null) return BadRequest();
+            var userResource = UserResourceFromEntityAssembler.ToResourceFromEntity(updatedUser);
+            return Ok(userResource);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Error Creating Image: " + e.Message);
+
+        }
+        
+    }
     
     [HttpDelete("kick-member/{userId}")]
     [SwaggerOperation(
@@ -146,6 +171,8 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
         Description = "Delete User, if you delete the MANAGER user the whole company will be deleted",
         OperationId = "DeleteUser"
     )]
+    [SwaggerResponse(200, "The user was kicked")]
+
     public async Task<IActionResult> KickUserByCompanyId(int userId)
     {
         try

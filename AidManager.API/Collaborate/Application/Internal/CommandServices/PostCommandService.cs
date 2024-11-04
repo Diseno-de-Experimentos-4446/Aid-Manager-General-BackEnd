@@ -43,13 +43,12 @@ public class PostCommandService(ExternalUserAccountService externalUserAccountSe
     public async Task<Post?> Handle(CreatePostCommand command)
     {
         var user = await externalUserAccountService.GetUserById(command.UserId);
-        
-        var name = user?.FirstName + " " + user?.LastName;
-        
+        Console.WriteLine("==================================== \n\n\n USER: " + user, "USER IMAGE: " + user?.ProfileImg, " \n\n\n =================");
         if (user == null)
         {
             throw new Exception("User not found");
         }
+        var name = user.FirstName + " " + user?.LastName;
         var post = new Post(command, name, user.Email, user.ProfileImg);
         await postRepository.AddAsync(post);
         await unitOfWork.CompleteAsync();

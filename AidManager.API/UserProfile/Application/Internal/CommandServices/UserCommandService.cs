@@ -102,8 +102,18 @@ public class UserCommandService(IUserRepository userRepository, IUnitOfWork unit
 
         return false;
     }
-    
-    
-    
-    
+
+    public async Task<User?> Handle(PatchImageCommand command, int userId)
+    {
+         
+            var user = await userRepository.FindUserById(userId);
+            if (user != null)
+            {
+                user.updateImage(command);
+                await userRepository.Update(user);
+                await unitOfWork.CompleteAsync();
+                return user;
+            }
+            throw new Exception("Could not update Image: User not found");
+    }
 }
