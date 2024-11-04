@@ -16,8 +16,6 @@ public class User
     public string ProfileImg { get; private set; }
     public int CompanyId { get; set; }
     public int Role { get; private set; }
-    public string CompanyName {get; set;}
-    
     public User(CreateUserCommand command)
     {
         
@@ -28,8 +26,7 @@ public class User
         this.Phone = command.Phone;
         this.Password = command.Password;
         this.ProfileImg = command.ProfileImg;
-        this.Role = command.Role;
-        this.CompanyName = command.CompanyName;
+        this.Role = command.Role; 
     }
    
     private User(){}

@@ -42,7 +42,7 @@ public class UserCommandService(IUserRepository userRepository, IUnitOfWork unit
                     var userid = await externalUserAuthService.FetchUserIdByUsername(user.Email);
                     //externalCompanyAuthService.CreateCompany
                     await externalUserAuthService.CreateCompany(command.CompanyName, command.CompanyCountry, command.CompanyEmail, userid);
-                    var company = await externalUserAuthService.FetchCompanyByUserId(userid);
+                    var company = await externalUserAuthService.FetchCompanyByCompanyId(user.CompanyId);
                     user.CompanyId = company.Id;
                     break;
                 //TeamMember
@@ -51,7 +51,6 @@ public class UserCommandService(IUserRepository userRepository, IUnitOfWork unit
                     var companyData = await externalUserAuthService.AuthenticateCode(command.TeamRegisterCode); 
                     await externalUserAuthService.CreateUsername(user.Email, user.Password, user.Role);
                     user.CompanyId = companyData.Id;
-                    user.CompanyName = companyData.CompanyName;
                     break;
             } 
             

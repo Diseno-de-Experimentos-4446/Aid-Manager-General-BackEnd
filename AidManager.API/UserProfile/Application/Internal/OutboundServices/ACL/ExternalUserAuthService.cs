@@ -60,9 +60,9 @@ public class ExternalUserAuthService(IIamContextFacade iamContextFacade, IAuthen
         return company;
     }
     
-    public async Task<Company> FetchCompanyByUserId(int managerId)
+    public async Task<Company> FetchCompanyByCompanyId(int comapnyId)
     {
-        var company = await authenticationFacade.GetCompanyByManagerId(managerId);
+        var company = await authenticationFacade.GetCompanyByCompanyId(comapnyId);
         if (company == null)
         {
             throw new Exception("ERROR Company not found by Manager ID");

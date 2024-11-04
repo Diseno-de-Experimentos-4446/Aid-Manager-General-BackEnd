@@ -19,7 +19,7 @@ public class AuthenticationFacade(ICompanyCommandService commandService, ICompan
         return await commandService.Handle(validateRegisterCodeCommand);
     }
 
-    public async Task<Company?> GetCompanyByManagerId(int userId)
+    public async Task<Company?> GetCompanyByCompanyId(int userId)
     {
         var getCompanyByUserId = new GetCompanyByUserIdQuery(userId);
         return await queryService.Handle(getCompanyByUserId);

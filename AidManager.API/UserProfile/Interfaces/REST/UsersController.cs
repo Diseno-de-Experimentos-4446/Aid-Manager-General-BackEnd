@@ -35,16 +35,16 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
             Console.WriteLine($"Request: {resource}");
             var command = CreateUserCommandFromResourceAssembler.ToCommandFromResource(resource);
             var user = await userCommandService.Handle(command);
-            if (user == null) return BadRequest("Error creating user");
+            if (user == null) return BadRequest("Error creating user");                
+            var company = await externalUserAuthService.FetchCompanyByCompanyId(user.CompanyId);
             if (user.Role == 0 )
             {            
-                var company = await externalUserAuthService.FetchCompanyByUserId(user.Id);
                  var managerResource = UserResourceFromEntityAssembler.ToManagerResourceFromEntity(user, company);
                  return Ok(new { status_code = 202, message = "Manager User created", data = managerResource });
 
             }
             
-            var userResource = UserResourceFromEntityAssembler.ToResourceFromEntity(user);
+            var userResource = UserResourceFromEntityAssembler.ToResourceFromEntity(user, company);
             return Ok(new { status_code = 202, message = "User created", data = userResource });
 
             
@@ -68,10 +68,13 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
     {
         try
         {
+            
             var query = new GetAllUsersByCompanyIdQuery(companyId);
+            var company = await externalUserAuthService.FetchCompanyByCompanyId(companyId);
             var users = await userQueryService.Handle(query); 
+            
             if(users == null) return BadRequest();
-            var usersResources = users.Select(UserResourceFromEntityAssembler.ToResourceFromEntity);
+            var usersResources = users.Select(user => UserResourceFromEntityAssembler.ToResourceFromEntity(user, company));
             return Ok(usersResources);
         }
         catch (Exception e)
@@ -95,15 +98,15 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
             var query = new GetUserByIdQuery(id);
             var user = await userQueryService.FindUserById(query);
             if(user == null) return BadRequest();
+            var company = await externalUserAuthService.FetchCompanyByCompanyId(user.CompanyId);
 
             if (user.Role == 0)
             {
-                var company = await externalUserAuthService.FetchCompanyByUserId(user.Id);
                 var managerResource = UserResourceFromEntityAssembler.ToManagerResourceFromEntity(user, company);
                 return Ok(managerResource);
             }
             
-            var userResource = UserResourceFromEntityAssembler.ToResourceFromEntity(user);
+            var userResource = UserResourceFromEntityAssembler.ToResourceFromEntity(user, company);
             return Ok(userResource);
         }
         catch (Exception e)
@@ -126,9 +129,11 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
         {
             var command = UpdateUserCommandFromResourceAssembler.ToCommandFromResource(resource);
             var updatedUser = await userCommandService.Handle(command, userId);
+            var company = await externalUserAuthService.FetchCompanyByCompanyId(updatedUser.CompanyId);
+
             if(updatedUser == null) return BadRequest();
         
-            var userResource = UserResourceFromEntityAssembler.ToResourceFromEntity(updatedUser);
+            var userResource = UserResourceFromEntityAssembler.ToResourceFromEntity(updatedUser,company);
             return Ok(userResource);
         }
         catch (Exception e)
@@ -153,8 +158,9 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
         {
             var command = UpdateImageCommandFromResourceAssembler.ToCommandFromResource(resource, userId);
             var updatedUser = await userCommandService.Handle(command, userId);
-            if(updatedUser == null) return BadRequest();
-            var userResource = UserResourceFromEntityAssembler.ToResourceFromEntity(updatedUser);
+            if(updatedUser == null) return BadRequest();            
+            var company = await externalUserAuthService.FetchCompanyByCompanyId(updatedUser.CompanyId);
+            var userResource = UserResourceFromEntityAssembler.ToResourceFromEntity(updatedUser, company);
             return Ok(userResource);
         }
         catch (Exception e)
