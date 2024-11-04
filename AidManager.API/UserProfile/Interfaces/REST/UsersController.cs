@@ -34,8 +34,9 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
         {
             Console.WriteLine($"Request: {resource}");
             var command = CreateUserCommandFromResourceAssembler.ToCommandFromResource(resource);
-            var user = await userCommandService.Handle(command);
-            if (user == null) return BadRequest("Error creating user");                
+            var user = await userCommandService.Handle(command);            
+            Console.WriteLine("RESULT: ============ \n ${user}");
+            if (user == null) return BadRequest("Error creating user");    
             var company = await externalUserAuthService.FetchCompanyByCompanyId(user.CompanyId);
             if (user.Role == 0 )
             {            

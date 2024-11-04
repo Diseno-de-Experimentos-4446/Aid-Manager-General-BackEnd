@@ -25,7 +25,7 @@ public class CompanyCommandService(ICompanyRepository companyRepository, IUnitOf
 
     public async Task<bool> Handle(DeleteCompanyCommand command)
     {
-        var company = await companyRepository.GetCompanyById(command.CompanyId);
+        var company = await companyRepository.FindCompanyByCompanyId(command.CompanyId);
         if (company == null)
         {
             throw new Exception("Company not found");
@@ -36,7 +36,7 @@ public class CompanyCommandService(ICompanyRepository companyRepository, IUnitOf
         return true;
     }
 
-    public async Task<bool> Handle(CreateCompanyCommand command)
+    public async Task<Company?> Handle(CreateCompanyCommand command)
     {
         var company = new Company(command);
         

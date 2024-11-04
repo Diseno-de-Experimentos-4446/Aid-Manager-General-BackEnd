@@ -24,7 +24,7 @@ public class CompanyController(ICompanyCommandService companyCommandService, ICo
     [SwaggerResponse(201, "Company Found", typeof(GetCompanyResource))]
     public async Task<IActionResult> GetCompanyById(int companyId)
     {
-        var query = new GetCompanyByUserIdQuery(companyId);
+        var query = new GetCompanyByIdQuery(companyId);
         var company = await companyQueryService.Handle(query);
         if (company == null) return Ok(new { status_code = 404, message = "Company not found" });
         return Ok(new { status_code = 200, message = "Company found", company = CreateCompanyResourceFromEntityAssembler.ToResourceFromEntity(company) });
