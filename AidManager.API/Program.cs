@@ -154,6 +154,11 @@ builder.Services.AddScoped<IPostCommandService, PostCommandService>();
 builder.Services.AddScoped<IPostQueryService, PostQueryService>();
 builder.Services.AddScoped<ExternalUserAccountService>(); // Register ExternalUserAccountService
 
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<ICommentCommandService, CommentCommandService>();
+builder.Services.AddScoped<ICommentQueryService, CommentQueryService>();
+
+
 // event bounded context injection configuration
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IEventCommandService, EventCommandService>();
@@ -204,6 +209,14 @@ builder.Services.AddScoped<IUserIAMQueryService, UserIAMQueryService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHashingService, HashingService>();
 builder.Services.AddScoped<IUserAccountFacade, UserAccountFacade>(); // Register IUserAccountFacade
+
+
+builder.Services.AddScoped<IFavoritePostRepository, FavoritePostRepository>();
+builder.Services.AddScoped<IFavoritePostCommandService, FavoritePostCommandService>();
+builder.Services.AddScoped<IFavoritePostQueryService, FavoritePostQueryService>();
+
+builder.Services.AddScoped<ILikedPostRepository, LikedPostRepository>();
+builder.Services.AddScoped<IFavoriteProjects, FavoriteProjectsRepository>();
 
 
 

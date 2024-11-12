@@ -1,5 +1,6 @@
 ﻿using AidManager.API.Authentication.Domain.Model.Aggregates;
 using AidManager.API.Authentication.Domain.Model.Entities;
+using AidManager.API.Collaborate.Domain.Model.Aggregates;
 using AidManager.API.Collaborate.Domain.Model.Entities;
 using AidManager.API.Collaborate.Domain.Model.ValueObjects;
 using AidManager.API.IAM.Domain.Model.Aggregates;
@@ -39,6 +40,20 @@ public class AppDBContext : DbContext
         builder.Entity<Post>().Property(p => p.Title).IsRequired();
         builder.Entity<Post>().HasMany(p => p.ImageUrl).WithOne().OnDelete(DeleteBehavior.Cascade);
         builder.Entity<Post>().HasMany(p => p.Comments).WithOne().OnDelete(DeleteBehavior.Cascade);
+        
+        // table for favorite posts
+        
+        builder.Entity<FavoritePosts>().ToTable("FavoritePosts");
+        builder.Entity<FavoritePosts>().HasKey(fp => new { fp.UserId, fp.PostId });
+        
+        // table for liked posts
+        builder.Entity<LikedPosts>().ToTable("LikedPosts");
+        builder.Entity<LikedPosts>().HasKey(lp => new { lp.UserId, lp.PostId });
+        
+        // table for favorite projects
+        
+        builder.Entity<FavoriteProjects>().ToTable("FavoriteProjects");
+        builder.Entity<FavoriteProjects>().HasKey(fp => new { fp.UserId, fp.ProjectId });
         
         // table for events
         builder.Entity<Event>().ToTable("Events");
