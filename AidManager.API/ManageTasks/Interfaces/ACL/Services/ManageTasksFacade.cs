@@ -9,5 +9,9 @@ public class ManageTasksFacade(IProjectQueryService queryService) : IManageTasks
     public async Task<IEnumerable<Project>> GetProjectsByCompany(int companyId)
     {
         var getAllProjects = new GetAllProjectsQuery(companyId);
-        return await queryService.Handle(getAllProjects);}
+        var result = await queryService.Handle(getAllProjects);
+        
+        return result.Select(x => x.Item1);
+        
+    }
 }

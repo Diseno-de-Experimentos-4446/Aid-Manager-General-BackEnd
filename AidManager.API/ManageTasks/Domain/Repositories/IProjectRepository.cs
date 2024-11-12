@@ -11,4 +11,7 @@ public interface IProjectRepository : IBaseRepository<Project>
     Task<List<Project>> GetProjectsByCompanyId(int companyId);
     Task<Project> GetProjectById(int projectId);
     Task<List<User>> GetTeamMembers(int companyId);
+    
+    Task<List<Project>> GetProjectsByUserId(int userId);
+    
 }

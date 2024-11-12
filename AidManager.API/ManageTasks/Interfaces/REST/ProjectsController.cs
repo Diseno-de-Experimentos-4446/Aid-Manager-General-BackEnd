@@ -1,4 +1,5 @@
 ﻿using System.Net.Mime;
+using AidManager.API.ManageTasks.Domain.Model.Commands;
 using AidManager.API.ManageTasks.Domain.Model.Queries;
 using AidManager.API.ManageTasks.Domain.Services;
 using AidManager.API.ManageTasks.Interfaces.REST.Resources;
@@ -26,13 +27,12 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
         {
             var createProjectCommand = CreateProjectCommandFromResourceAssembler.ToCommandFromResource(resource);
             var project = await projectCommandService.Handle(createProjectCommand);
-            var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project);
+            var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project.Item1, project.Item2);
             return Ok(projectResource);
         }
         catch (Exception e)
         {
             return BadRequest("Error: " + e.Message);
-
         }
         
     }
@@ -46,7 +46,7 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
     public async Task<IActionResult> UpdateProject(int projectId,UpdateProjectResource resource)
     {
         var project = await projectCommandService.Handle(UpdateProjectCommandFromResourceAssembler.ToCommandFromResource(projectId, resource));
-        var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project);
+        var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project.Item1, project.Item2);
         return Ok(projectResource);
     }
 
@@ -60,7 +60,7 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
     public async Task<IActionResult> GetAllProjects(int companyId)
     {
         var projects = await projectQueryService.Handle(new GetAllProjectsQuery(companyId));
-        var projectResources = projects.Select(ProjectResourceFromEntityAssembler.ToResourceFromEntity);
+        var projectResources = projects.Select(tuple => ProjectResourceFromEntityAssembler.ToResourceFromEntity(tuple.Item1, tuple.Item2));
         return Ok(projectResources);
     }
     
@@ -73,7 +73,7 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
     public async Task<IActionResult> GetProject(int projectId)
     {
         var project = await projectQueryService.Handle(new GetProjectByIdQuery(projectId));
-        var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project);
+        var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project.Item1, project.Item2);
         return Ok(projectResource);
     }
     
@@ -83,12 +83,12 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
         Description = "Update project images",
         OperationId = "UpdateProjectImages"
     )]
-    public async Task<IActionResult> UpdateProject(AddImageResource resource)
+    public async Task<IActionResult> UpdateProject(AddImageResource resource, int projectId)
     {
         try
         {
-            var project = await projectCommandService.Handle(AddImageResourceFromResourceAssembler.ToCommandFromResource(resource));
-            var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project);
+            var project = await projectCommandService.Handle(AddImageResourceFromResourceAssembler.ToCommandFromResource(resource, projectId));
+            var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project.Item1, project.Item2);
             return Ok(projectResource);
         }
         catch (Exception e)
@@ -123,7 +123,7 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
         try
         {
             var project = await projectCommandService.Handle(DeleteProjectCommandFromResourceAssembler.ToCommandFromResource(projectId));
-            var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project);
+            var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project.Item1, project.Item2);
             return Ok(projectResource);
         }
         catch (Exception e)
@@ -134,6 +134,93 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
         
     }
     
+    [HttpGet("user/{userId}")]
+    
+    [SwaggerOperation(
+        Summary = "Get all projects by user",
+        Description = "Get all projects by user",
+        OperationId = "GetProjectsByUser"
+    )]
+    
+    public async Task<IActionResult> GetProjectsByUser(int userId)
+    {
+        var projects = await projectQueryService.Handle(new GetAllProjectsByUserIdQuery(userId));
+        var projectResources = projects.Select(tuple => ProjectResourceFromEntityAssembler.ToResourceFromEntity(tuple.Item1, tuple.Item2));
+        return Ok(projectResources);
+    }
+    
+    // Favorite Projects
+    
+    [HttpPost("favorite")]
+    [SwaggerOperation(
+        Summary = "Save project as favorite",
+        Description = "Save project as favorite",
+        OperationId = "SaveProjectAsFavorite"
+    )]
+    public async Task<IActionResult> SaveProjectAsFavorite(SaveProjectResource resource)
+    {
+        try
+        {
+            var command = SaveProjectCommandFromResourceAssembler.ToCommandFromResource(resource);
+            var project = await projectCommandService.Handle(command);
+            var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project.Item1, project.Item2);
+            return Ok(projectResource);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Error: " + e.Message);
+
+        }
+        
+    }
+    
+    //delete favorite
+    
+    [HttpDelete("favorite")]
+    [SwaggerOperation(
+        Summary = "Delete project from favorite",
+        Description = "Delete project from favorite",
+        OperationId = "DeleteProjectFromFavorite"
+    )]
+    public async Task<IActionResult> DeleteProjectFromFavorite(SaveProjectResource resource)
+    {
+        try
+        {
+            var command = DeleteProjectFromFavoriteCommandFromResourceAssembler.ToCommandFromResource(resource);
+            var project = await projectCommandService.Handle(command);
+            var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project.Item1, project.Item2);
+            return Ok(projectResource);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Error: " + e.Message);
+
+        }
+        
+    }
+    
+    //get favorites
+    
+    [HttpGet("favorite/{userId}")]
+    [SwaggerOperation(
+        Summary = "Get all favorite projects by user",
+        Description = "Get all favorite projects by user",
+        OperationId = "GetFavoriteProjectsByUser"
+    )]
+    public async Task<IActionResult> GetFavoriteProjectsByUser(int userId)
+    {
+        try
+        {
+            var projects = await projectQueryService.Handle(new GetFavoriteProjectsByUserId(userId));
+            var projectResources = projects.Select(tuple => ProjectResourceFromEntityAssembler.ToResourceFromEntity(tuple.Item1, tuple.Item2));
+            return Ok(projectResources);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Error: " + e.Message);
+        }
+        
+    } 
     
     
 }

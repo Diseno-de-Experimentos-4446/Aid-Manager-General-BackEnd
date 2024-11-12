@@ -5,6 +5,6 @@ namespace AidManager.API.ManageTasks.Interfaces.REST.Transform;
 
 public class AddImageResourceFromResourceAssembler
 {
-    public static AddProjectImageCommand ToCommandFromResource(AddImageResource resource) =>
-        new AddProjectImageCommand(resource.ProjectId, resource.ImageUrl);
+    public static AddProjectImageCommand ToCommandFromResource(AddImageResource resource, int projectId) =>
+        new AddProjectImageCommand(projectId, resource.ImageUrl);
 }

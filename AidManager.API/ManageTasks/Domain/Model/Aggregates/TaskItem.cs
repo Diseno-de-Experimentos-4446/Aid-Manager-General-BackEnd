@@ -16,11 +16,8 @@ public class TaskItem
     
    public string State {get; private set;}
     
-   public string Assignee {get; private set;}
    
     public int AssigneeId {get; private set;}
-    
-    public string profileImg {get; private set;}
     public DateOnly CreatedAt { get; private set; }
    
     protected TaskItem()
@@ -30,12 +27,11 @@ public class TaskItem
         this.DueDate = DateOnly.MinValue;
         this.ProjectId = 0;
         this.State = "ToDo";
-        this.Assignee = string.Empty;
         this.AssigneeId = 0;
         this.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
     }
 
-    public TaskItem(CreateTaskCommand command, string assignee, string assigneeImage)
+    public TaskItem(CreateTaskCommand command)
     {
         this.Title = command.Title;
         this.Description = command.Description;
@@ -43,21 +39,21 @@ public class TaskItem
         this.ProjectId = command.ProjectId;
         this.State = command.State;
         this.AssigneeId = command.AssigneeId;
-        this.Assignee = assignee;
-        this.profileImg = assigneeImage;
         this.CreatedAt= DateOnly.FromDateTime(DateTime.Now);
 
     }
     
-    public void UpdateTask(UpdateTaskCommand command, string assignee, string assigneeImage)
+    public void UpdateStatus(string state)
+    {
+        this.State = state;
+    }
+    public void UpdateTask(UpdateTaskCommand command)
     {
         this.Title = command.Title;
         this.Description = command.Description;
         this.DueDate = command.DueDate;
         this.State = command.State;
-        this.Assignee = assignee;
         this.AssigneeId = command.AssigneeId;
-        this.profileImg = assigneeImage;
     }
     
     

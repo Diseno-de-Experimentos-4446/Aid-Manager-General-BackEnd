@@ -1,3 +1,3 @@
 ﻿namespace AidManager.API.ManageTasks.Interfaces.REST.Resources;
 
-public record AddImageResource(List<string> ImageUrl);
+public record SaveProjectResource(int UserId, int ProjectId);

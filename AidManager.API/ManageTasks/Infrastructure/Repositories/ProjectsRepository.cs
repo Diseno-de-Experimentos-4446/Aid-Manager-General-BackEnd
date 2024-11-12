@@ -23,8 +23,8 @@ public class ProjectsRepository(AppDBContext context) : BaseRepository<Project>(
     public async Task<Project> GetProjectById(int projectId)
     {
         return await Context.Set<Project>()
+            .Include(p => p.ImageUrl)            
             .Include(p => p.TeamMembers)
-            .Include(p => p.ImageUrl)
             .FirstOrDefaultAsync(p=> p.Id == projectId);
     }
 
@@ -41,6 +41,14 @@ public class ProjectsRepository(AppDBContext context) : BaseRepository<Project>(
             .Include(p => p.TeamMembers)
             .Where(f => f.CompanyId == companyId).ToListAsync();
 
+    }
+    
+    public async Task<List<Project>> GetProjectsByUserId(int userId)
+    {
+        return await Context.Set<Project>()
+            .Include(p => p.ImageUrl) // Ensure eager loading of ImageUrl
+            .Include(p => p.TeamMembers)
+            .Where(f => f.TeamMembers.Any(tm => tm.Id == userId)).ToListAsync();
     }
     
     

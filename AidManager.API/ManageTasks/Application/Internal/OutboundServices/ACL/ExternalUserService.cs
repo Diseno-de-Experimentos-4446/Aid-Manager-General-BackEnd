@@ -9,7 +9,7 @@ using AidManager.API.UserProfile.Interfaces.ACL;
 
 namespace AidManager.API.ManageTasks.Application.Internal.OutboundServices.ACL;
 
-public class ExternalUserService(IUserAccountFacade accountFacade, IManageCostsFacade manageCostsFacade, IProjectQueryService projectFacade)
+public class ExternalUserService(IUserAccountFacade accountFacade, IManageCostsFacade manageCostsFacade)
 {
     public async Task<User> GetUserById(int id)
     {
@@ -20,7 +20,7 @@ public class ExternalUserService(IUserAccountFacade accountFacade, IManageCostsF
         }
         catch (Exception e)
         {
-            throw new Exception("Error while getting user fullname", e);
+            throw new Exception("Error while getting user", e);
         }
     }
     
@@ -29,10 +29,6 @@ public class ExternalUserService(IUserAccountFacade accountFacade, IManageCostsF
         return await manageCostsFacade.CreateAnalytics(projectId);
     }
     
-    public async Task<IEnumerable<Project>> GetProjectsByCompany(int companyId)
-    {
-        var query = new GetAllProjectsQuery(companyId);
-        return await projectFacade.Handle(query);
-    }
+    
     
 }

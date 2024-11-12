@@ -19,4 +19,9 @@ public class TaskItemsRepository(AppDBContext context) : BaseRepository<TaskItem
         return await Context.Set<TaskItem>().FirstOrDefaultAsync(f => f.Id == id);
     }
     
+    public async Task<List<TaskItem>> GetTasksByUserId(int userId)
+    {
+        return await Context.Set<TaskItem>().Where(f => f.AssigneeId == userId).ToListAsync();
+    }
+    
 }
