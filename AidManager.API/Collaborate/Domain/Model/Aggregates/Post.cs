@@ -18,16 +18,11 @@ public class Post
     public DateTime CreatedAt { get; private set; }
     public int Rating { get; set; } = 0;// don't use private set here, because we want to update it
     
+    [ForeignKey("CompanyId")]
     public int CompanyId { get; private set; }
     
     [ForeignKey("UserId")]
     public int UserId { get; private set; }
-    
-    public string Username { get; private set; }
-    
-    public string UserEmail { get; private set; }
-    
-    public string UserImage { get; private set; }
     
     public Post()
     {
@@ -35,7 +30,7 @@ public class Post
         Comments = new List<Comments>();
     }
     
-    public Post(CreatePostCommand command, string username, string userEmail, string userImage)
+    public Post(CreatePostCommand command)
     {
 
         this.ImageUrl = command.Images?.ConvertAll(url => new PostImage() { PostImageUrl = url }) ?? new List<PostImage>();
@@ -46,22 +41,6 @@ public class Post
         CreatedAt = DateTime.Now;
         this.CompanyId = command.CompanyId;
         this.UserId = command.UserId;
-        this.Username = username;
-        this.UserEmail = userEmail;
-        this.UserImage = userImage;
-    }
-    
-    public void AddComment(AddCommentCommand command,
-        string username,
-        string userEmail,
-        string userImage)
-    {
-        this.Comments.Add(new Comments(command.UserId,
-            username,
-            command.Comment,
-            command.PostId,
-            userImage,
-            userEmail ));
     }
     
     public void DeleteComment(int commentId)
@@ -73,9 +52,17 @@ public class Post
         }
     }
     
-    public void UpdateRating()
+    public void AddRating()
     {
         this.Rating = Rating + 1;
+    }
+    public void RemoveRating()
+    {
+        if (Rating > 0)
+        { 
+            this.Rating = Rating - 1;
+        }
+        
     }
 
     

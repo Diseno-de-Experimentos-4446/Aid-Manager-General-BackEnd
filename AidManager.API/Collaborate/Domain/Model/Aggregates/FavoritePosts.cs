@@ -2,21 +2,25 @@
 
 namespace AidManager.API.Collaborate.Domain.Model.ValueObjects;
 
-public class Comments
+public class FavoritePosts
 {
     public int Id { get; set; }
     public int UserId { get; set; }
-    public string Comment { get; set; }
     public int PostId { get; set; }
-    public DateTime TimeOfComment { get; set; } = DateTime.Now;
     
-    public Comments() {}
-    public Comments(AddCommentCommand command)
+    public FavoritePosts()
+    {
+        
+    }
+    public FavoritePosts(FavoritePostCommand command)
     {
         UserId = command.UserId;
-        Comment = command.Comment;
         PostId = command.PostId;
-        TimeOfComment = DateTime.Now;
     }
     
+    
+    
+    
+    
 }
+

@@ -7,11 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AidManager.API.Collaborate.Infraestructure.Repositories;
 
-public class EventRepository : BaseRepository<Event>, IEventRepository
+public class EventRepository(AppDBContext context) : BaseRepository<Event>(context), IEventRepository
 {
-    public EventRepository(AppDBContext dbContext) : base(dbContext)
-    {
-    }
     
     public async Task<IEnumerable<Event>?> GetEventsByProjectId(int projectId)
     {

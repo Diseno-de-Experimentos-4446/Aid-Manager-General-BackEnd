@@ -14,7 +14,7 @@ namespace AidManager.API.Collaborate.Interfaces;
 [ApiController]
 [Route("api/v1/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
-public class PostsController(IPostCommandService postCommandService, IPostQueryService postQueryService) : ControllerBase
+public class PostsController(IPostCommandService postCommandService, IPostQueryService postQueryService, IFavoritePostQueryService favoritePostQueryService) : ControllerBase
 {
     // create new post
     [HttpPost]
@@ -31,9 +31,9 @@ public class PostsController(IPostCommandService postCommandService, IPostQueryS
             var command = CreatePostCommandFromResourceAssembler.ToCommandFromResource(resource);
             var post = await postCommandService.Handle(command);
 
-            if (post == null) return BadRequest();
+            if (post.Item1 == null) return BadRequest();
 
-            var postResource = PostResourceFromEntityAssembler.ToResourceFromEntity(post);
+            var postResource = PostResourceFromEntityAssembler.ToResourceFromEntity(post.Item1, post.Item2);
             return Ok(postResource);
         }
         catch (Exception e)
@@ -44,23 +44,23 @@ public class PostsController(IPostCommandService postCommandService, IPostQueryS
     }
     
      // update rating field of post by id
-        [HttpPatch("{id}/rating")]
+        [HttpPatch("{id}/rating/{userId}")]
         [SwaggerOperation(
             Summary = "Update rating field of post by id",
             Description = "Update rating field of post by id",
             OperationId = "UpdatePostRating"
         )]
         [SwaggerResponse(200, "The post rating was updated: ", typeof(CreatePostResource))]
-        public async Task<IActionResult> UpdatePostRating([FromRoute] int id)
+        public async Task<IActionResult> UpdatePostRating([FromRoute] int id, int userId)
         {
             try
             {
-                var command = UpdatePostRatingCommandFromResourceAssembler.ToCommandFromResource(id);
+                var command = UpdatePostRatingCommandFromResourceAssembler.ToCommandFromResource(id, userId);
                 var post = await postCommandService.Handle(command);
     
-                if (post == null) return NotFound();
+                if (post.Item1 == null) return NotFound();
     
-                var postResource = PostResourceFromEntityAssembler.ToResourceFromEntity(post);
+                var postResource = PostResourceFromEntityAssembler.ToResourceFromEntity(post.Item1, post.Item2);
                 return Ok(postResource);
             }
             catch (Exception e)
@@ -85,9 +85,9 @@ public class PostsController(IPostCommandService postCommandService, IPostQueryS
             var query = new GetPostById(id);
             var post = await postQueryService.Handle(query);
 
-            if (post == null) return NotFound();
+            if (post.Item1 == null) return NotFound();
 
-            var postResource = PostResourceFromEntityAssembler.ToResourceFromEntity(post);
+            var postResource = PostResourceFromEntityAssembler.ToResourceFromEntity(post.Item1, post.Item2);
             return Ok(postResource);
         }
         catch (Exception e)
@@ -112,9 +112,9 @@ public class PostsController(IPostCommandService postCommandService, IPostQueryS
             var command = new DeletePostCommand(id);
             var post = await postCommandService.Handle(command);
 
-            if (post == null) return NotFound();
+            if (post.Item1 == null) return NotFound();
 
-            var postResource = PostResourceFromEntityAssembler.ToResourceFromEntity(post);
+            var postResource = PostResourceFromEntityAssembler.ToResourceFromEntity(post.Item1,post.Item2);
             return Ok(postResource);
         }
         catch (Exception e)
@@ -141,7 +141,7 @@ public class PostsController(IPostCommandService postCommandService, IPostQueryS
 
             if (posts == null) return NotFound();
 
-            var postResources = posts.Select(PostResourceFromEntityAssembler.ToResourceFromEntity);
+            var postResources = posts.Select(tuple=>PostResourceFromEntityAssembler.ToResourceFromEntity(tuple.Item1,tuple.Item2));
             return Ok(postResources);
         }
         catch (Exception e)
@@ -150,4 +150,56 @@ public class PostsController(IPostCommandService postCommandService, IPostQueryS
         }
         
     }
+    [HttpGet("user/{userId}")]
+    [SwaggerOperation(
+        Summary = "Get all posts by author/user id",
+        Description = "Get all posts by user id",
+        OperationId = "GetAllPostsByUserId"
+    )] 
+    public async Task<IActionResult> GetAllPostsByUserId([FromRoute] int userId)
+    {
+        try
+        {
+            var query = new GetPostByAuthor(userId);
+            var posts = await postQueryService.Handle(query);
+
+            if (posts == null) return NotFound();
+
+            var postResources = posts.Select(tuple=>PostResourceFromEntityAssembler.ToResourceFromEntity(tuple.Item1,tuple.Item2));
+            return Ok(postResources);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Error: " + e.Message);
+        }
+        
+    }
+    //show liked posts
+    
+    [HttpGet("liked/{userId}")]
+    [SwaggerOperation(
+        Summary = "Get all liked posts by user id",
+        Description = "Get all liked posts by user id",
+        OperationId = "GetLikedPostsByUserId"
+    )]
+    public async Task<IActionResult> GetLikedPostsByUserId([FromRoute] int userId)
+    {
+        try
+        {
+            var query = new GetLikedPostsByUserid(userId);
+            var posts = await postQueryService.Handle(query);
+
+            if (posts == null) return NotFound();
+
+            var postResources = posts.Select(tuple=>PostResourceFromEntityAssembler.ToResourceFromEntity(tuple.Item1,tuple.Item2));
+            return Ok(postResources);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Error: " + e.Message);
+        }
+        
+    }
+    
+   
 }
