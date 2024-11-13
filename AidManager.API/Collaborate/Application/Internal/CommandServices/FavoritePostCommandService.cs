@@ -1,7 +1,5 @@
-﻿using AidManager.API.Authentication.Domain.Model.Entities;
-using AidManager.API.Collaborate.Application.Internal.OutboundServices.ACL;
+﻿using AidManager.API.Collaborate.Application.Internal.OutboundServices.ACL;
 using AidManager.API.Collaborate.Domain.Model.Commands;
-using AidManager.API.Collaborate.Domain.Model.Entities;
 using AidManager.API.Collaborate.Domain.Model.ValueObjects;
 using AidManager.API.Collaborate.Domain.Repositories;
 using AidManager.API.Collaborate.Domain.Services;

@@ -9,7 +9,7 @@ namespace AidManager.API.Authentication.Infrastructure.Persistence.EFC.Repositor
 
 public class CompanyRepository(AppDBContext context) : BaseRepository<Company>(context), ICompanyRepository
 {
-    public async Task<Company> CreateCompany(Company company)
+    public async Task<Company?> CreateCompany(Company company)
     {
             await AddAsync(company);
             return company;

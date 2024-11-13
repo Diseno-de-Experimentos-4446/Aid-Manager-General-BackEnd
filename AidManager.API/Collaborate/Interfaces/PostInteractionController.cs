@@ -12,7 +12,7 @@ namespace AidManager.API.Collaborate.Interfaces;
 [ApiController]
 [Route("api/v1/posts/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
-public class PostInteractionController(IFavoritePostCommandService favoritePostCommandService, IFavoritePostQueryService favoritePostQueryService, IPostQueryService postQueryService) :ControllerBase
+public class PostInteractionController(IFavoritePostCommandService favoritePostCommandService, IFavoritePostQueryService favoritePostQueryService, IPostQueryService postQueryService) : ControllerBase
 {
     
     [HttpPost]
@@ -61,9 +61,14 @@ public class PostInteractionController(IFavoritePostCommandService favoritePostC
             }
             
             var post = await postQueryService.Handle(new GetPostById(command.PostId));
+            if (post.Item1 == null)
+            {
+                return BadRequest("Post not found");
+
+            }                
             var resource = PostResourceFromEntityAssembler.ToResourceFromEntity(post.Item1, post.Item2);
-            
             return Ok(resource);
+
         }
         catch (Exception e)
         {
