@@ -49,7 +49,7 @@ public class UserIAMCommandService(
 
     public async Task Handle(UpdateUserCommand command)
     {
-        var user = await userRepository.FindByUsernameAsync(command.Username);
+        var user = await userRepository.FindByUsernameAsync(command.OldUsername);
         
         if (user is null)
             throw new Exception($"User with username {command.Username} does not exist");

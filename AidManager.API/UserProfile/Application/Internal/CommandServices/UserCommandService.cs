@@ -70,10 +70,12 @@ public class UserCommandService(IUserRepository userRepository, IUnitOfWork unit
     public async Task<User> Handle(UpdateUserCommand command, int id)
     {
         var user = await userRepository.FindUserById(id);
+        
         if (user != null)
         {
+            var oldUsername = user.Email;
             user.updateProfile(command);
-            await externalUserAuthService.UpdateUser(user.Email, user.Password, user.Role);
+            await externalUserAuthService.UpdateUser(oldUsername,user.Email, user.Password, user.Role);
                     await userRepository.Update(user);
                     await unitOfWork.CompleteAsync();
                     return user;

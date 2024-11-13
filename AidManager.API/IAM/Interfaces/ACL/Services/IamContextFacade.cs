@@ -23,9 +23,9 @@ public class IamContextFacade(IUserIAMCommandService userCommandService, IUserIA
         return result?.Id ?? 0;
     }
     
-    public async Task<int> UpdateUserData(string username, string password, int role)
+    public async Task<int> UpdateUserData(string oldUsername,string username, string password, int role)
     {
-        var updateUserCommand = new UpdateUserCommand(username, password, role);
+        var updateUserCommand = new UpdateUserCommand(oldUsername,username, password, role);
         await userCommandService.Handle(updateUserCommand);
         var getUserByUsernameQuery = new GetUserIAMByUsernameQuery(username);
         var result = await userQueryService.Handle(getUserByUsernameQuery);
