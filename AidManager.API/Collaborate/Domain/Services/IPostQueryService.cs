@@ -12,14 +12,14 @@ public interface IPostQueryService
 {
     // "Task" keywords it used to represent an asynchronous operation that returns a result of type "IEnumerable<Post>?"
     
-    Task<IEnumerable<(Post?,User)>?> Handle(GetPostByAuthor query);
+    Task<List<(Post?, User, List<(Comments?, User)>)>> Handle(GetPostByAuthor query);
     
-    Task<(Post?,User)> Handle(GetPostById query);
+    Task<(Post posts, User user, List<(Comments?, User)> comments)> Handle(GetPostById query);
     
     // "Task" keywords it used to represent an asynchronous operation that returns a result of type "IEnumerable<Post>?"
-    Task<IEnumerable<(Post?,User)>?> Handle(GetAllPostsByCompanyId query);
+    Task<List<(Post?, User, List<(Comments?, User)>)>> Handle(GetAllPostsByCompanyId query);
     
-    Task<IEnumerable<(Post?,User)>?> Handle(GetLikedPostsByUserid query);
+    Task<List<(Post?, User, List<(Comments?, User)>)>> Handle(GetLikedPostsByUserid query);
     
     
 }

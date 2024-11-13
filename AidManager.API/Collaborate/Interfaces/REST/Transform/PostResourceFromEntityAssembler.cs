@@ -2,13 +2,14 @@
 using AidManager.API.Authentication.Interfaces.REST.Resources;
 using AidManager.API.Authentication.Interfaces.REST.Transform;
 using AidManager.API.Collaborate.Domain.Model.Entities;
+using AidManager.API.Collaborate.Domain.Model.ValueObjects;
 using AidManager.API.Collaborate.Interfaces.REST.Resources;
 
 namespace AidManager.API.Collaborate.Interfaces.REST.Transform;
 
 public static class PostResourceFromEntityAssembler
 {
-    public static PostResource ToResourceFromEntity(Post post, User user)
+    public static PostResource ToResourceFromEntity(Post post, User user, List<CommentResource> commentResources)
     {
         
         return new PostResource(
@@ -24,8 +25,8 @@ public static class PostResourceFromEntityAssembler
             user.ProfileImg,
             post.Rating,
             post.ImageUrl.Select(img => img.PostImageUrl).ToList(),
-            post.Comments
-        );
+            commentResources
+            );
     }
     
     

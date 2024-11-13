@@ -10,9 +10,9 @@ using AidManager.API.Shared.Domain.Repositories;
 
 namespace AidManager.API.Collaborate.Application.Internal.QueryServices;
 
-public class FavoritePostQueryService(IPostRepository postRepository ,ExternalUserAccountService externalUserAccountService,IFavoritePostRepository favoritePostRepository, IUnitOfWork unitOfWork): IFavoritePostQueryService
+public class FavoritePostQueryService(ICommentQueryService commentQueryService,IPostRepository postRepository ,ExternalUserAccountService externalUserAccountService,IFavoritePostRepository favoritePostRepository, IUnitOfWork unitOfWork): IFavoritePostQueryService
 {
-    public async Task<List<(Post,User)>> Handle(GetFavoritePosts query)
+    public async Task<List<(Post,User,List<(Comments?, User)>)>> Handle(GetFavoritePosts query)
     {
         var posts = await favoritePostRepository.GetFavoritePostsByUserIdAsync(query.UserId);
         if (posts is null)
@@ -30,7 +30,7 @@ public class FavoritePostQueryService(IPostRepository postRepository ,ExternalUs
             throw new Exception("ERROR GETTING POST BY ID");
         }
         
-        var listPosts = new List<(Post, User)>();
+        var listPosts = new List<(Post, User, List<(Comments?, User)>)>();
         foreach (var post in posts)
         {
 
@@ -38,7 +38,8 @@ public class FavoritePostQueryService(IPostRepository postRepository ,ExternalUs
             {
                 if (post.PostId == notFavPost.Id) 
                 {
-                    listPosts.Add((notFavPost, user));
+                    var comments = await commentQueryService.Handle(new GetCommentsByPostIdQuery(notFavPost.Id));
+                    listPosts.Add((notFavPost, user, comments));
                 }
             }
             

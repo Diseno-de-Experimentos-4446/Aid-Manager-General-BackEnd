@@ -14,4 +14,4 @@ public record PostResource(int Id, string Title,
     string AuthorEmail,
     int Rating,
     List<string> Images,
-    List<Comments> CommentsList);
+    List<CommentResource> CommentsList);

@@ -5,6 +5,7 @@ using AidManager.API.Collaborate.Application.Internal.OutboundServices.ACL;
 using AidManager.API.Collaborate.Domain.Model.Aggregates;
 using AidManager.API.Collaborate.Domain.Model.Commands;
 using AidManager.API.Collaborate.Domain.Model.Entities;
+using AidManager.API.Collaborate.Domain.Model.Queries;
 using AidManager.API.Collaborate.Domain.Model.ValueObjects;
 using AidManager.API.Collaborate.Domain.Repositories;
 using AidManager.API.Collaborate.Domain.Services;
@@ -13,7 +14,7 @@ using AidManager.API.Shared.Domain.Repositories;
 
 namespace AidManager.API.Collaborate.Application.Internal.CommandServices;
 
-public class PostCommandService( ILikedPostRepository likedPostRepository  ,ExternalUserAccountService externalUserAccountService,IPostRepository postRepository, IUnitOfWork unitOfWork): IPostCommandService
+public class PostCommandService( ILikedPostRepository likedPostRepository  ,ExternalUserAccountService externalUserAccountService,IPostRepository postRepository, ICommentQueryService commentQueryService, ICommentCommandService commentCommandService , IUnitOfWork unitOfWork): IPostCommandService
 {
     
     
@@ -40,7 +41,7 @@ public class PostCommandService( ILikedPostRepository likedPostRepository  ,Exte
         
     }
     
-    public async Task<(Post?,User)> Handle(DeletePostCommand command)
+    public async Task<(Post post, User user, List<(Comments?, User)> comments)> Handle(DeletePostCommand command)
     {
         var post = await postRepository.FindPostById(command.Id);
         if (post == null)
@@ -54,13 +55,25 @@ public class PostCommandService( ILikedPostRepository likedPostRepository  ,Exte
         {
             throw new Exception("User not found");
         }
+        var getComments = new GetCommentsByPostIdQuery(post.Id);
+        var comments = await commentQueryService.Handle(getComments);
+        if (comments is null)
+        {
+            throw new Exception("ERROR GETTING COMMENTS BY POST ID");
+        }
+        
+        foreach (var comment in comments)
+        {
+            if (comment.Item1 != null)
+                await commentCommandService.Handle(new DeleteCommentCommand(comment.Item1.Id, post.Id));
+        }
         
         await postRepository.Remove(post);
         await unitOfWork.CompleteAsync();
-        return (post,user);
+        return (post,user,comments);
     }
     
-    public async Task<(Post?,User)> Handle(UpdatePostRatingCommand command)
+    public async Task<(Post post, User user, List<(Comments?, User)> comments)> Handle(UpdatePostRatingCommand command)
     {
         var post = await postRepository.FindPostById(command.PostId);
         if (post == null)
@@ -87,10 +100,17 @@ public class PostCommandService( ILikedPostRepository likedPostRepository  ,Exte
             await likedPostRepository.AddAsync(postLikedSaved);
             post.AddRating();
         }
-
+        
+        var getComments = new GetCommentsByPostIdQuery(post.Id);
+        var comments = await commentQueryService.Handle(getComments);
+        if (comments is null)
+        {
+            throw new Exception("ERROR GETTING COMMENTS BY POST ID");
+        }
+        
         await postRepository.Update(post);
         await unitOfWork.CompleteAsync();
-        return (post, user);
+        return (post, user, comments);
     }
     
 

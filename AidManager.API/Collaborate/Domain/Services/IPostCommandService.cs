@@ -9,10 +9,10 @@ namespace AidManager.API.Collaborate.Domain.Services;
 public interface IPostCommandService
 {
     Task<(Post?,User)> Handle(CreatePostCommand command);
-    Task<(Post?,User)> Handle(DeletePostCommand command);
+    Task<(Post post, User user, List<(Comments?, User)> comments)> Handle(DeletePostCommand command);
     
     
-    Task<(Post?,User)> Handle(UpdatePostRatingCommand command);
+    Task<(Post post, User user, List<(Comments?, User)> comments)> Handle(UpdatePostRatingCommand command);
     
     
     Task<PostImage?> Handle(DeletePostImageCommand command);

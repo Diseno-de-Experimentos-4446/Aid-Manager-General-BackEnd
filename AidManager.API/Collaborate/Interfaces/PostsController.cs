@@ -33,7 +33,7 @@ public class PostsController(IPostCommandService postCommandService, IPostQueryS
 
             if (post.Item1 == null) return BadRequest();
 
-            var postResource = PostResourceFromEntityAssembler.ToResourceFromEntity(post.Item1, post.Item2);
+            var postResource = PostResourceFromEntityAssembler.ToResourceFromEntity(post.Item1, post.Item2, []);
             return Ok(postResource);
         }
         catch (Exception e)
@@ -58,9 +58,12 @@ public class PostsController(IPostCommandService postCommandService, IPostQueryS
                 var command = UpdatePostRatingCommandFromResourceAssembler.ToCommandFromResource(id, userId);
                 var post = await postCommandService.Handle(command);
     
-                if (post.Item1 == null) return NotFound();
-    
-                var postResource = PostResourceFromEntityAssembler.ToResourceFromEntity(post.Item1, post.Item2);
+                var comment = post.comments;
+            
+                var commentResources = comment.Select(t=>CommentResourceFromEntityAssembler.ToResourceFromEntity(t.Item1,t.Item2)).ToList();
+
+                var postResource = PostResourceFromEntityAssembler.ToResourceFromEntity(post.Item1, post.Item2, commentResources);
+
                 return Ok(postResource);
             }
             catch (Exception e)
@@ -85,9 +88,12 @@ public class PostsController(IPostCommandService postCommandService, IPostQueryS
             var query = new GetPostById(id);
             var post = await postQueryService.Handle(query);
 
-            if (post.Item1 == null) return NotFound();
+            var comment = post.comments;
+            
+            var commentResources = comment.Select(t=>CommentResourceFromEntityAssembler.ToResourceFromEntity(t.Item1,t.Item2)).ToList();
 
-            var postResource = PostResourceFromEntityAssembler.ToResourceFromEntity(post.Item1, post.Item2);
+            var postResource = PostResourceFromEntityAssembler.ToResourceFromEntity(post.Item1, post.Item2, commentResources);
+
             return Ok(postResource);
         }
         catch (Exception e)
@@ -114,7 +120,12 @@ public class PostsController(IPostCommandService postCommandService, IPostQueryS
 
             if (post.Item1 == null) return NotFound();
 
-            var postResource = PostResourceFromEntityAssembler.ToResourceFromEntity(post.Item1,post.Item2);
+            var comment = post.comments;
+            
+            var commentResources = comment.Select(t=>CommentResourceFromEntityAssembler.ToResourceFromEntity(t.Item1,t.Item2)).ToList();
+
+            var postResource = PostResourceFromEntityAssembler.ToResourceFromEntity(post.Item1, post.Item2, commentResources);
+            
             return Ok(postResource);
         }
         catch (Exception e)
@@ -139,9 +150,17 @@ public class PostsController(IPostCommandService postCommandService, IPostQueryS
             var query = new GetAllPostsByCompanyId(companyId);
             var posts = await postQueryService.Handle(query);
 
-            if (posts == null) return NotFound();
+            var comment = posts.Select(tuple=>tuple.Item3);
+            
+            var commentResources = comment.Select(tuple=>tuple.Select(t=>CommentResourceFromEntityAssembler.ToResourceFromEntity(t.Item1,t.Item2)).ToList()).ToList();
 
-            var postResources = posts.Select(tuple=>PostResourceFromEntityAssembler.ToResourceFromEntity(tuple.Item1,tuple.Item2));
+            var postResources = posts.Select(tuple =>
+            {
+                if (tuple.Item1 != null)
+                    return PostResourceFromEntityAssembler.ToResourceFromEntity(tuple.Item1, tuple.Item2,
+                        commentResources.ElementAt(posts.IndexOf(tuple)));
+                return null;
+            });
             return Ok(postResources);
         }
         catch (Exception e)
@@ -165,8 +184,17 @@ public class PostsController(IPostCommandService postCommandService, IPostQueryS
 
             if (posts == null) return NotFound();
 
-            var postResources = posts.Select(tuple=>PostResourceFromEntityAssembler.ToResourceFromEntity(tuple.Item1,tuple.Item2));
-            return Ok(postResources);
+            var comment = posts.Select(tuple=>tuple.Item3);
+            
+            var commentResources = comment.Select(tuple=>tuple.Select(t=>CommentResourceFromEntityAssembler.ToResourceFromEntity(t.Item1,t.Item2)).ToList()).ToList();
+
+            var postResources = posts.Select(tuple =>
+            {
+                if (tuple.Item1 != null)
+                    return PostResourceFromEntityAssembler.ToResourceFromEntity(tuple.Item1, tuple.Item2,
+                        commentResources.ElementAt(posts.IndexOf(tuple)));
+                return null;
+            });            return Ok(postResources);
         }
         catch (Exception e)
         {
@@ -191,8 +219,17 @@ public class PostsController(IPostCommandService postCommandService, IPostQueryS
 
             if (posts == null) return NotFound();
 
-            var postResources = posts.Select(tuple=>PostResourceFromEntityAssembler.ToResourceFromEntity(tuple.Item1,tuple.Item2));
-            return Ok(postResources);
+            var comment = posts.Select(tuple=>tuple.Item3);
+            
+            var commentResources = comment.Select(tuple=>tuple.Select(t=>CommentResourceFromEntityAssembler.ToResourceFromEntity(t.Item1,t.Item2)).ToList()).ToList();
+
+            var postResources = posts.Select(tuple =>
+            {
+                if (tuple.Item1 != null)
+                    return PostResourceFromEntityAssembler.ToResourceFromEntity(tuple.Item1, tuple.Item2,
+                        commentResources.ElementAt(posts.IndexOf(tuple)));
+                return null;
+            });            return Ok(postResources);
         }
         catch (Exception e)
         {

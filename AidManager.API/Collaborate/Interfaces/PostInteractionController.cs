@@ -33,8 +33,12 @@ public class PostInteractionController(IFavoritePostCommandService favoritePostC
             }
             
             var post = await postQueryService.Handle(new GetPostById(command.PostId));
-            var resource = PostResourceFromEntityAssembler.ToResourceFromEntity(post.Item1, post.Item2);
+            var comment = post.comments;
             
+            var commentResources = comment.Select(t=>CommentResourceFromEntityAssembler.ToResourceFromEntity(t.Item1,t.Item2)).ToList();
+
+            var resource = PostResourceFromEntityAssembler.ToResourceFromEntity(post.Item1, post.Item2, commentResources);
+
             return Ok(resource);
         }
         catch (Exception e)
@@ -66,7 +70,11 @@ public class PostInteractionController(IFavoritePostCommandService favoritePostC
                 return BadRequest("Post not found");
 
             }                
-            var resource = PostResourceFromEntityAssembler.ToResourceFromEntity(post.Item1, post.Item2);
+            var comment = post.comments;
+            
+            var commentResources = comment.Select(t=>CommentResourceFromEntityAssembler.ToResourceFromEntity(t.Item1,t.Item2)).ToList();
+
+            var resource = PostResourceFromEntityAssembler.ToResourceFromEntity(post.Item1, post.Item2, commentResources);
             return Ok(resource);
 
         }
@@ -86,10 +94,18 @@ public class PostInteractionController(IFavoritePostCommandService favoritePostC
     {
         try
         {
-            var result = await favoritePostQueryService.Handle(new GetFavoritePosts(userId));
+            var posts = await favoritePostQueryService.Handle(new GetFavoritePosts(userId));
             
-            var postResources = result.Select(tuple=>PostResourceFromEntityAssembler.ToResourceFromEntity(tuple.Item1,tuple.Item2));
+            var comment = posts.Select(tuple=>tuple.Item3);
             
+            var commentResources = comment.Select(tuple=>tuple.Select(t=>CommentResourceFromEntityAssembler.ToResourceFromEntity(t.Item1,t.Item2)).ToList()).ToList();
+
+            var postResources = posts.Select(tuple =>
+            { 
+                return PostResourceFromEntityAssembler.ToResourceFromEntity(tuple.Item1, tuple.Item2,
+                    commentResources.ElementAt(posts.IndexOf(tuple)));
+               
+            });
             return Ok(postResources);
         }
         catch (Exception e)

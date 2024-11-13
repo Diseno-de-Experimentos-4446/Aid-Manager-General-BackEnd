@@ -10,10 +10,10 @@ using AidManager.API.Collaborate.Domain.Services;
 
 namespace AidManager.API.Collaborate.Application.Internal.QueryServices;
 
-public class PostQueryService(IPostRepository postRepository, ExternalUserAccountService externalUserAccountService, ILikedPostRepository likedPostRepository) : IPostQueryService
+public class PostQueryService(ICommentQueryService commentQueryService,IPostRepository postRepository, ExternalUserAccountService externalUserAccountService, ILikedPostRepository likedPostRepository) : IPostQueryService
 {
     
-    public async Task<IEnumerable<(Post?, User)>?> Handle(GetPostByAuthor query)
+    public async Task<List<(Post?, User, List<(Comments?, User)>)>> Handle(GetPostByAuthor query)
     {
         
         var posts = await postRepository.GetPostByAuthor(query.Id);
@@ -29,17 +29,25 @@ public class PostQueryService(IPostRepository postRepository, ExternalUserAccoun
             throw new Exception("ERROR GETTING USER BY ID FOR POSTS BY AUTHOR");
         }
 
-        var postList = new List<(Post?, User)>();
+        
+        
+        var postList = new List<(Post?, User, List<(Comments?, User)>)>();
         
         foreach (var post in posts)
         {
-            postList.Add((post, user));
+            var getComments = new GetCommentsByPostIdQuery(post.Id);
+            var comments = await commentQueryService.Handle(getComments);
+            if (comments is null)
+            {
+                throw new Exception("ERROR GETTING COMMENTS BY POST ID");
+            }
+            postList.Add((post, user, comments));
         }
 
         return postList;
     }
     
-    public async Task<(Post?,User)> Handle(GetPostById query)
+    public async Task<(Post posts, User user, List<(Comments?, User)> comments)> Handle(GetPostById query)
     {
         
         var posts = await postRepository.FindPostById(query.Id);
@@ -54,18 +62,24 @@ public class PostQueryService(IPostRepository postRepository, ExternalUserAccoun
         {
             throw new Exception("ERROR Getting user by ID for post by ID");
         }
+        var getComments = new GetCommentsByPostIdQuery(posts.Id);
+        var comments = await commentQueryService.Handle(getComments);
+        if (comments is null)
+        {
+            throw new Exception("ERROR GETTING COMMENTS BY POST ID");
+        }
 
-        return (posts, user);
+        return (posts, user, comments);
     }
     
-    public async Task<IEnumerable<(Post?, User)>?> Handle(GetAllPostsByCompanyId query)
+    public async Task<List<(Post?, User, List<(Comments?, User)>)>> Handle(GetAllPostsByCompanyId query)
     {
         var posts = await postRepository.GetAllPostsByCompanyId(query.CompanyId);
         if (posts is null)
         {
             throw new Exception("ERROR GETTING POSTS BY AUTHOR");
         }
-        var postList = new List<(Post?, User)>();
+        var postList = new List<(Post?, User, List<(Comments?,User)>)>();
         
         foreach (var post in posts)
         {
@@ -74,20 +88,28 @@ public class PostQueryService(IPostRepository postRepository, ExternalUserAccoun
             {
                  throw new Exception("ERROR GETTING USER BY ID FOR POSTS BY AUTHOR");
             }
-            postList.Add((post, user));
+            
+            var getComments = new GetCommentsByPostIdQuery(post.Id);
+            var comments = await commentQueryService.Handle(getComments);
+            if (comments is null)
+            {
+                throw new Exception("ERROR GETTING COMMENTS BY POST ID");
+            }
+            
+            postList.Add((post, user, comments));
         }
 
         return postList;
     }
     
-    public async Task<IEnumerable<(Post?, User)>?> Handle(GetLikedPostsByUserid query)
+    public async Task<List<(Post?, User, List<(Comments?, User)>)>> Handle(GetLikedPostsByUserid query)
     {
         var likedPosts = await likedPostRepository.GetLikedPostByUserIdAsync(query.UserId);
         if (likedPosts is null)
         {
             throw new Exception("ERROR GETTING LIKED POSTS BY USER ID");
         }
-        var postList = new List<(Post?, User)>();
+        var postList = new List<(Post?, User, List<(Comments?,User)>)>();
         
         foreach (var likedPost in likedPosts)
         {
@@ -101,7 +123,13 @@ public class PostQueryService(IPostRepository postRepository, ExternalUserAccoun
             {
                 throw new Exception("ERROR GETTING USER BY ID FOR LIKED POSTS BY USER ID");
             }
-            postList.Add((post, user));
+            var getComments = new GetCommentsByPostIdQuery(post.Id);
+            var comments = await commentQueryService.Handle(getComments);
+            if (comments is null)
+            {
+                throw new Exception("ERROR GETTING COMMENTS BY POST ID");
+            }
+            postList.Add((post, user, comments));
         }
 
         return postList;
