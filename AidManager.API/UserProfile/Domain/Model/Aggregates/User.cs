@@ -47,4 +47,15 @@ public class User
         this.ProfileImg = command.Image;
     }
 
+    public void DeleteUser()
+    {
+        this.FirstName = "Deleted";
+        this.LastName = "User";
+        this.Age = 0;
+        this.Email = "Not Available";
+        this.Phone = "+0 (000) 000-000";
+        this.Password = "***";
+        this.ProfileImg = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzXtAL7ktbK0AErHJlPp7PnJsK7khu8pw34g&s";
+    }
+    
 }

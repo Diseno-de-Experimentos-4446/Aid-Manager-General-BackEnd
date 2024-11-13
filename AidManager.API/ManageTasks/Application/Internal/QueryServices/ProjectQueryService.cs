@@ -23,6 +23,10 @@ public class ProjectQueryService(IFavoriteProjects favoriteProjects,IProjectRepo
               foreach (var teamMember in project.TeamMembers)
               {
                 var user = await externalUserService.GetUserById(teamMember.Id);
+                if (user is { FirstName: "Deleted", Age: 0 })
+                {
+                    continue;
+                }
                 team.Add(user);
               }
               projectUserList.Add((project, team));
@@ -41,6 +45,10 @@ public class ProjectQueryService(IFavoriteProjects favoriteProjects,IProjectRepo
         foreach (var teamMember in project.TeamMembers)
         {
             var user = await externalUserService.GetUserById(teamMember.Id);
+            if (user is { FirstName: "Deleted", Age: 0 })
+            {
+                continue;
+            }
             team.Add(user);
         }
         
@@ -57,6 +65,10 @@ public class ProjectQueryService(IFavoriteProjects favoriteProjects,IProjectRepo
         foreach (var teamMember in project.TeamMembers)
         {
             var user = await externalUserService.GetUserById(teamMember.Id);
+            if (user is { FirstName: "Deleted", Age: 0 })
+            {
+                continue;
+            }
             team.Add(user);
         }
         
@@ -96,6 +108,10 @@ public class ProjectQueryService(IFavoriteProjects favoriteProjects,IProjectRepo
                 foreach (var teamMember in projectEntity.TeamMembers)
                 {
                     var user = await externalUserService.GetUserById(teamMember.Id);
+                    if (user is { FirstName: "Deleted", Age: 0 })
+                    {
+                        continue;
+                    }
                     team.Add(user);
                 }
                 projectUserList.Add((projectEntity, team));

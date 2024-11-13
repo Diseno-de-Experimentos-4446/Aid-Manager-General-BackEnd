@@ -158,6 +158,11 @@ public class AppDBContext : DbContext
         builder.Entity<UserAuth>().Property(u => u.Username).IsRequired();
         builder.Entity<UserAuth>().Property(u => u.PasswordHash).IsRequired();
         
+        //Deleted Users
+        
+        builder.Entity<DeletedUser>().ToTable("DeletedAccounts");
+        builder.Entity<DeletedUser>().HasKey(u => u.Id);
+        
         builder.UseSnakeCaseNamingConvention();
     }
 }

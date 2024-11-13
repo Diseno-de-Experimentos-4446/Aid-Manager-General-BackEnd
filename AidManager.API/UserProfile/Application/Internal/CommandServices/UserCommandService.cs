@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace AidManager.API.Authentication.Application.Internal.CommandServices;
 
-public class UserCommandService(IUserRepository userRepository, IUnitOfWork unitOfWork, ExternalUserAuthService externalUserAuthService) : IUserCommandService
+public class UserCommandService(IDeletedUserRepository deletedUserRepository,IUserRepository userRepository, IUnitOfWork unitOfWork, ExternalUserAuthService externalUserAuthService) : IUserCommandService
 {
     public async Task<User?> Handle(CreateUserCommand command)
     {
@@ -90,12 +90,12 @@ public class UserCommandService(IUserRepository userRepository, IUnitOfWork unit
         var user = await userRepository.FindByIdAsync(command.UserId);
         if (user != null)
         {
-            if (user.Role == 0)
-            {
-                await externalUserAuthService.DeleteCompany(user.CompanyId);
-            }
             await externalUserAuthService.DeleteUser(user.Email);
-            await userRepository.Remove(user);
+
+            var deletedUser = new DeletedUser(user);
+            await deletedUserRepository.AddAsync(deletedUser);
+            user.DeleteUser();
+            await userRepository.Update(user);
             await unitOfWork.CompleteAsync();
             return true;
         }

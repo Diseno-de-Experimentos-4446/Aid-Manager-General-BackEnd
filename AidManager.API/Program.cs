@@ -218,6 +218,7 @@ builder.Services.AddScoped<IFavoritePostQueryService, FavoritePostQueryService>(
 builder.Services.AddScoped<ILikedPostRepository, LikedPostRepository>();
 builder.Services.AddScoped<IFavoriteProjects, FavoriteProjectsRepository>();
 
+builder.Services.AddScoped<IDeletedUserRepository, DeletedUserRepository>();
 
 
 // Configure the HTTP request pipeline.
