@@ -15,18 +15,17 @@ public class ProjectQueryService(IFavoriteProjects favoriteProjects,IProjectRepo
         
        var projectList = await projectRepository.GetProjectsByCompanyId(query.CompanyId);
        var projectUserList = new List<(Project, List<User>)>();
-       var team = new List<User>();
-
+       
        
          foreach (var project in projectList)
          {
+             var team = new List<User>();
               foreach (var teamMember in project.TeamMembers)
               {
                 var user = await externalUserService.GetUserById(teamMember.Id);
                 team.Add(user);
               }
               projectUserList.Add((project, team));
-              team.Clear();
               
          }
        
@@ -44,6 +43,7 @@ public class ProjectQueryService(IFavoriteProjects favoriteProjects,IProjectRepo
             var user = await externalUserService.GetUserById(teamMember.Id);
             team.Add(user);
         }
+        
         
         return (project, team);
         
