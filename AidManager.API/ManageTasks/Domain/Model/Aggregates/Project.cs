@@ -79,7 +79,7 @@ public class Project
         {
             throw new Exception("Rating not valid must be between 1 - 5 >:V");
         }
-        this.Rating = rating;
+        this.Rating = Math.Round(rating, 2);
     }
     
 }

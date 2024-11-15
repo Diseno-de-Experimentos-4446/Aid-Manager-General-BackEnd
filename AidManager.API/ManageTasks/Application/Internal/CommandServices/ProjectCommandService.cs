@@ -211,7 +211,8 @@ public class ProjectCommandService(IProjectRepository projectRepository, IUnitOf
             throw new Exception("Project not Found");
         }
         
-        project.UpdateRating(command.Rating);
+        var rating = command.Rating;
+        project.UpdateRating(rating);
         
         var team = new List<User>();
         

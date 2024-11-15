@@ -65,7 +65,7 @@ public class PostCommandService( ILikedPostRepository likedPostRepository  ,Exte
         foreach (var comment in comments)
         {
             if (comment.Item1 != null)
-                await commentCommandService.Handle(new DeleteCommentCommand(comment.Item1.Id, post.Id));
+                await commentCommandService.Handle(new DeleteCommentCommand(post.Id, comment.Item1.Id));
         }
         
         await postRepository.Remove(post);
