@@ -42,6 +42,37 @@ public class PostsController(IPostCommandService postCommandService, IPostQueryS
         }
         
     }
+
+    [HttpPut("{id}/update/{userId}/company/{companyId}")]
+    [SwaggerOperation(
+        Summary = "Update post by id",
+        Description = "Update post by id",
+        OperationId = "UpdatePost")]
+    [SwaggerResponse(200, "The post was updated", typeof(UpdatePostResource))]
+    public async Task<IActionResult> UpdatePost([FromRoute] int id, int userId, int companyId, [FromBody] UpdatePostResource resource)
+    {
+        try
+        {
+            var command = UpdatePostCommandFromResource.FromResourceToCommand(id, userId, companyId, resource);
+            var post = await postCommandService.Handle(command);
+
+            if (post.Item1 == null) return NotFound();
+
+            var comment = post.Item3;
+            
+            var commentResources = comment.Select(t=>CommentResourceFromEntityAssembler.ToResourceFromEntity(t.Item1,t.Item2)).ToList();
+
+            var postResource = PostResourceFromEntityAssembler.ToResourceFromEntity(post.Item1, post.Item2, commentResources);
+            
+            return Ok(postResource);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Error: " + e.Message);
+        }
+    }
+    
+    
     
      // update rating field of post by id
         [HttpPatch("{id}/rating/{userId}")]

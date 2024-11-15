@@ -17,4 +17,6 @@ public interface IPostCommandService
     
     Task<PostImage?> Handle(DeletePostImageCommand command);
     
+    Task<(Post?,User,List<(Comments?, User)>)> Handle(UpdatePostCommand command);
+    
 }

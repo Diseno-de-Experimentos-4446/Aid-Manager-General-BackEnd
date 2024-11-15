@@ -64,6 +64,14 @@ public class Post
         }
         
     }
+    
+    public void Update(UpdatePostCommand command)
+    {
+        this.Title = command.Title;
+        this.Subject = command.Subject;
+        this.Description = command.Description;
+        this.ImageUrl = command.Images?.ConvertAll(url => new PostImage() { PostImageUrl = url }) ?? new List<PostImage>();
+    }
 
     
     

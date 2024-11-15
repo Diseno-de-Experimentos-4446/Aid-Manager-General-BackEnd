@@ -126,5 +126,30 @@ public class PostCommandService( ILikedPostRepository likedPostRepository  ,Exte
         await unitOfWork.CompleteAsync();
         return postImage;
     }
-    
+
+    public async Task<(Post?, User, List<(Comments?, User)>)> Handle(UpdatePostCommand command)
+    {
+        var post = await postRepository.FindPostById(command.Id);
+        if (post == null)
+        {
+            throw new Exception("Post not found");
+        }
+        var user = await externalUserAccountService.GetUserById(command.UserId);
+        if (user == null)
+        {
+            throw new Exception("User not found");
+        }
+        
+        post.Update(command);
+        var getComments = new GetCommentsByPostIdQuery(post.Id);
+        var comments = await commentQueryService.Handle(getComments);
+        if (comments is null)
+        {
+            throw new Exception("ERROR GETTING COMMENTS BY POST ID");
+        }
+        
+        await postRepository.Update(post);
+        await unitOfWork.CompleteAsync();
+        return (post, user, comments);
+    }
 }
