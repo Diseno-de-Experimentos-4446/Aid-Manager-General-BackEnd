@@ -43,7 +43,7 @@ public class Project
         this.ProjectDate = DateOnly.Parse(command.ProjectDate);
         this.ProjectTime = TimeOnly.Parse(command.ProjectTime);
         this.ProjectLocation = command.ProjectLocation;
-        this.Rating = 1.00;
+        this.Rating = 0.00;
         
         this.AuditDate = DateOnly.FromDateTime(DateTime.Now);
     }
