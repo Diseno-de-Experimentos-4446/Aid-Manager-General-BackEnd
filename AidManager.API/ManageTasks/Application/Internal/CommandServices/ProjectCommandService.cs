@@ -10,7 +10,7 @@ using AidManager.API.Shared.Domain.Repositories;
 
 namespace AidManager.API.ManageTasks.Application.Internal.CommandServices;
 
-public class ProjectCommandService(IProjectRepository projectRepository, IUnitOfWork unitOfWork,IFavoriteProjects favoriteProjects, ExternalUserService externalUserService): IProjectCommandService
+public class ProjectCommandService(ITaskRepository taskRepository,IProjectRepository projectRepository, IUnitOfWork unitOfWork,IFavoriteProjects favoriteProjects, ExternalUserService externalUserService): IProjectCommandService
 {
     public async Task<(Project,List<User>)> Handle(CreateProjectCommand command)
     {
@@ -114,6 +114,11 @@ public class ProjectCommandService(IProjectRepository projectRepository, IUnitOf
         foreach (var teamMember in project.TeamMembers)
         {
             var user = await externalUserService.GetUserById(teamMember.Id);
+            var userTasks= await taskRepository.GetTasksByUserId(teamMember.Id);
+            foreach (var task in userTasks)
+            {
+                await taskRepository.Remove(task);
+            }
             team.Add(user);
         }
         
