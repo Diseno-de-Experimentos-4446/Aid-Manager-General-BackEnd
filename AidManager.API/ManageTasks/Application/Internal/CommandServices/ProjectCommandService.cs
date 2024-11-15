@@ -16,6 +16,11 @@ public class ProjectCommandService(IProjectRepository projectRepository, IUnitOf
     {
         try {
             
+            if(command.CompanyId == 0)
+            {
+                throw new Exception("Company Id is required");
+            }
+            
             var existsByName = await projectRepository.ExistsByName(command.Name);
             
             if (existsByName)
@@ -43,7 +48,10 @@ public class ProjectCommandService(IProjectRepository projectRepository, IUnitOf
     public async Task<(Project,List<User>)> Handle(AddProjectImageCommand command)
     {
         var project = await projectRepository.GetProjectById(command.ProjectId);
-       
+        if (project == null)
+        {
+            throw new Exception("Project not Found");
+        }
         project.AddImage(command);
         
         var team = new List<User>();
@@ -65,6 +73,10 @@ public class ProjectCommandService(IProjectRepository projectRepository, IUnitOf
         {
             var project = await projectRepository.GetProjectById(command.ProjectId); 
             var newUser = await externalUserService.GetUserById(command.UserId);
+            if (project == null)
+            {
+                throw new Exception("Project not Found");
+            }
 
             if (project.TeamMembers.All(tm => tm.Id != newUser.Id)) 
             { 
@@ -92,7 +104,10 @@ public class ProjectCommandService(IProjectRepository projectRepository, IUnitOf
     public async Task<(Project,List<User>)> Handle(DeleteProjectCommand command)
     {
         var project = await projectRepository.GetProjectById(command.ProjectId);
-        
+        if (project == null)
+        {
+            throw new Exception("Project not Found");
+        }
         
         var team = new List<User>();
         
@@ -110,6 +125,11 @@ public class ProjectCommandService(IProjectRepository projectRepository, IUnitOf
     public async Task<(Project,List<User>)> Handle(UpdateProjectCommand command)
     {
         var project = await projectRepository.GetProjectById(command.ProjectId);
+        if (project == null)
+        {
+            throw new Exception("Project not Found");
+        }
+        
         project.UpdateProject(command);
         
         var team = new List<User>();
@@ -127,7 +147,10 @@ public class ProjectCommandService(IProjectRepository projectRepository, IUnitOf
     public async Task<(Project, List<User>)> Handle(SaveProjectAsFavorite command)
     {
         var project = await projectRepository.GetProjectById(command.ProjectId);
-        
+        if (project == null)
+        {
+            throw new Exception("Project not Found");
+        }
         var team = new List<User>();
         
         foreach (var teamMember in project.TeamMembers)
@@ -137,6 +160,14 @@ public class ProjectCommandService(IProjectRepository projectRepository, IUnitOf
         }
 
         var saved = new FavoriteProjects(command);
+        
+        var exists = await favoriteProjects.GetFavoriteProjectsByProjectIdAndUserIdAsync(command.ProjectId, command.UserId);
+
+        if (exists != null)
+        {
+            return (project, team);
+        }
+        
         await favoriteProjects.AddAsync(saved);
         await unitOfWork.CompleteAsync();
         return (project, team);
@@ -144,7 +175,43 @@ public class ProjectCommandService(IProjectRepository projectRepository, IUnitOf
 
     public async Task<(Project, List<User>)> Handle(RemoveProjectAsFavorite command)
     {
+        var saved = await favoriteProjects.GetFavoriteProjectsByProjectIdAndUserIdAsync(command.ProjectId, command.UserId);
+        if (saved == null)
+        {
+            throw new Exception("Project is not saved as favorite.");
+        }
         var project = await projectRepository.GetProjectById(command.ProjectId);
+        if (project == null)
+        {
+            await favoriteProjects.Remove(saved);
+            throw new Exception("This project was deleted.");
+        }
+        var team = new List<User>();
+        
+        foreach (var teamMember in project.TeamMembers)
+        {
+            var user = await externalUserService.GetUserById(teamMember.Id);
+            team.Add(user);
+        }
+        
+        await favoriteProjects.Remove(saved);
+        await unitOfWork.CompleteAsync();
+        return (project, team);    
+    }
+
+    public async Task<(Project, List<User>)> Handle(UpdateRatingCommand command)
+    {
+        if (command.Rating < 1 || command.Rating > 5)
+        {
+            throw new Exception("Rating not valid must be between 1 - 5 >:V");
+        }
+        var project = await projectRepository.GetProjectById(command.ProjectId);
+        if (project == null)
+        {
+            throw new Exception("Project not Found");
+        }
+        
+        project.UpdateRating(command.Rating);
         
         var team = new List<User>();
         
@@ -153,16 +220,8 @@ public class ProjectCommandService(IProjectRepository projectRepository, IUnitOf
             var user = await externalUserService.GetUserById(teamMember.Id);
             team.Add(user);
         }
-
-        var saved = await favoriteProjects.GetFavoriteProjectsByProjectIdAndUserIdAsync(command.ProjectId, command.UserId);
-
-        if (saved == null)
-        {
-            throw new Exception("Project is not saved as favorite.");
-        }
-        
-        await favoriteProjects.AddAsync(saved);
+        await projectRepository.Update(project);
         await unitOfWork.CompleteAsync();
-        return (project, team);    
+        return (project, team);
     }
 }

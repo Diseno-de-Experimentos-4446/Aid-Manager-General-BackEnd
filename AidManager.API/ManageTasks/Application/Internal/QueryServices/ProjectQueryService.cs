@@ -19,10 +19,15 @@ public class ProjectQueryService(IFavoriteProjects favoriteProjects,IProjectRepo
        
          foreach (var project in projectList)
          {
+             if (project == null)
+             {
+                    continue;
+             } 
              var team = new List<User>();
               foreach (var teamMember in project.TeamMembers)
-              {
-                var user = await externalUserService.GetUserById(teamMember.Id);
+              { 
+                  
+                  var user = await externalUserService.GetUserById(teamMember.Id);
                 if (user is { FirstName: "Deleted", Age: 0 })
                 {
                     continue;
@@ -37,10 +42,15 @@ public class ProjectQueryService(IFavoriteProjects favoriteProjects,IProjectRepo
        
     }
     
-    public async Task<(Project, List<User>)> Handle(GetProjectByIdQuery query)
+    public async Task<(Project? project, List<User> team)> Handle(GetProjectByIdQuery query)
     {
         var project = await projectRepository.GetProjectById(query.id);
         var team = new List<User>();
+        
+        if (project == null)
+        {
+            throw new Exception("Project not found or was Deleted");
+        }
         
         foreach (var teamMember in project.TeamMembers)
         {
@@ -62,8 +72,13 @@ public class ProjectQueryService(IFavoriteProjects favoriteProjects,IProjectRepo
         var project = await projectRepository.GetProjectById(query.ProjectId);
         var team = new List<User>();
         
+        if (project == null)
+        {
+            throw new Exception("Project not found or was Deleted");
+        }
         foreach (var teamMember in project.TeamMembers)
         {
+            
             var user = await externalUserService.GetUserById(teamMember.Id);
             if (user is { FirstName: "Deleted", Age: 0 })
             {
@@ -84,6 +99,10 @@ public class ProjectQueryService(IFavoriteProjects favoriteProjects,IProjectRepo
        
         foreach (var project in projectList)
         {
+            if (project == null)
+            {
+                continue;
+            }
             var team = new List<User>();
             foreach (var teamMember in project.TeamMembers)
             {
@@ -105,6 +124,16 @@ public class ProjectQueryService(IFavoriteProjects favoriteProjects,IProjectRepo
          foreach (var project in projectsList)
          {
                 var projectEntity = await projectRepository.GetProjectById(project.ProjectId);
+                if (projectEntity == null)
+                {
+                    var delete = await favoriteProjects.GetFavoriteProjectsByProjectIdAndUserIdAsync(query.UserId, project.ProjectId);
+                    if (delete == null)
+                    {
+                        continue;
+                    }
+                    await favoriteProjects.Remove(delete);
+                    continue;
+                }
                 foreach (var teamMember in projectEntity.TeamMembers)
                 {
                     var user = await externalUserService.GetUserById(teamMember.Id);

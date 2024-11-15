@@ -197,7 +197,31 @@ public class UsersController(IUserCommandService userCommandService, IUserQueryS
     }
 
 
-    
+    [HttpGet("deleted-users/{companyId}")]
+    [SwaggerOperation(
+        Summary = "Obtains all deleted users",
+        Description = "Obtains all deleted users",
+        OperationId = "GetAllDeletedUsers"
+    )]
+    [SwaggerResponse(200, "The deleted users were obtained")]
+    public async Task<IActionResult> GetAllDeletedUsers(int companyId)
+    {
+        try
+        {
+            var query = new GetAllUsersByCompanyIdQuery(companyId);
+            var company = await externalUserAuthService.FetchCompanyByCompanyId(companyId);
+            var users = await userQueryService.HandleDel(query);
+
+            var usersResources = 
+                users.Select(user => DeletedUserResourceFromEntityAssembler.ToResource(user, company));
+            return Ok(usersResources);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Error: " + e.Message);
+        }
+        
+    }
 
 
 

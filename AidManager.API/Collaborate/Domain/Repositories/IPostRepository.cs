@@ -12,6 +12,6 @@ public interface IPostRepository : IBaseRepository<Post>
     Task<List<Comments?>> GetPostComments(int postId);
     Task<IEnumerable<Post>?> GetAllPostsByCompanyId(int companyId);
     
-    Task<IEnumerable<Post>?> GetPostByAuthor(int authorId);
+    Task<IEnumerable<Post?>> GetPostByAuthor(int authorId);
     
 }

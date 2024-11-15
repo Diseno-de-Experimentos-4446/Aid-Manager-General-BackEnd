@@ -8,10 +8,10 @@ public interface IProjectRepository : IBaseRepository<Project>
 {
     Task<bool> ExistsProject(int projectId);
     Task<bool> ExistsByName(string name);
-    Task<List<Project>> GetProjectsByCompanyId(int companyId);
-    Task<Project> GetProjectById(int projectId);
+    Task<List<Project?>> GetProjectsByCompanyId(int companyId);
+    Task<Project?> GetProjectById(int projectId);
     Task<List<User>> GetTeamMembers(int companyId);
     
-    Task<List<Project>> GetProjectsByUserId(int userId);
+    Task<List<Project?>> GetProjectsByUserId(int userId);
     
 }

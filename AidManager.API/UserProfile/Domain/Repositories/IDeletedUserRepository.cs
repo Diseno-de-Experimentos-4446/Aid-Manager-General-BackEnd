@@ -5,9 +5,9 @@ namespace AidManager.API.Authentication.Domain.Repositories;
 
 public interface IDeletedUserRepository : IBaseRepository<DeletedUser>
 {
-        Task<List<User>> FindUsersByCompanyId(int companyId);
+        Task<List<DeletedUser>> FindUsersByCompanyId(int companyId);
         
-        Task<User?> FindUserByEmail(string email);
+        Task<DeletedUser?> FindUserByEmail(string email);
         
-        Task<User?> FindUserById(int id);
+        Task<DeletedUser?> FindUserById(int id);
 }

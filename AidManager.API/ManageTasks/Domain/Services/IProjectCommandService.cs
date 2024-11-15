@@ -21,4 +21,6 @@ public interface IProjectCommandService
     Task<(Project,List<User>)> Handle(SaveProjectAsFavorite command);
     Task<(Project,List<User>)> Handle(RemoveProjectAsFavorite command);
 
+    Task<(Project,List<User>)> Handle(UpdateRatingCommand command);
+    
 }

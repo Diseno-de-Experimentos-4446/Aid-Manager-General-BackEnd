@@ -61,7 +61,7 @@ public class PostInteractionController(IFavoritePostCommandService favoritePostC
 
             if (result == false)
             {
-                return BadRequest("Post already in favorites");
+                return BadRequest("Post already deleted from favorites");
             }
             
             var post = await postQueryService.Handle(new GetPostById(command.PostId));

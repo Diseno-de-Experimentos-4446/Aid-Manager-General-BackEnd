@@ -14,7 +14,7 @@ namespace AidManager.API.Collaborate.Infraestructure.Repositories;
 public class PostRepository(AppDBContext context) : BaseRepository<Post>(context), IPostRepository
 {
     
-    public async Task<IEnumerable<Post>?> GetPostByAuthor(int authorId)
+    public async Task<IEnumerable<Post?>> GetPostByAuthor(int authorId)
     {
         try
         {

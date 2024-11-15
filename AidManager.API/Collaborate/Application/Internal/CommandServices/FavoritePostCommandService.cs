@@ -24,7 +24,7 @@ public class FavoritePostCommandService(IPostRepository postRepository,ExternalU
             {
                 throw new Exception("Post not found");
             }
-
+            
             if (await favoritePostRepository.GetFavoritePostsByPostIdAndUserIdAsync(command.UserId, command.PostId) !=
                 null)
             {

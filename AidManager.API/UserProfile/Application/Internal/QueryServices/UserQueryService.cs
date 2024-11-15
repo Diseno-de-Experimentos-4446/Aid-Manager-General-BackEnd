@@ -5,7 +5,7 @@ using AidManager.API.Authentication.Domain.Services;
 
 namespace AidManager.API.Authentication.Application.Internal.QueryServices;
 
-public class UserQueryService(IUserRepository userRepository) : IUserQueryService
+public class UserQueryService(IUserRepository userRepository, IDeletedUserRepository deletedUserRepository) : IUserQueryService
 {
     public async Task<IEnumerable<User>?> Handle(GetAllUsersByCompanyIdQuery query)
     {
@@ -33,5 +33,17 @@ public class UserQueryService(IUserRepository userRepository) : IUserQueryServic
     {
         Console.WriteLine("searching by email user");
         return await userRepository.FindUserByEmail(query.email);
+    }
+
+    public async Task<IEnumerable<DeletedUser?>> HandleDel(GetAllUsersByCompanyIdQuery query)
+    {
+        var users =  await deletedUserRepository.FindUsersByCompanyId(query.CompanyId);
+        var userList = new List<DeletedUser>();
+        
+        foreach (var user in users)
+        {
+            userList.Add(user);
+        }
+        return userList;
     }
 }

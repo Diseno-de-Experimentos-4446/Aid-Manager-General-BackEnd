@@ -10,7 +10,7 @@ public interface IProjectQueryService
 {
     Task<IEnumerable<(Project, List<User>)>> Handle(GetAllProjectsQuery query);
     
-    Task<(Project,List<User>)> Handle(GetProjectByIdQuery query);
+    Task<(Project? project, List<User> team)> Handle(GetProjectByIdQuery query);
     
     Task<IEnumerable<User>> Handle(GetAllTeamMembers query);
 

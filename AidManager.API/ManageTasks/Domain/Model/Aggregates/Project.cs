@@ -10,6 +10,8 @@ public class Project
     public int Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
+    
+    public double Rating { get; set; }
 
     public List<ProjectImage> ImageUrl { get; set; }
     
@@ -41,6 +43,8 @@ public class Project
         this.ProjectDate = DateOnly.Parse(command.ProjectDate);
         this.ProjectTime = TimeOnly.Parse(command.ProjectTime);
         this.ProjectLocation = command.ProjectLocation;
+        this.Rating = 1.00;
+        
         this.AuditDate = DateOnly.FromDateTime(DateTime.Now);
     }
     
@@ -67,6 +71,15 @@ public class Project
         {
             TeamMembers.Add(user);
         }
+    }
+    
+    public void UpdateRating(double rating)
+    {
+        if (rating < 1 || rating > 5)
+        {
+            throw new Exception("Rating not valid must be between 1 - 5 >:V");
+        }
+        this.Rating = rating;
     }
     
 }

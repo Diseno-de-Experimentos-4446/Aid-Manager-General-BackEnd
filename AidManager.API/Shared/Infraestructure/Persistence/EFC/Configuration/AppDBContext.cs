@@ -137,10 +137,10 @@ public class AppDBContext : DbContext
         builder.Entity<Comments>().Property(c => c.UserId).IsRequired();
         builder.Entity<Comments>().Property(c => c.PostId).IsRequired();
 
+        //Favorite Projects
+        builder.Entity<FavoriteProjects>().ToTable("FavoriteProjects");
+        builder.Entity<FavoriteProjects>().HasKey(fp => new { fp.UserId, fp.ProjectId });
         
-        
-        
-
         
         builder.Entity<PaymentDetail>().ToTable("PaymentDetails");
         builder.Entity<PaymentDetail>().HasKey(p => p.Id);

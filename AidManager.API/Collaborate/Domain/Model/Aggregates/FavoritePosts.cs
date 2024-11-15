@@ -4,7 +4,6 @@ namespace AidManager.API.Collaborate.Domain.Model.ValueObjects;
 
 public class FavoritePosts
 {
-    public int Id { get; set; }
     public int UserId { get; set; }
     public int PostId { get; set; }
     

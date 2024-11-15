@@ -24,7 +24,7 @@ public class FavoritePostQueryService(ICommentQueryService commentQueryService,I
         {
             throw new Exception("ERROR GETTING USER BY ID FOR FAVORITE POSTS");
         }
-        var postObj = await postRepository.GetPostByAuthor(query.UserId);
+        var postObj = await postRepository.GetAllPostsByCompanyId(user.CompanyId);
         if (postObj is null)
         { 
             throw new Exception("ERROR GETTING POST BY ID");

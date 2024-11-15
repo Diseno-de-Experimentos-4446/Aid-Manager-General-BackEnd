@@ -30,6 +30,7 @@ public class DeletedUser
 
     public DeletedUser(User user)
     {
+        this.Id = user.Id;
         this.FirstName = user.FirstName;
         this.LastName = user.LastName;
         this.Age = user.Age;

@@ -99,6 +99,32 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
         
     }
     
+    
+    [HttpPatch("{projectId}")]
+    
+    [SwaggerOperation(
+        Summary = "Update project rating",
+        Description = "Update project rating",
+        OperationId = "UpdateProjectrating"
+    )]
+    public async Task<IActionResult> UpdateRating(UpdateRatingProject resource, int projectId)
+    {
+        try
+        {
+            var project = await projectCommandService.Handle(UpdateRatingCommandFromResource.ToCommandFromResource(projectId, resource));
+            var projectResource = ProjectResourceFromEntityAssembler.ToResourceFromEntity(project.Item1, project.Item2);
+            return Ok(projectResource);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Error: " + e.Message);
+
+        }
+        
+    }    
+    
+    
+    
     [HttpGet("team/{projectId}")]
     [SwaggerOperation(
         Summary = "Get all project Team Members",

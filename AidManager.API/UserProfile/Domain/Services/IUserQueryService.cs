@@ -9,4 +9,7 @@ public interface IUserQueryService
     
     Task<User?> FindUserById(GetUserByIdQuery id);
     Task<User?> FindUserByEmail(GetUserByEmailQuery email);
+
+    Task<IEnumerable<DeletedUser?>> HandleDel(GetAllUsersByCompanyIdQuery query);
+
 }
