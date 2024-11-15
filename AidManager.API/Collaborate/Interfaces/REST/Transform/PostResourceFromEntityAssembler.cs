@@ -21,8 +21,8 @@ public static class PostResourceFromEntityAssembler
             post.CompanyId,
             post.UserId,
             user.FirstName + " " + user.LastName,
-            user.Email,
             user.ProfileImg,
+            user.Email,
             post.Rating,
             post.ImageUrl.Select(img => img.PostImageUrl).ToList(),
             commentResources
