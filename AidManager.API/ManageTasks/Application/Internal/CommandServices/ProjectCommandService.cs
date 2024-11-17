@@ -180,7 +180,7 @@ public class ProjectCommandService(ITaskRepository taskRepository,IProjectReposi
 
     public async Task<(Project, List<User>)> Handle(RemoveProjectAsFavorite command)
     {
-        var saved = await favoriteProjects.GetFavoriteProjectsByProjectIdAndUserIdAsync(command.ProjectId, command.UserId);
+        var saved = await favoriteProjects.GetFavoriteProjectsByProjectIdAndUserIdAsync(command.UserId, command.ProjectId);
         if (saved == null)
         {
             throw new Exception("Project is not saved as favorite.");
