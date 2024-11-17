@@ -11,5 +11,5 @@ public interface ITaskQueryService
     Task<(TaskItem,User)> Handle(GetTaskByIdQuery query); 
     Task<List<(TaskItem,User)>> Handle(GetTasksByProjectIdQuery query);
     Task<List<(TaskItem,User)>> Handle(GetTasksByCompanyId query);
-    
+    Task<List<(TaskItem,User)>> Handle(GetAllTasksByUserIdByCompanyId query);
 }
