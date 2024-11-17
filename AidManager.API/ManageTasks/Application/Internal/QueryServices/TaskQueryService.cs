@@ -67,7 +67,41 @@ public class TaskQueryService(ITaskRepository taskRepository, ExternalUserServic
         }
         
     }
-    
+
+    public async Task<List<(TaskItem, User)>> Handle(GetAllTasksByUserIdByCompanyId query)
+    {
+        try
+        {
+            var getAllProjectsQuery = new GetAllProjectsQuery(query.CompanyId);
+            var projects = await projectQuery.Handle(getAllProjectsQuery);
+
+            var tasksList = new List<TaskItem>();
+            
+            foreach (var project in projects)
+            {
+                var tasks = await taskRepository.GetTasksByProjectId(project.Item1.Id);
+                tasksList.AddRange(tasks);
+            }
+            
+            var taskUserList = new List<(TaskItem, User)>();
+            foreach (var task in tasksList)
+            {
+                if (task.AssigneeId == query.UserId)
+                {
+                    var user = await external.GetUserById(task.AssigneeId);
+                    taskUserList.Add((task, user));
+                }
+            }
+
+            return taskUserList;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
     public async Task<List<(TaskItem, User)>> Handle(GetTasksByUserId query)
     {
         var taskList = await taskRepository.GetTasksByUserId(query.UserId);
