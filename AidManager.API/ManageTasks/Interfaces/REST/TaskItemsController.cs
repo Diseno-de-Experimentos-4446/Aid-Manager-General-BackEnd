@@ -95,7 +95,7 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
         }
     }
     
-    [HttpPatch("edit/{id}")]
+    [HttpPut("edit/{id}")]
     [SwaggerOperation(
         Summary = "Update a Task",
         Description = "Update a Project Task",
