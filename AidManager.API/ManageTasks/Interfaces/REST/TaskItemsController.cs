@@ -186,6 +186,28 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
         
     }
     
+    [HttpGet($"/api/v1/company-tasks/{{companyId}}/user/{{userId}}")]
+    [SwaggerOperation(
+        Summary = "Get All Tasks assigned User by Company",
+        Description = "Get all tasks assigned to a user by company",
+        OperationId = "GetAllTasksByUserByCompany"
+    )]
+    public async Task<ActionResult<IEnumerable<TaskItemResource>>> GetAllTaskItemsByUserByCompany(int companyId, int userId)
+    {
+        try
+        {
+            var getAllTasksQueryByUserIdByCompanyId = new GetAllTasksByUserIdByCompanyId(userId, companyId);
+            var result = await taskQueryService.Handle(getAllTasksQueryByUserIdByCompanyId);
+            var resources = result.Select(tuple => TaskItemResourceFromEntityAssembler.ToResourceFromEntity(tuple.Item1, tuple.Item2));
+            return Ok(resources);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Error: " + e.Message);
+
+        }
+    }
+    
     [HttpGet("user/{userId}")]
     [SwaggerOperation(
         Summary = "Get All Tasks by User",
