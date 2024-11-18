@@ -1,4 +1,5 @@
-﻿using AidManager.API.Authentication.Domain.Model.Entities;
+﻿using System.Diagnostics;
+using AidManager.API.Authentication.Domain.Model.Entities;
 using AidManager.API.Collaborate.Application.Internal.OutboundServices.ACL;
 using AidManager.API.Collaborate.Domain.Model.Entities;
 using AidManager.API.Collaborate.Domain.Model.Queries;
@@ -39,7 +40,13 @@ public class FavoritePostQueryService(ICommentQueryService commentQueryService,I
                 if (post.PostId == notFavPost.Id) 
                 {
                     var comments = await commentQueryService.Handle(new GetCommentsByPostIdQuery(notFavPost.Id));
-                    listPosts.Add((notFavPost, user, comments));
+                    var author = await externalUserAccountService.GetUserById(notFavPost.UserId);
+                    if (author == null)
+                    {
+                        continue;
+                    }
+                    
+                    listPosts.Add((notFavPost, author , comments));
                 }
             }
             

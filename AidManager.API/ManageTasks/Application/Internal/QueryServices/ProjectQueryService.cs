@@ -5,10 +5,11 @@ using AidManager.API.ManageTasks.Domain.Model.Commands;
 using AidManager.API.ManageTasks.Domain.Model.Queries;
 using AidManager.API.ManageTasks.Domain.Repositories;
 using AidManager.API.ManageTasks.Domain.Services;
+using AidManager.API.Shared.Domain.Repositories;
 
 namespace AidManager.API.ManageTasks.Application.Internal.QueryServices;
 
-public class ProjectQueryService(ITeamMemberRepository teamMemberRepository,IFavoriteProjects favoriteProjects,IProjectRepository projectRepository, ExternalUserService externalUserService) :IProjectQueryService
+public class ProjectQueryService(IUnitOfWork unitOfWork,ITeamMemberRepository teamMemberRepository,IFavoriteProjects favoriteProjects,IProjectRepository projectRepository, ExternalUserService externalUserService) :IProjectQueryService
 {
     public async Task<IEnumerable<(Project,List<User>)>> Handle(GetAllProjectsQuery query)
     {
@@ -30,6 +31,7 @@ public class ProjectQueryService(ITeamMemberRepository teamMemberRepository,IFav
                 if (user is { FirstName: "Deleted", Age: 0 })
                 {
                     await teamMemberRepository.RemoveDeletedUser(teamMember.UserId);
+                    await unitOfWork.CompleteAsync();
                     continue;
                 }
                 team.Add(user);
@@ -59,6 +61,7 @@ public class ProjectQueryService(ITeamMemberRepository teamMemberRepository,IFav
             if (user is { FirstName: "Deleted", Age: 0 })
             {
                 await teamMemberRepository.RemoveDeletedUser(teamMember.UserId);
+                await unitOfWork.CompleteAsync();
                 continue;
             }
             team.Add(user);
@@ -86,6 +89,7 @@ public class ProjectQueryService(ITeamMemberRepository teamMemberRepository,IFav
             if (user is { FirstName: "Deleted", Age: 0 })
             {
                 await teamMemberRepository.RemoveDeletedUser(teamMember.UserId);
+                await unitOfWork.CompleteAsync();
                 continue;
             }
             team.Add(user);
@@ -116,6 +120,7 @@ public class ProjectQueryService(ITeamMemberRepository teamMemberRepository,IFav
                 if (user is { FirstName: "Deleted", Age: 0 })
                 {
                     await teamMemberRepository.RemoveDeletedUser(teamMember.UserId);
+                    await unitOfWork.CompleteAsync();
                     continue;
                 }
                 team.Add(user);
@@ -153,6 +158,9 @@ public class ProjectQueryService(ITeamMemberRepository teamMemberRepository,IFav
                     if (user is { FirstName: "Deleted", Age: 0 })
                     {
                         await teamMemberRepository.RemoveDeletedUser(teamMember.UserId);
+                        await unitOfWork.CompleteAsync();
+
+                        
                         continue;
                     }
                     team.Add(user);
