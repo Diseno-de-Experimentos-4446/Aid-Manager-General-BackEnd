@@ -1,5 +1,6 @@
 ﻿using AidManager.API.Authentication.Domain.Model.Entities;
 using AidManager.API.Collaborate.Domain.Model.Commands;
+using AidManager.API.ManageTasks.Application.Internal.OutboundServices;
 using AidManager.API.ManageTasks.Application.Internal.OutboundServices.ACL;
 using AidManager.API.ManageTasks.Domain.Model.Aggregates;
 using AidManager.API.ManageTasks.Domain.Model.Commands;
@@ -59,6 +60,7 @@ public class ProjectCommandService(ITaskRepository taskRepository,IProjectReposi
         foreach (var teamMember in project.TeamMembers)
         {
             var user = await externalUserService.GetUserById(teamMember.Id);
+            if (user is null) continue;
             team.Add(user);
         }
         await projectRepository.Update(project);
@@ -73,6 +75,8 @@ public class ProjectCommandService(ITaskRepository taskRepository,IProjectReposi
         {
             var project = await projectRepository.GetProjectById(command.ProjectId); 
             var newUser = await externalUserService.GetUserById(command.UserId);
+            if (newUser is null) throw new Exception("User not found");
+
             if (project == null)
             {
                 throw new Exception("Project not Found");
@@ -86,9 +90,16 @@ public class ProjectCommandService(ITaskRepository taskRepository,IProjectReposi
             }
             var team = new List<User>();
         
-            foreach (var teamMember in project.TeamMembers)
+            foreach (var teamMember in project.TeamMembers.ToList())
             {
                 var user = await externalUserService.GetUserById(teamMember.Id);
+                if (user is null)
+                {
+                
+                    project.TeamMembers.Remove(teamMember);
+                    continue;
+                }
+
                 team.Add(user);
             }
             await unitOfWork.CompleteAsync();
@@ -111,9 +122,14 @@ public class ProjectCommandService(ITaskRepository taskRepository,IProjectReposi
         
         var team = new List<User>();
         
-        foreach (var teamMember in project.TeamMembers)
+        foreach (var teamMember in project.TeamMembers.ToList())
         {
             var user = await externalUserService.GetUserById(teamMember.Id);
+            if (user is null)
+            {
+                project.TeamMembers.Remove(teamMember);
+                continue;
+            }
             var userTasks= await taskRepository.GetTasksByUserId(teamMember.Id);
             foreach (var task in userTasks)
             {
@@ -139,9 +155,15 @@ public class ProjectCommandService(ITaskRepository taskRepository,IProjectReposi
         
         var team = new List<User>();
         
-        foreach (var teamMember in project.TeamMembers)
+        foreach (var teamMember in project.TeamMembers.ToList())
         {
             var user = await externalUserService.GetUserById(teamMember.Id);
+            if (user is null)
+            {
+                
+                project.TeamMembers.Remove(teamMember);
+                continue;
+            }
             team.Add(user);
         }
         await projectRepository.Update(project);
@@ -158,9 +180,15 @@ public class ProjectCommandService(ITaskRepository taskRepository,IProjectReposi
         }
         var team = new List<User>();
         
-        foreach (var teamMember in project.TeamMembers)
+        foreach (var teamMember in project.TeamMembers.ToList())
         {
             var user = await externalUserService.GetUserById(teamMember.Id);
+            if (user is null)
+            {
+                
+                project.TeamMembers.Remove(teamMember);
+                continue;
+            }
             team.Add(user);
         }
 
@@ -193,9 +221,15 @@ public class ProjectCommandService(ITaskRepository taskRepository,IProjectReposi
         }
         var team = new List<User>();
         
-        foreach (var teamMember in project.TeamMembers)
+        foreach (var teamMember in project.TeamMembers.ToList())
         {
             var user = await externalUserService.GetUserById(teamMember.Id);
+            if (user is null)
+            {
+                
+                project.TeamMembers.Remove(teamMember);
+                continue;
+            }
             team.Add(user);
         }
         
@@ -221,9 +255,15 @@ public class ProjectCommandService(ITaskRepository taskRepository,IProjectReposi
         
         var team = new List<User>();
         
-        foreach (var teamMember in project.TeamMembers)
+        foreach (var teamMember in project.TeamMembers.ToList())
         {
             var user = await externalUserService.GetUserById(teamMember.Id);
+            if (user is null)
+            {
+                
+                project.TeamMembers.Remove(teamMember);
+                continue;
+            }
             team.Add(user);
         }
         await projectRepository.Update(project);

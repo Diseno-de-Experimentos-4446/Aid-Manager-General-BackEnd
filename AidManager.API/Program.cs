@@ -34,6 +34,7 @@ using AidManager.API.ManageCosts.Infraestructure.Repositories;
 using AidManager.API.ManageCosts.Interfaces.ACL;
 using AidManager.API.ManageCosts.Interfaces.ACL.Services;
 using AidManager.API.ManageTasks.Application.Internal.CommandServices;
+using AidManager.API.ManageTasks.Application.Internal.OutboundServices;
 using AidManager.API.ManageTasks.Application.Internal.OutboundServices.ACL;
 using AidManager.API.ManageTasks.Application.Internal.QueryServices;
 using AidManager.API.ManageTasks.Domain.Repositories;
@@ -220,6 +221,7 @@ builder.Services.AddScoped<IFavoriteProjects, FavoriteProjectsRepository>();
 
 builder.Services.AddScoped<IDeletedUserRepository, DeletedUserRepository>();
 
+builder.Services.AddScoped<ITaskEventHandlerService, TaskEventHandlerService>();
 
 // Configure the HTTP request pipeline.
 var app = builder.Build();
