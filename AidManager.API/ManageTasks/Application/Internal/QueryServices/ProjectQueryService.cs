@@ -102,13 +102,20 @@ public class ProjectQueryService(IUnitOfWork unitOfWork,ITeamMemberRepository te
     {
         var projectList = await projectRepository.GetProjectsByUserId(query.UserId);
         var projectUserList = new List<(Project, List<User>)>();
-        
 
-       
+
+
         foreach (var project in projectList)
         {
             if (project == null)
             {
+                var delete = await favoriteProjects.GetFavoriteProjectsByProjectIdAndUserIdAsync(query.UserId, project.Id);
+                if (delete == null)
+                {
+                    continue;
+                }
+
+                await favoriteProjects.Remove(delete);
                 continue;
             }
             var team = new List<User>();
