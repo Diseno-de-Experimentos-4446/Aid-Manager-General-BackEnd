@@ -29,6 +29,7 @@ public class ProjectQueryService(ITeamMemberRepository teamMemberRepository,IFav
                   var user = await externalUserService.GetUserById(teamMember.UserId);
                 if (user is { FirstName: "Deleted", Age: 0 })
                 {
+                    await teamMemberRepository.RemoveDeletedUser(teamMember.UserId);
                     continue;
                 }
                 team.Add(user);
@@ -57,6 +58,7 @@ public class ProjectQueryService(ITeamMemberRepository teamMemberRepository,IFav
             var user = await externalUserService.GetUserById(teamMember.UserId);
             if (user is { FirstName: "Deleted", Age: 0 })
             {
+                await teamMemberRepository.RemoveDeletedUser(teamMember.UserId);
                 continue;
             }
             team.Add(user);
@@ -83,6 +85,7 @@ public class ProjectQueryService(ITeamMemberRepository teamMemberRepository,IFav
             var user = await externalUserService.GetUserById(teamMember.UserId);
             if (user is { FirstName: "Deleted", Age: 0 })
             {
+                await teamMemberRepository.RemoveDeletedUser(teamMember.UserId);
                 continue;
             }
             team.Add(user);
@@ -110,6 +113,11 @@ public class ProjectQueryService(ITeamMemberRepository teamMemberRepository,IFav
             foreach (var teamMember in teams)
             {
                 var user = await externalUserService.GetUserById(teamMember.UserId);
+                if (user is { FirstName: "Deleted", Age: 0 })
+                {
+                    await teamMemberRepository.RemoveDeletedUser(teamMember.UserId);
+                    continue;
+                }
                 team.Add(user);
             }
             projectUserList.Add((project, team));
@@ -144,6 +152,7 @@ public class ProjectQueryService(ITeamMemberRepository teamMemberRepository,IFav
                     var user = await externalUserService.GetUserById(teamMember.UserId);
                     if (user is { FirstName: "Deleted", Age: 0 })
                     {
+                        await teamMemberRepository.RemoveDeletedUser(teamMember.UserId);
                         continue;
                     }
                     team.Add(user);
