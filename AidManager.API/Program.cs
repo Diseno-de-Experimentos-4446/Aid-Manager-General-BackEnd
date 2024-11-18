@@ -223,6 +223,8 @@ builder.Services.AddScoped<IDeletedUserRepository, DeletedUserRepository>();
 
 builder.Services.AddScoped<ITaskEventHandlerService, TaskEventHandlerService>();
 
+builder.Services.AddScoped<ITeamMemberRepository, TeamMemberRepository>();
+
 // Configure the HTTP request pipeline.
 var app = builder.Build();
 

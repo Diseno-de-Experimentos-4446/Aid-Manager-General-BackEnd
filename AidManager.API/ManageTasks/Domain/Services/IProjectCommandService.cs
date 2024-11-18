@@ -11,8 +11,6 @@ public interface IProjectCommandService
     Task<(Project,List<User>)> Handle(CreateProjectCommand command);
     
     Task<(Project,List<User>)> Handle(AddProjectImageCommand command);
-
-    Task<(Project,List<User>)> Handle(AddTeamMemberCommand command);
     
     Task<(Project,List<User>)> Handle(DeleteProjectCommand command);
     

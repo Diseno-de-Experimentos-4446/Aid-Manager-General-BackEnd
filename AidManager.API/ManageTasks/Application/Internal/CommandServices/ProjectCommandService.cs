@@ -11,7 +11,7 @@ using AidManager.API.Shared.Domain.Repositories;
 
 namespace AidManager.API.ManageTasks.Application.Internal.CommandServices;
 
-public class ProjectCommandService(ITaskRepository taskRepository,IProjectRepository projectRepository, IUnitOfWork unitOfWork,IFavoriteProjects favoriteProjects, ExternalUserService externalUserService): IProjectCommandService
+public class ProjectCommandService(ITeamMemberRepository teamMemberRepository,ITaskRepository taskRepository,IProjectRepository projectRepository, IUnitOfWork unitOfWork,IFavoriteProjects favoriteProjects, ExternalUserService externalUserService): IProjectCommandService
 {
     public async Task<(Project,List<User>)> Handle(CreateProjectCommand command)
     {
@@ -57,59 +57,22 @@ public class ProjectCommandService(ITaskRepository taskRepository,IProjectReposi
         
         var team = new List<User>();
         
-        foreach (var teamMember in project.TeamMembers)
+        var teams = await teamMemberRepository.GetTeamMembers(project.Id);
+        foreach (var teamMember in teams)
         {
-            var user = await externalUserService.GetUserById(teamMember.Id);
-            if (user is null) continue;
+            var user = await externalUserService.GetUserById(teamMember.UserId);
+            if (user is null || user.FirstName == "Deleted")
+            {
+                
+                await teamMemberRepository.RemoveDeletedUser(teamMember.UserId);
+                continue;
+            }
             team.Add(user);
         }
         await projectRepository.Update(project);
         await unitOfWork.CompleteAsync();
         return (project, team);
         
-    }
-
-    public async Task<(Project,List<User>)> Handle(AddTeamMemberCommand command)
-    {
-        try
-        {
-            var project = await projectRepository.GetProjectById(command.ProjectId); 
-            var newUser = await externalUserService.GetUserById(command.UserId);
-            if (newUser is null) throw new Exception("User not found");
-
-            if (project == null)
-            {
-                throw new Exception("Project not Found");
-            }
-
-            if (project.TeamMembers.All(tm => tm.Id != newUser.Id)) 
-            { 
-                project.AddTeamMember(newUser);
-                await projectRepository.Update(project);
-                
-            }
-            var team = new List<User>();
-        
-            foreach (var teamMember in project.TeamMembers.ToList())
-            {
-                var user = await externalUserService.GetUserById(teamMember.Id);
-                if (user is null)
-                {
-                
-                    project.TeamMembers.Remove(teamMember);
-                    continue;
-                }
-
-                team.Add(user);
-            }
-            await unitOfWork.CompleteAsync();
-            return (project, team);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
     }
 
     public async Task<(Project,List<User>)> Handle(DeleteProjectCommand command)
@@ -121,16 +84,17 @@ public class ProjectCommandService(ITaskRepository taskRepository,IProjectReposi
         }
         
         var team = new List<User>();
-        
-        foreach (var teamMember in project.TeamMembers.ToList())
+        var teams = await teamMemberRepository.GetTeamMembers(project.Id);
+        foreach (var teamMember in teams)
         {
-            var user = await externalUserService.GetUserById(teamMember.Id);
-            if (user is null)
+            var user = await externalUserService.GetUserById(teamMember.UserId);
+            if (user is null || user.FirstName == "Deleted")
             {
-                project.TeamMembers.Remove(teamMember);
+                await teamMemberRepository.RemoveDeletedUser(teamMember.UserId);
                 continue;
             }
-            var userTasks= await taskRepository.GetTasksByUserId(teamMember.Id);
+            
+            var userTasks= await taskRepository.GetTasksByUserId(teamMember.UserId);
             foreach (var task in userTasks)
             {
                 await taskRepository.Remove(task);
@@ -154,14 +118,14 @@ public class ProjectCommandService(ITaskRepository taskRepository,IProjectReposi
         project.UpdateProject(command);
         
         var team = new List<User>();
-        
-        foreach (var teamMember in project.TeamMembers.ToList())
+        var teams = await teamMemberRepository.GetTeamMembers(project.Id);
+        foreach (var teamMember in teams)
         {
-            var user = await externalUserService.GetUserById(teamMember.Id);
-            if (user is null)
+            var user = await externalUserService.GetUserById(teamMember.UserId);
+            if (user is null || user.FirstName == "Deleted")
             {
                 
-                project.TeamMembers.Remove(teamMember);
+                await teamMemberRepository.RemoveDeletedUser(teamMember.UserId);
                 continue;
             }
             team.Add(user);
@@ -179,14 +143,15 @@ public class ProjectCommandService(ITaskRepository taskRepository,IProjectReposi
             throw new Exception("Project not Found");
         }
         var team = new List<User>();
-        
-        foreach (var teamMember in project.TeamMembers.ToList())
+        var teams = await teamMemberRepository.GetTeamMembers(project.Id);
+
+        foreach (var teamMember in teams)
         {
-            var user = await externalUserService.GetUserById(teamMember.Id);
-            if (user is null)
+            var user = await externalUserService.GetUserById(teamMember.UserId);
+            if (user is null || user.FirstName == "Deleted")
             {
                 
-                project.TeamMembers.Remove(teamMember);
+                await teamMemberRepository.RemoveDeletedUser(teamMember.UserId);
                 continue;
             }
             team.Add(user);
@@ -220,14 +185,15 @@ public class ProjectCommandService(ITaskRepository taskRepository,IProjectReposi
             throw new Exception("This project was deleted.");
         }
         var team = new List<User>();
-        
-        foreach (var teamMember in project.TeamMembers.ToList())
+        var teams = await teamMemberRepository.GetTeamMembers(project.Id);
+
+        foreach (var teamMember in teams)
         {
-            var user = await externalUserService.GetUserById(teamMember.Id);
-            if (user is null)
+            var user = await externalUserService.GetUserById(teamMember.UserId);
+            if (user is null || user.FirstName == "Deleted")
             {
                 
-                project.TeamMembers.Remove(teamMember);
+                await teamMemberRepository.RemoveDeletedUser(teamMember.UserId);
                 continue;
             }
             team.Add(user);
@@ -254,14 +220,14 @@ public class ProjectCommandService(ITaskRepository taskRepository,IProjectReposi
         project.UpdateRating(rating);
         
         var team = new List<User>();
-        
-        foreach (var teamMember in project.TeamMembers.ToList())
+        var teams = await teamMemberRepository.GetTeamMembers(project.Id);
+
+        foreach (var teamMember in teams)
         {
-            var user = await externalUserService.GetUserById(teamMember.Id);
-            if (user is null)
+            var user = await externalUserService.GetUserById(teamMember.UserId);
+            if (user is null || user.FirstName == "Deleted")
             {
-                
-                project.TeamMembers.Remove(teamMember);
+                await teamMemberRepository.RemoveDeletedUser(teamMember.UserId);
                 continue;
             }
             team.Add(user);

@@ -8,14 +8,13 @@ using AidManager.API.ManageTasks.Domain.Services;
 
 namespace AidManager.API.ManageTasks.Application.Internal.QueryServices;
 
-public class ProjectQueryService(IFavoriteProjects favoriteProjects,IProjectRepository projectRepository, ExternalUserService externalUserService) :IProjectQueryService
+public class ProjectQueryService(ITeamMemberRepository teamMemberRepository,IFavoriteProjects favoriteProjects,IProjectRepository projectRepository, ExternalUserService externalUserService) :IProjectQueryService
 {
     public async Task<IEnumerable<(Project,List<User>)>> Handle(GetAllProjectsQuery query)
     {
         
        var projectList = await projectRepository.GetProjectsByCompanyId(query.CompanyId);
        var projectUserList = new List<(Project, List<User>)>();
-       
        
          foreach (var project in projectList)
          {
@@ -24,10 +23,10 @@ public class ProjectQueryService(IFavoriteProjects favoriteProjects,IProjectRepo
                     continue;
              } 
              var team = new List<User>();
-              foreach (var teamMember in project.TeamMembers)
-              { 
-                  
-                  var user = await externalUserService.GetUserById(teamMember.Id);
+             var teams = await teamMemberRepository.GetTeamMembers(project.Id);
+              foreach (var teamMember in teams)
+              {
+                  var user = await externalUserService.GetUserById(teamMember.UserId);
                 if (user is { FirstName: "Deleted", Age: 0 })
                 {
                     continue;
@@ -51,10 +50,11 @@ public class ProjectQueryService(IFavoriteProjects favoriteProjects,IProjectRepo
         {
             throw new Exception("Project not found or was Deleted");
         }
-        
-        foreach (var teamMember in project.TeamMembers)
+        var teams = await teamMemberRepository.GetTeamMembers(project.Id);
+
+        foreach (var teamMember in teams)
         {
-            var user = await externalUserService.GetUserById(teamMember.Id);
+            var user = await externalUserService.GetUserById(teamMember.UserId);
             if (user is { FirstName: "Deleted", Age: 0 })
             {
                 continue;
@@ -76,10 +76,11 @@ public class ProjectQueryService(IFavoriteProjects favoriteProjects,IProjectRepo
         {
             throw new Exception("Project not found or was Deleted");
         }
-        foreach (var teamMember in project.TeamMembers)
+        var teams = await teamMemberRepository.GetTeamMembers(project.Id);
+
+        foreach (var teamMember in teams)
         {
-            
-            var user = await externalUserService.GetUserById(teamMember.Id);
+            var user = await externalUserService.GetUserById(teamMember.UserId);
             if (user is { FirstName: "Deleted", Age: 0 })
             {
                 continue;
@@ -104,9 +105,11 @@ public class ProjectQueryService(IFavoriteProjects favoriteProjects,IProjectRepo
                 continue;
             }
             var team = new List<User>();
-            foreach (var teamMember in project.TeamMembers)
+            var teams = await teamMemberRepository.GetTeamMembers(project.Id);
+
+            foreach (var teamMember in teams)
             {
-                var user = await externalUserService.GetUserById(teamMember.Id);
+                var user = await externalUserService.GetUserById(teamMember.UserId);
                 team.Add(user);
             }
             projectUserList.Add((project, team));
@@ -134,9 +137,11 @@ public class ProjectQueryService(IFavoriteProjects favoriteProjects,IProjectRepo
                     await favoriteProjects.Remove(delete);
                     continue;
                 }
-                foreach (var teamMember in projectEntity.TeamMembers)
+                var teams = await teamMemberRepository.GetTeamMembers(project.ProjectId);
+
+                foreach (var teamMember in teams)
                 {
-                    var user = await externalUserService.GetUserById(teamMember.Id);
+                    var user = await externalUserService.GetUserById(teamMember.UserId);
                     if (user is { FirstName: "Deleted", Age: 0 })
                     {
                         continue;

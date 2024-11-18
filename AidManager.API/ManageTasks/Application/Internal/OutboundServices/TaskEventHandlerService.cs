@@ -1,28 +1,32 @@
 ﻿using AidManager.API.ManageTasks.Application.Internal.OutboundServices.ACL;
+using AidManager.API.ManageTasks.Domain.Model.Aggregates;
 using AidManager.API.ManageTasks.Domain.Model.Commands;
 using AidManager.API.ManageTasks.Domain.Repositories;
 using AidManager.API.Shared.Domain.Repositories;
 
 namespace AidManager.API.ManageTasks.Application.Internal.OutboundServices;
 
-public class TaskEventHandlerService(IProjectRepository projectRepository, ExternalUserService externalUserService, IUnitOfWork unitOfWork) : ITaskEventHandlerService
+public class TaskEventHandlerService(ITeamMemberRepository teamMemberRepository, ExternalUserService externalUserService, IUnitOfWork unitOfWork) : ITaskEventHandlerService
 {
     public async Task HandleAddTeamMember(AddTeamMemberCommand command)
     {
-        var project = await projectRepository.GetProjectById(command.ProjectId);
-        var newUser = await externalUserService.GetUserById(command.UserId);
+       await teamMemberRepository.AddAsync(new ProjectTeamMembers(command.UserId, command.ProjectId));
+       await unitOfWork.CompleteAsync();
+    }
 
-        if (project == null)
-        {
-            throw new Exception("Project not Found");
-        }
+    public async Task HandleUpdateTeamMember(int userId, int projectId, int olduserId)
+    {
+        
+        await teamMemberRepository.Remove(new ProjectTeamMembers(olduserId, projectId));
+        await teamMemberRepository.AddAsync(new ProjectTeamMembers(userId, projectId));
+        await unitOfWork.CompleteAsync();
 
-        if (project.TeamMembers.All(tm => tm.Id != newUser.Id))
-        {
-            project.AddTeamMember(newUser);
-            await projectRepository.Update(project);
-        }
+        
+    }
 
+    public async Task HandleRemoveTeamMember(int userId, int projectId)
+    {
+        await teamMemberRepository.Remove(new ProjectTeamMembers(userId, projectId));
         await unitOfWork.CompleteAsync();
     }
 }

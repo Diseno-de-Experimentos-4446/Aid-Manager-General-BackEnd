@@ -6,4 +6,8 @@ public interface ITaskEventHandlerService
 {
     Task HandleAddTeamMember(AddTeamMemberCommand command);
 
+    Task HandleUpdateTeamMember(int userId, int projectId, int oldUserId);
+    
+    Task HandleRemoveTeamMember(int userId, int projectId);
+    
 }
