@@ -55,7 +55,7 @@ public class User
         this.Email = "Not Available";
         this.Phone = "+0 (000) 000-000";
         this.Password = "***";
-        this.ProfileImg = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzXtAL7ktbK0AErHJlPp7PnJsK7khu8pw34g&s";
+        this.ProfileImg = "https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg";
     }
     
 }
