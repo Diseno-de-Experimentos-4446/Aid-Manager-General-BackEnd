@@ -100,26 +100,15 @@ public class ProjectQueryService(IUnitOfWork unitOfWork,ITeamMemberRepository te
 
     public async Task<IEnumerable<(Project, List<User>)>> Handle(GetAllProjectsByUserIdQuery query)
     {
-        var projectList = await projectRepository.GetProjectsByUserId(query.UserId);
+        var projectList = await teamMemberRepository.GetProject(query.UserId);
         var projectUserList = new List<(Project, List<User>)>();
 
 
 
         foreach (var project in projectList)
         {
-            if (project == null)
-            {
-                var delete = await favoriteProjects.GetFavoriteProjectsByProjectIdAndUserIdAsync(query.UserId, project.Id);
-                if (delete == null)
-                {
-                    continue;
-                }
-
-                await favoriteProjects.Remove(delete);
-                continue;
-            }
             var team = new List<User>();
-            var teams = await teamMemberRepository.GetTeamMembers(project.Id);
+            var teams = await teamMemberRepository.GetTeamMembers(project.ProjectId);
 
             foreach (var teamMember in teams)
             {
@@ -132,7 +121,14 @@ public class ProjectQueryService(IUnitOfWork unitOfWork,ITeamMemberRepository te
                 }
                 team.Add(user);
             }
-            projectUserList.Add((project, team));
+            var projectEntity = await projectRepository.GetProjectById(project.ProjectId);
+
+            if (projectEntity == null)
+            {
+                continue;
+            }
+            
+            projectUserList.Add((projectEntity, team));
         }
        
         return projectUserList;
