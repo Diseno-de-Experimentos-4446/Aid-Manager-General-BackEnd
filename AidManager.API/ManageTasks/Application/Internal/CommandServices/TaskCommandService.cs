@@ -29,8 +29,11 @@ public class TaskCommandService(ITeamMemberRepository teamMemberRepository,ITask
             }
             
             var task = new TaskItem(command);
-            
-            await eventHandlerService.HandleAddTeamMember(new AddTeamMemberCommand(command.AssigneeId, command.ProjectId));
+
+            if (!await teamMemberRepository.Exists(command.AssigneeId, command.ProjectId))
+            {
+                await eventHandlerService.HandleAddTeamMember(new AddTeamMemberCommand(command.AssigneeId, command.ProjectId));
+            }
             await taskRepository.AddAsync(task);
             await unitOfWork.CompleteAsync();
             return (task, user);
@@ -81,7 +84,10 @@ public class TaskCommandService(ITeamMemberRepository teamMemberRepository,ITask
         }
         else
         {
-            await eventHandlerService.HandleAddTeamMember(new AddTeamMemberCommand(command.AssigneeId, command.ProjectId));
+            if (!await teamMemberRepository.Exists(command.AssigneeId, command.ProjectId))
+            {
+                await eventHandlerService.HandleAddTeamMember(new AddTeamMemberCommand(command.AssigneeId, command.ProjectId));
+            }
         }
 
         

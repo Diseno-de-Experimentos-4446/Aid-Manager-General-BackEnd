@@ -10,15 +10,20 @@ public class TaskEventHandlerService(ITeamMemberRepository teamMemberRepository,
 {
     public async Task HandleAddTeamMember(AddTeamMemberCommand command)
     {
-       await teamMemberRepository.AddAsync(new ProjectTeamMembers(command.UserId, command.ProjectId));
-       await unitOfWork.CompleteAsync();
+        if (!await teamMemberRepository.Exists(command.UserId, command.ProjectId))
+        {
+            await teamMemberRepository.AddAsync(new ProjectTeamMembers(command.UserId, command.ProjectId));
+            await unitOfWork.CompleteAsync();
+        }
     }
 
     public async Task HandleUpdateTeamMember(int userId, int projectId, int olduserId)
     {
-        
         await teamMemberRepository.Remove(new ProjectTeamMembers(olduserId, projectId));
-        await teamMemberRepository.AddAsync(new ProjectTeamMembers(userId, projectId));
+        if (!await teamMemberRepository.Exists(userId, projectId))
+        {
+            await teamMemberRepository.AddAsync(new ProjectTeamMembers(userId, projectId));
+        }
         await unitOfWork.CompleteAsync();
 
         
