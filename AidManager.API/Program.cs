@@ -242,6 +242,11 @@ using (var scope = app.Services.CreateScope())
     context.Database.EnsureCreated();
 }
 
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ListenAnyIP(8080); // <- Este puerto debe coincidir
+});
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()|| app.Environment.IsProduction())
 {
