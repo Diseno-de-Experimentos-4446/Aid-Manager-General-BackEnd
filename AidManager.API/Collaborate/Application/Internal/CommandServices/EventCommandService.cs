@@ -4,7 +4,6 @@ using AidManager.API.Collaborate.Domain.Model.Entities;
 using AidManager.API.Collaborate.Domain.Repositories;
 using AidManager.API.Collaborate.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
-using Mysqlx.Crud;
 
 namespace AidManager.API.Collaborate.Application.Internal.CommandServices;
 
