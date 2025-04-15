@@ -54,6 +54,7 @@ using AidManager.API.Shared.Infraestructure.Persistence.EFC.Repositories;
 using AidManager.API.UserManagement.UserProfile.Application.Internal.OutboundServices.ACL;
 using AidManager.API.UserProfile.Interfaces.ACL;
 using AidManager.API.UserProfile.Interfaces.ACL.Services;
+using DotNetEnv;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -120,6 +121,7 @@ builder.Services.AddSwaggerGen(
     });
 
 // adding database connection
+Env.Load();
 
 var connectionString = Environment.GetEnvironmentVariable("CONN_STRING");
 
