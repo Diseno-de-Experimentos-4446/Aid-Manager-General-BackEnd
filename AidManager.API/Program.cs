@@ -120,7 +120,8 @@ builder.Services.AddSwaggerGen(
     });
 
 // adding database connection
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+var connectionString = Environment.GetEnvironmentVariable("CONN_STRING");
 
 // Configure Database Context and Logging Levels
 builder.Services.AddDbContext<AppDBContext>(
@@ -128,12 +129,12 @@ builder.Services.AddDbContext<AppDBContext>(
     {
         if (connectionString != null)
             if (builder.Environment.IsDevelopment())
-                options.UseMySQL(connectionString)
+                options.UseSqlServer(connectionString)
                     .LogTo(Console.WriteLine, LogLevel.Information)
                     .EnableSensitiveDataLogging()
                     .EnableDetailedErrors();
             else if (builder.Environment.IsProduction())
-                options.UseMySQL(connectionString)
+                options.UseSqlServer(connectionString)
                     .LogTo(Console.WriteLine, LogLevel.Error)
                     .EnableSensitiveDataLogging()
                     .EnableDetailedErrors();    
