@@ -1,18 +1,23 @@
-﻿# Build stage
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+USER $APP_UID
 WORKDIR /app
-
-COPY . ./
-RUN dotnet restore "AidManager.API/AidManager.API.csproj"
-RUN dotnet publish "AidManager.API/AidManager.API.csproj" -c Release -o /out --no-restore
-
-# Runtime stage
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
-WORKDIR /app
-COPY --from=build /out ./
-
-# Configurar la variable de entorno si usas puertos distintos
-ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
+EXPOSE 8081
 
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
+COPY ["AidManager.API/AidManager.API.csproj", "AidManager.API/"]
+RUN dotnet restore "AidManager.API/AidManager.API.csproj"
+COPY . .
+WORKDIR "/src/AidManager.API"
+RUN dotnet build "AidManager.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+FROM build AS publish
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "AidManager.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "AidManager.API.dll"]
