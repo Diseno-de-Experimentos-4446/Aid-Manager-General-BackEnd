@@ -106,6 +106,21 @@ namespace AidManager.Tests.CoreEntities
             // Assert
             Assert.That(project.TeamMembers.Count, Is.EqualTo(1));
         }
-        
+
+        [Test]
+        public void AddImage_WithValidCommand_ShouldAddImages()
+        {
+            // Arrange
+            var project = new Project();
+            var command = new AddProjectImageCommand(1, new List<string> { "image1.jpg", "image2.jpg" });
+
+            // Act
+            project.AddImage(command);
+
+            // Assert
+            Assert.That(project.ImageUrl.Count, Is.EqualTo(2));
+            Assert.That(project.ImageUrl[0].Url, Is.EqualTo("image1.jpg"));
+            Assert.That(project.ImageUrl[1].Url, Is.EqualTo("image2.jpg"));
+        }
     }
 }
