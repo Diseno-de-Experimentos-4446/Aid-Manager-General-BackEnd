@@ -26,6 +26,17 @@ namespace AidManager.Tests.CoreEntities
             Assert.That(project.Rating, Is.EqualTo(4.5));
         }
 
+        [Test]
+        public void UpdateRating_WithInvalidRating_ShouldThrowException()
+        {
+            // Arrange
+            var project = new Project();
+
+            // Act & Assert
+            var exception = Assert.Throws<Exception>(() => project.UpdateRating(6.0));
+            Assert.That(exception.Message, Does.Contain("Rating not valid"));
+        }
+
         
     }
 }
