@@ -72,6 +72,40 @@ namespace AidManager.Tests.CoreEntities
             Assert.That(project.TeamMembers[0].Id, Is.EqualTo(1));
         }
 
+        [Test]
+        public void AddTeamMember_WhenMemberAlreadyInTeam_ShouldNotDuplicate()
+        {
+            // Arrange
+            var project = new Project();
+            
+            // Create a CreateUserCommand to pass to the User constructor
+            var createUserCommand = new CreateUserCommand(
+                "John", 
+                "Doe", 
+                30, 
+                "test@example.com", 
+                "1234567890", 
+                "password123", 
+                "profile.jpg", 
+                1, 
+                "Test Company", 
+                "company@test.com", 
+                "USA", 
+                "ABC123"
+            );
+            
+            var user = new User(createUserCommand);
+            
+            // Use reflection to set Id if needed (if it's not set by constructor)
+            typeof(User).GetProperty("Id")?.SetValue(user, 1);
+
+            // Act
+            project.AddTeamMember(user);
+            project.AddTeamMember(user);
+
+            // Assert
+            Assert.That(project.TeamMembers.Count, Is.EqualTo(1));
+        }
         
     }
 }
