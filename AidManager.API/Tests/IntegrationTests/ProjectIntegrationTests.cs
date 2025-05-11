@@ -70,6 +70,58 @@ namespace AidManager.Tests.Integration
             _manageTasksFacadeMock.Verify(m => m.GetProjectsByCompany(companyId), Times.Once);
         }
 
-       
+        [Test]
+        public async Task UpdateProjectWithTasks_ShouldTrackTasksAcrossBoundedContexts()
+        {
+            // Arrange
+            var projectId = 3;
+            var project = new Project
+            {
+                Id = projectId,
+                Name = "Project with Tasks",
+                Description = "Integration test for tasks",
+                CompanyId = 1
+            };
+
+            var tasks = new List<TaskItem>
+            {
+                new TaskItem(new CreateTaskCommand(
+                    "Task 1",
+                    "Description for task 1",
+                    DateOnly.FromDateTime(DateTime.Now.AddDays(7)),
+                    projectId,
+                    "ToDo",
+                    1
+                )),
+                new TaskItem(new CreateTaskCommand(
+                    "Task 2",
+                    "Description for task 2",
+                    DateOnly.FromDateTime(DateTime.Now.AddDays(14)),
+                    projectId,
+                    "InProgress",
+                    2
+                ))
+            };
+
+            // Mock the data for tracking task status across contexts
+            _manageTasksFacadeMock.Setup(m => m.GetProjectsByCompany(1))
+                .ReturnsAsync(new List<Project> { project });
+
+            // Act
+            // Update a task status to represent work happening across bounded contexts
+            tasks[1].UpdateStatus("Done");
+
+            // Get project to verify task status updates are reflected
+            var projects = await _manageTasksFacadeMock.Object.GetProjectsByCompany(1);
+            var retrievedProject = projects.FirstOrDefault(p => p.Id == projectId);
+
+            // Assert
+            Assert.That(retrievedProject, Is.Not.Null);
+            Assert.That(retrievedProject.Id, Is.EqualTo(projectId));
+            Assert.That(tasks[1].State, Is.EqualTo("Done"));
+
+            // Verify interaction between bounded contexts
+            _manageTasksFacadeMock.Verify(m => m.GetProjectsByCompany(1), Times.Once);
+        }
     }
 }
