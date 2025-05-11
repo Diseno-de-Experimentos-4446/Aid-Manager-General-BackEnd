@@ -56,6 +56,22 @@ namespace AidManager.Tests.CoreEntities
             Assert.That(project.AuditDate, Is.EqualTo(DateOnly.FromDateTime(DateTime.Now)));
         }
 
+        [Test]
+        public void AddImage_ShouldIncreaseImageCount()
+        {
+            // Arrange
+            var project = new Project();
+            var command = new AddProjectImageCommand(1, new List<string> { "new-image1.jpg", "new-image2.jpg" });
+
+            // Act
+            project.AddImage(command);
+
+            // Assert
+            Assert.That(project.ImageUrl.Count, Is.EqualTo(2));
+            Assert.That(project.ImageUrl[0].Url, Is.EqualTo("new-image1.jpg"));
+            Assert.That(project.ImageUrl[1].Url, Is.EqualTo("new-image2.jpg"));
+        }
+        
         
     }
 }
