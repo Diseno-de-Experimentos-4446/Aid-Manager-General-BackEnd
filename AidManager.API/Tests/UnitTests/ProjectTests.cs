@@ -83,6 +83,34 @@ namespace AidManager.Tests.CoreEntities
             Assert.Throws<Exception>(() => project.UpdateRating(0.5));
         }
         
-        
+        [Test]
+        public void UpdateProject_ShouldModifyAllProperties()
+        {
+            // Arrange
+            var project = new Project();
+            var command = new UpdateProjectCommand(
+                1,
+                "Updated Project",
+                "Updated Description",
+                new List<string> { "updated-image.jpg" },
+                2,
+                "2023-11-20",
+                "16:45",
+                "Updated Location"
+            );
+
+            // Act
+            project.UpdateProject(command);
+
+            // Assert
+            Assert.That(project.Name, Is.EqualTo("Updated Project"));
+            Assert.That(project.Description, Is.EqualTo("Updated Description"));
+            Assert.That(project.ImageUrl.Count, Is.EqualTo(1));
+            Assert.That(project.ImageUrl[0].Url, Is.EqualTo("updated-image.jpg"));
+            Assert.That(project.CompanyId, Is.EqualTo(2));
+            Assert.That(project.ProjectDate, Is.EqualTo(DateOnly.Parse("2023-11-20")));
+            Assert.That(project.ProjectTime, Is.EqualTo(TimeOnly.Parse("16:45")));
+            Assert.That(project.ProjectLocation, Is.EqualTo("Updated Location"));
+        }
     }
 }
