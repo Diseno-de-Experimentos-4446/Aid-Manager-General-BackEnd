@@ -72,6 +72,17 @@ namespace AidManager.Tests.CoreEntities
             Assert.That(project.ImageUrl[1].Url, Is.EqualTo("new-image2.jpg"));
         }
         
+        [Test]
+        public void UpdateRating_WithInvalidRating_ShouldThrowException()
+        {
+            // Arrange
+            var project = new Project();
+
+            // Act & Assert
+            Assert.Throws<Exception>(() => project.UpdateRating(5.5));
+            Assert.Throws<Exception>(() => project.UpdateRating(0.5));
+        }
+        
         
     }
 }
