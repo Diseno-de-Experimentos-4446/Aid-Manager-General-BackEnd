@@ -7,32 +7,18 @@ on:
     branches: [main]
 
 jobs:
-  build-test-deploy:
+  build-test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Stage 1: Checkout del código
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Stage 2: Setup .NET SDK
-        uses: actions/setup-dotnet@v3
+      - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
 
-      - name: Stage 3: Restore dependencias
-        run: dotnet restore AidManager-BackEnd.sln
+      - run: dotnet restore AidManager-BackEnd.sln
 
-      - name: Stage 4: Compilar solución
-        run: dotnet build AidManager-BackEnd.sln --configuration Release --no-restore
+      - run: dotnet build AidManager-BackEnd.sln --configuration Release --no-restore
 
-      - name: Stage 5: Ejecutar pruebas automatizadas
-        run: dotnet test AidManager-BackEnd.sln --configuration Release --no-build
-
-      - name: Stage 6: Instalar Railway CLI
-        run: npm install -g railway
-
-      - name: Stage 7: Login a Railway con token
-        run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
-
-      - name: Stage 8: Desplegar a Railway
-        run: railway up --production
+      - run: dotnet test AidManager-BackEnd.sln --configuration Release --no-build
