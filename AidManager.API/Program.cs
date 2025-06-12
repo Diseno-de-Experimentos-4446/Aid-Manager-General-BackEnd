@@ -71,8 +71,10 @@ builder.Services.AddControllers(options =>
     options.Conventions.Add(new KebabCaseRouteNamingConvention());
 });
 
-var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
-builder.WebHost.UseUrls($"http://*:{port}");
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+Console.WriteLine($"Starting server on port: {port}");
+Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -149,7 +151,26 @@ builder.Services.AddDbContext<AppDBContext>(
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 // configure CORS
-builder.Services.AddCors();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+      options.AddPolicy("AllowSpecificOrigins", policy =>
+    {
+        policy.WithOrigins(
+                "http://localhost:3000", 
+                "http://localhost:4200", 
+                "https://aidmanagerv3.netlify.app",
+                "https://aid-manager-general-backend-production.up.railway.app")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
+    });
+});
 
 // shared bounded context injection configuration
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -253,10 +274,12 @@ if (app.Environment.IsDevelopment()|| app.Environment.IsProduction())
     app.UseSwaggerUI();
 }
 
-app.UseCors(x => x
-    .AllowAnyOrigin()
-    .AllowAnyMethod()
-    .AllowAnyHeader());
+// Configure CORS - allow all origins temporarily for troubleshooting
+Console.WriteLine("Configuring CORS to allow all origins");
+app.UseCors(policy => 
+    policy.AllowAnyOrigin()
+          .AllowAnyMethod()
+          .AllowAnyHeader());
 
 // Add authorization middleware to pipeline
 app.UseRequestAuthorization();
