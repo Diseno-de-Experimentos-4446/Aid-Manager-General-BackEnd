@@ -65,10 +65,6 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.ConfigureKestrel(serverOptions =>
-{
-    serverOptions.ListenAnyIP(8080); // <- Este puerto debe coincidir
-});
 // configure kebab case route naming convention
 builder.Services.AddControllers(options =>
 {
