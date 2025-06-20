@@ -208,7 +208,7 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
         }
     }
 
-    [HttpGet("user/{userId}")]
+    [HttpGet($"/api/v1/user-tasks-project/{{projectId}}/user/{{userId}}")]
     [SwaggerOperation(
         Summary = "Get All Tasks by User and Project id",
         Description = "Get all tasks assigned to a user based on the project",
@@ -231,7 +231,7 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
 
     }
 
-    [HttpGet("user/{userId}/all")]
+    [HttpGet("user/{userId}")]
     [SwaggerOperation(
         Summary = "Get All Tasks by User",
         Description = "Get all tasks assigned to a user",
