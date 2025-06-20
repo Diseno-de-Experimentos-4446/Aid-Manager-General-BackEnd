@@ -13,6 +13,7 @@ public class UserCommandService(IDeletedUserRepository deletedUserRepository,IUs
 {
     public async Task<User?> Handle(CreateUserCommand command)
     {
+        string? externalUserEmail = null;
         try
         {
             var validate = await userRepository.FindUserByEmail(command.Email);
@@ -22,39 +23,36 @@ public class UserCommandService(IDeletedUserRepository deletedUserRepository,IUs
                 Console.WriteLine("Company EMAIL ALREADY USED"); 
                 throw new Exception("Error: Company EMAIL already exist");
             } 
-            if ( validate != null) 
+            if (validate != null) 
             {
                 Console.WriteLine("EMAIL ALREADY USED"); 
                 throw new Exception("Error: User EMAIL already exists");
             }
-            
+
             var user = new User(command);
-           
-            
-            
-            
-            
+
+            // Solo después de validaciones locales, crear usuario externo
             switch (command.Role)
             {
                 //Manager
                 case 0:
                     await externalUserAuthService.CreateUsername(user.Email, user.Password, user.Role);
+                    externalUserEmail = user.Email;
                     var userid = await externalUserAuthService.FetchUserIdByUsername(user.Email);
-                    //externalCompanyAuthService.CreateCompany
                     var company = await externalUserAuthService.CreateCompany(command.CompanyName, command.CompanyCountry, command.CompanyEmail, userid);
                     user.CompanyId = company.Id;
                     break;
                 //TeamMember
                 case 1:
-                    //externalCompanyAuthService.GetCompanyInfoByCompanyRegisterCode
                     var companyData = await externalUserAuthService.AuthenticateCode(command.TeamRegisterCode); 
                     await externalUserAuthService.CreateUsername(user.Email, user.Password, user.Role);
+                    externalUserEmail = user.Email;
                     user.CompanyId = companyData.Id;
                     break;
-            } 
-            
+            }
+
             Console.WriteLine("USER: " + user);
-            
+
             await userRepository.AddAsync(user);
             await unitOfWork.CompleteAsync();
             return user;
@@ -62,6 +60,18 @@ public class UserCommandService(IDeletedUserRepository deletedUserRepository,IUs
         catch (Exception e)
         {
             Console.WriteLine("Error in creation: " + e.Message);
+            // Si ya se creó el usuario externo, intentar eliminarlo
+            if (externalUserEmail != null)
+            {
+                try
+                {
+                    await externalUserAuthService.DeleteUser(externalUserEmail);
+                }
+                catch (Exception cleanupEx)
+                {
+                    Console.WriteLine($"Error cleaning up external user: {cleanupEx.Message}");
+                }
+            }
             throw;
         }
         
