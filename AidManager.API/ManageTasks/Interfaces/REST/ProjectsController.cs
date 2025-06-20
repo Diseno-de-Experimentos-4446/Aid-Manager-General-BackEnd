@@ -123,8 +123,6 @@ public class ProjectsController (IProjectCommandService projectCommandService, I
         
     }    
     
-    
-    
     [HttpGet("team/{projectId}")]
     [SwaggerOperation(
         Summary = "Get all project Team Members",

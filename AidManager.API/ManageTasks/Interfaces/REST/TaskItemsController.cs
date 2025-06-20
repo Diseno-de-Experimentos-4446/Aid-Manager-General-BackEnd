@@ -26,24 +26,24 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
     {
         try
         {
-            var createTaskItemCommand = CreateTaskItemCommandFromResourceAssembler.ToCommandFromResource(resource, projectId); 
+            var createTaskItemCommand = CreateTaskItemCommandFromResourceAssembler.ToCommandFromResource(resource, projectId);
             Console.WriteLine("The TaskItemController is called. and the Task Item is assembled." + createTaskItemCommand);
             var result = await taskCommandService.Handle(createTaskItemCommand);
             Console.WriteLine("The Create Item Command is handled in the taskCommandService.");
             var taskItemById = GetTaskItemById(result.Item1.Id);
             Console.WriteLine("Task by id called" + taskItemById.Result);
-            var response = TaskItemResourceFromEntityAssembler.ToResourceFromEntity(result.Item1,result.Item2);
+            var response = TaskItemResourceFromEntityAssembler.ToResourceFromEntity(result.Item1, result.Item2);
             return Ok(response);
-            
+
         }
         catch (Exception e)
         {
             return BadRequest("Error: " + e.Message);
         }
-        
-        
+
+
     }
-    
+
     [HttpGet("{id}")]
     [SwaggerOperation(
         Summary = "Get a Task by Id",
@@ -62,10 +62,10 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
         {
             return BadRequest("Error: " + e.Message);
         }
-        
+
     }
-    
-    
+
+
     [HttpPatch("{id}")]
     [SwaggerOperation(
         Summary = "Change Status",
@@ -80,13 +80,13 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
             var getTaskByIdQuery = new GetTaskByIdQuery(id);
             var taskItem = await taskQueryService.Handle(getTaskByIdQuery);
             taskItem.Item1.UpdateStatus(request.status);
-            
+
             var updateTaskItemResource = new UpdateTaskItemResource(taskItem.Item1.Title, taskItem.Item1.Description, taskItem.Item1.DueDate, taskItem.Item1.State, taskItem.Item1.AssigneeId);
-            
+
             var updateTaskCommand = UpdateTaskItemCommandFromResourceAssembler.ToCommandFromResource(updateTaskItemResource, id, projectId);
 
             var result = await taskCommandService.Handle(updateTaskCommand);
-            
+
             return Ok(TaskItemResourceFromEntityAssembler.ToResourceFromEntity(result.Item1, result.Item2));
         }
         catch (Exception e)
@@ -94,7 +94,7 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
             return BadRequest("Error: " + e.Message);
         }
     }
-    
+
     [HttpPut("edit/{id}")]
     [SwaggerOperation(
         Summary = "Update a Task",
@@ -103,10 +103,10 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
     )]
     [SwaggerResponse(201, "Task Updated", typeof(UpdateTaskItemResource))]
 
-    public async Task<ActionResult> UpdateTaskItem( int id ,int projectId,[FromBody] UpdateTaskItemResource resource)
+    public async Task<ActionResult> UpdateTaskItem(int id, int projectId, [FromBody] UpdateTaskItemResource resource)
     {
         try
-        { 
+        {
             var updateTaskCommand = UpdateTaskItemCommandFromResourceAssembler.ToCommandFromResource(resource, id, projectId);
             var result = await taskCommandService.Handle(updateTaskCommand);
             return Ok(TaskItemResourceFromEntityAssembler.ToResourceFromEntity(result.Item1, result.Item2));
@@ -116,7 +116,7 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
             return BadRequest("Error: " + e.Message);
 
         }
-       
+
     }
     [HttpDelete("{id}")]
     [SwaggerOperation(
@@ -137,9 +137,9 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
             return BadRequest("Error: " + e.Message);
 
         }
-       
+
     }
-    
+
     [HttpGet("all")]
     [SwaggerOperation(
         Summary = "Get All Tasks from a project",
@@ -150,7 +150,7 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
     {
         try
         {
-            var getAllTasksQueryByProjectId = new GetTasksByProjectIdQuery(projectId); 
+            var getAllTasksQueryByProjectId = new GetTasksByProjectIdQuery(projectId);
             var result = await taskQueryService.Handle(getAllTasksQueryByProjectId);
             var resources = result.Select(tuple => TaskItemResourceFromEntityAssembler.ToResourceFromEntity(tuple.Item1, tuple.Item2));
             return Ok(resources);
@@ -160,9 +160,9 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
             return BadRequest("Error: " + e.Message);
 
         }
-        
+
     }
-    
+
     [HttpGet("/api/v1/Company-Tasks/{companyId}")]
     [SwaggerOperation(
         Summary = "Get All Tasks from a Company",
@@ -183,9 +183,9 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
             return BadRequest("Error: " + e.Message);
 
         }
-        
+
     }
-    
+
     [HttpGet($"/api/v1/company-tasks/{{companyId}}/user/{{userId}}")]
     [SwaggerOperation(
         Summary = "Get All Tasks assigned User by Company",
@@ -207,8 +207,31 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
 
         }
     }
-    
+
     [HttpGet("user/{userId}")]
+    [SwaggerOperation(
+        Summary = "Get All Tasks by User and Project id",
+        Description = "Get all tasks assigned to a user based on the project",
+        OperationId = "GetAllTasksByUserAndProjectId"
+    )]
+    public async Task<ActionResult<IEnumerable<TaskItemResource>>> GetAllTaskItemsByUserAndProjectId(int userId, int projectId)
+    {
+        try
+        {
+            var getAllTasksQueryByUserIdAndProjectId = new GetTasksByUserIdAndProjectId(userId, projectId);
+            var result = await taskQueryService.Handle(getAllTasksQueryByUserIdAndProjectId);
+            var resources = result.Select(tuple => TaskItemResourceFromEntityAssembler.ToResourceFromEntity(tuple.Item1, tuple.Item2));
+            return Ok(resources);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Error: " + e.Message);
+
+        }
+
+    }
+
+    [HttpGet("user/{userId}/all")]
     [SwaggerOperation(
         Summary = "Get All Tasks by User",
         Description = "Get all tasks assigned to a user",
@@ -228,9 +251,6 @@ public class TaskItemsController(ITaskCommandService taskCommandService, ITaskQu
             return BadRequest("Error: " + e.Message);
 
         }
-        
     }
-    
-    
     
 }

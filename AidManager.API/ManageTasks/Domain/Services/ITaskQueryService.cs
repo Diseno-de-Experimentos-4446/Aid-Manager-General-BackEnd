@@ -7,9 +7,11 @@ namespace AidManager.API.ManageTasks.Domain.Services;
 
 public interface ITaskQueryService
 {
-    Task<List<(TaskItem,User)>> Handle(GetTasksByUserId query);
-    Task<(TaskItem,User)> Handle(GetTaskByIdQuery query); 
-    Task<List<(TaskItem,User)>> Handle(GetTasksByProjectIdQuery query);
-    Task<List<(TaskItem,User)>> Handle(GetTasksByCompanyId query);
-    Task<List<(TaskItem,User)>> Handle(GetAllTasksByUserIdByCompanyId query);
+    Task<List<(TaskItem, User)>> Handle(GetTasksByUserId query);
+    Task<(TaskItem, User)> Handle(GetTaskByIdQuery query);
+    Task<List<(TaskItem, User)>> Handle(GetTasksByProjectIdQuery query);
+    Task<List<(TaskItem, User)>> Handle(GetTasksByCompanyId query);
+    Task<List<(TaskItem, User)>> Handle(GetAllTasksByUserIdByCompanyId query);
+    Task<List<(TaskItem, User)>> Handle(GetTasksByUserIdAndProjectId query);
+
 }

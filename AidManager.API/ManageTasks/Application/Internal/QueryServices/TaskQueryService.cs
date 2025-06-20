@@ -10,7 +10,7 @@ namespace AidManager.API.ManageTasks.Application.Internal.QueryServices;
 
 public class TaskQueryService(ITaskRepository taskRepository, ExternalUserService external, IProjectQueryService projectQuery) : ITaskQueryService
 {
-        
+
     public async Task<(TaskItem, User)> Handle(GetTaskByIdQuery query)
     {
         var taskItem = await taskRepository.GetTaskById(query.Id);
@@ -18,13 +18,13 @@ public class TaskQueryService(ITaskRepository taskRepository, ExternalUserServic
         {
             throw new Exception("Error: Task not found");
         }
-        
+
         var user = await external.GetUserById(taskItem.AssigneeId);
-        
-        return (taskItem,user);
-        
+
+        return (taskItem, user);
+
     }
-    
+
     public async Task<List<(TaskItem, User)>> Handle(GetTasksByProjectIdQuery query)
     {
         var taskList = await taskRepository.GetTasksByProjectId(query.ProjectId);
@@ -45,7 +45,7 @@ public class TaskQueryService(ITaskRepository taskRepository, ExternalUserServic
             var projects = await projectQuery.Handle(getAllProjectsQuery);
 
             var tasksList = new List<TaskItem>();
-                
+
             foreach (var project in projects)
             {
                 var tasks = await taskRepository.GetTasksByProjectId(project.Item1.Id);
@@ -65,7 +65,7 @@ public class TaskQueryService(ITaskRepository taskRepository, ExternalUserServic
             Console.WriteLine(e);
             throw;
         }
-        
+
     }
 
     public async Task<List<(TaskItem, User)>> Handle(GetAllTasksByUserIdByCompanyId query)
@@ -76,13 +76,13 @@ public class TaskQueryService(ITaskRepository taskRepository, ExternalUserServic
             var projects = await projectQuery.Handle(getAllProjectsQuery);
 
             var tasksList = new List<TaskItem>();
-            
+
             foreach (var project in projects)
             {
                 var tasks = await taskRepository.GetTasksByProjectId(project.Item1.Id);
                 tasksList.AddRange(tasks);
             }
-            
+
             var taskUserList = new List<(TaskItem, User)>();
             foreach (var task in tasksList)
             {
@@ -105,6 +105,18 @@ public class TaskQueryService(ITaskRepository taskRepository, ExternalUserServic
     public async Task<List<(TaskItem, User)>> Handle(GetTasksByUserId query)
     {
         var taskList = await taskRepository.GetTasksByUserId(query.UserId);
+        var taskUserList = new List<(TaskItem, User)>();
+        foreach (var task in taskList)
+        {
+            var user = await external.GetUserById(task.AssigneeId);
+            taskUserList.Add((task, user));
+        }
+        return taskUserList;
+    }
+
+    public async Task<List<(TaskItem, User)>> Handle(GetTasksByUserIdAndProjectId query)
+    {
+        var taskList = await taskRepository.GetTasksByUserIdAndProjectId(query.userId, query.ProjectId);
         var taskUserList = new List<(TaskItem, User)>();
         foreach (var task in taskList)
         {
